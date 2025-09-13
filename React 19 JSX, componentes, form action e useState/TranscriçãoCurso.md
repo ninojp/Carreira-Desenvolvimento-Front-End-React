@@ -758,41 +758,587 @@ Nesta aula, aprendemos:
 
 ### Aula 2 - Passagem de parâmetros - Vídeo 1
 
-Transcrição
+Transcrição  
 Agora que já iniciamos o projeto, começamos a criar os componentes e entendemos o que é o React e como ele funciona, é hora de evoluir e criar mais componentes. Na última vez que codificamos, esquecemos de adicionar o placeholder no input. O placeholder é "SummerDevHeats", um nome bastante sugestivo para o evento.
 
-Análise do Formulário de Evento
+Análise do Formulário de Evento  
 Precisamos começar a tratar e criar mais componentes. Vamos analisar o bloco de código do formulário de evento. Faz sentido que ele cuide dos campos que um evento deve ter para que possamos cadastrá-lo na nossa lista. No entanto, não faz sentido reaproveitar o formulário inteiro. Por exemplo, o conjunto de fieldset, label e input provavelmente será reaproveitado. Não queremos que o tipo do input seja sempre "text", nem que o id seja sempre "nome", ou que o placeholder seja sempre "SummerDevHeats". No Figma, temos um componente do tipo "text" e outro do tipo "date", mostrando pequenas diferenças.
 
-Criando Componentes Reaproveitáveis
+Criando Componentes Reaproveitáveis  
 Vamos começar a criar componentes reaproveitáveis no React. A primeira coisa a fazer é criar uma nova função acima do formulário de evento. No React, componentes são funções. Vamos criar uma função chamada tituloFormulario, que será o título do formulário. Essa função não terá parâmetros e retornará o JSX. Podemos omitir os parênteses se for uma linha só, mas prefiro retornar entre parênteses para ter mais liberdade na estrutura, podendo quebrar linhas e tudo mais. Queremos retornar um H2. Vamos cortar o H2 da linha 15 e colá-lo dentro do return, chamando o nosso tituloFormulario.
 
-Tornando o Componente Reaproveitável
-Se fizermos isso e olharmos no navegador, veremos que está funcionando, mas não está reaproveitável. O título está sempre fixo. Queremos que ele receba um parâmetro, como titulo ou texto, para preencher o valor dentro do H2. Vamos pensar na forma de uso. Em vez de fechar o componente diretamente, podemos usá-lo assim: <TituloFormulario>Texto</TituloFormulario>. Queremos passar esse texto para dentro do componente.
+Tornando o Componente Reaproveitável  
+Se fizermos isso e olharmos no navegador, veremos que está funcionando, mas não está reaproveitável. O título está sempre fixo. Queremos que ele receba um parâmetro, como titulo ou texto, para preencher o valor dentro do H2. Vamos pensar na forma de uso. Em vez de fechar o componente diretamente, podemos usá-lo assim: `<TituloFormulario>`Texto`</TituloFormulario>`. Queremos passar esse texto para dentro do componente.
 
-Utilizando Props no React
+Utilizando Props no React  
 O VSCode não indica nenhum erro, pois a sintaxe está correta. Precisamos capturar esse texto no tituloFormulario. Se olharmos no Chrome, o texto está travado. Podemos colocar lado a lado para ver. Os componentes React são funções e podemos passar parâmetros para essas funções, como em uma função normal.
 
 Nós utilizamos a soma que recebe o número 1 e o número 2 e retornamos o número 1 mais o número 2. É o mesmo conceito de uma função JavaScript pura. O React faz isso de forma automática, sem precisarmos nos preocupar. Quando colocamos algo no meio, estamos inserindo um elemento filho, ou seja, esse texto é um filho direto do título do formulário. Esse tipo de parâmetro é injetado automaticamente pelo React e o recebemos como primeiro argumento.
 
-Trabalhando com Propriedades e Elementos Filhos
+Trabalhando com Propriedades e Elementos Filhos  
 Quando passamos um parâmetro para um componente, dizemos que estamos passando propriedades, chamadas de props (propriedades) para simplificar. Podemos nomear essa variável como quisermos, mas o nome comum é props. Quando falamos do componente e do elemento filho, estamos lidando com um objeto. Podemos acessar as propriedades desse objeto, por exemplo, usando props.algumaCoisa. Se quisermos acessar os filhos, utilizamos props.children, pois o React foi codificado em inglês.
 
-Renderização Dinâmica com Props
+Renderização Dinâmica com Props  
 O React faz isso automaticamente. Podemos pegar o children e renderizá-lo. Se props é um objeto, fazemos props.children. Quando alteramos, o Vite ativa um hot reload e coloca props.children. No entanto, queremos o valor dinâmico. Para acessar um valor dinâmico dentro do JSX, colocamos entre chaves. Sem as chaves, o VS Code nos avisa que estamos declarando props sem usar. Com as chaves, o erro desaparece, e o conteúdo da variável é renderizado no DOM, na tela.
 
-Conclusão e Próximos Passos
+Conclusão e Próximos Passos  
 Ao salvar, tudo volta a funcionar como desejado. Recebemos o props e o preenchemos para criar um evento. Qualquer alteração que fizermos funcionará. Aprendemos a passar elementos, texto e outros elementos HTML. Podemos, por exemplo, usar uma tag strong, se quisermos. Se não passarmos nada, nada será renderizado.
 
 Aprendemos a passar parâmetros para nossos componentes usando props. Podemos nomear a variável como quisermos, pois o React injeta para nós. É comum chamarmos de props, mas podemos usar qualquer nome. Além dos filhos, podemos passar outras coisas. Vamos evoluir essa passagem de props no próximo vídeo.
 
-Nota sobre Snippets de Código
+Nota sobre Snippets de Código  
 Infelizmente, não foram fornecidos snippets de código para complementar a transcrição. Se você tiver algum código específico que gostaria de incluir ou discutir, por favor, forneça-o para que possamos integrá-lo adequadamente ao conteúdo.
 
-### Aula 2 -  - Vídeo 2
-### Aula 2 -  - Vídeo 3
-### Aula 2 -  - Vídeo 4
-### Aula 2 -  - Vídeo 5
-### Aula 2 -  - Vídeo 6
-### Aula 2 -  - Vídeo 7
-### Aula 2 -  - Vídeo 8
+### Aula 2 - Props e suas sintaxes - Vídeo 2
+
+Transcrição  
+Vamos começar a organizar a transcrição didática com base nas explicações fornecidas. Como não há snippets de código específicos fornecidos, vamos estruturar o conteúdo de forma a refletir o desenvolvimento progressivo do código conforme descrito na transcrição.
+
+Criando Componentes com Parâmetros  
+Já começamos a dar nossos primeiros passos, passando parâmetros próprios para nossos componentes. Iniciamos pelo children. Não nomeamos isso nem fizemos nada específico, mas agora vamos evoluir, continuando a separar pequenos blocos do nosso código em componentes.
+
+Implementação do Componente CampoDeFormulario  
+No arquivo app.jsx, seguindo a mesma linha de raciocínio, vamos criar uma função chamada CampoDeFormulario. Estamos codificando em português para facilitar a sintaxe. Podemos fazer um return, entre parênteses, de um fieldset. Agora sim, vamos renderizar o children. Já aprendemos sobre o children e sabemos como utilizá-lo.
+
+```JSX
+function CampoDeFormulario({ children }) {
+  return (
+    <fieldset>
+      {children}
+    </fieldset>
+  );
+}
+```
+
+Desconstrução de Parâmetros em JavaScript  
+Agora, vamos aprender algo novo. Deixaremos conteúdo no "Para Saber Mais" para aprofundamento, mas isso é do JavaScript, não do React. Para evitar ficar usando props.children, queremos usar diretamente, destruindo esse parâmetro que estamos recebendo, e pegar apenas o children. Como fazemos isso? Em vez de receber diretamente props, colocamos um objeto JavaScript, abrimos e fechamos chaves, e pegamos o children. Estamos desconstruindo o objeto que chegou, pegando a propriedade children e guardando em uma variável chamada children. Isso se chama destructuring (desconstrução), e é uma forma diferente de manipular parâmetros que uma função recebe dentro do JavaScript.
+
+Criando o Componente Label  
+Podemos pegar esse CampoDeFormulario e trocar o fieldset por CampoDeFormulario, que continuará funcionando. Podemos criar uma terceira função, Label. Não chamaremos de "etiqueta", pois "etiqueta" soa estranho. Vamos chamá-la de Label. Faremos um return de uma tag label. Já sabemos como lidar com o children, então vamos copiar do fieldset até o parâmetro que recebemos. O fieldset recebe children, então podemos trocar agora o label por esse componente.
+
+```JSX
+function Label({ children, htmlFor }) {
+  return (
+    <label htmlFor={htmlFor}>
+      {children}
+    </label>
+  );
+}
+```
+
+Considerações sobre o htmlFor e Consistência de Código  
+Agora, temos mais um detalhe para considerar: o htmlFor. Vamos inspecionar o elemento, aumentar o zoom e fechar o console, que não precisamos. Repare que não estamos capturando o htmlFor. Como fazemos para pegar outros parâmetros? Podemos chamar nosso htmlFor e passá-lo para baixo. Recebemos por parâmetro.
+
+Repare que estamos desconstruindo. Se tivéssemos props, teríamos que fazer props.htmlFor, props.children. A sintaxe não influencia o resultado final; podemos desconstruir ou chamar props.algumaCoisa, conforme acharmos mais elegante. A única sugestão é seguir sempre o mesmo padrão. Se usamos sempre props, continuemos com props. Se desconstruímos, façamos isso sempre, para manter o código homogêneo. No meu caso, prefiro o outro jeito, então vou remover o props.
+
+Ajustes e Testes de Parâmetros  
+Vamos deixar o código desconstruído. Vou ajustar o título do formulário para manter a consistência. Desconstruindo tudo, nada quebrou e tudo continua funcionando. Se passarmos qualquer valor, como "hello", e definirmos o valor como "terezinha", podemos receber essa variável e imprimi-la ao invés do children. No HTML, ao dar um zoom, vemos que o valor foi alterado para "terezinha". Essa é a forma de passarmos parâmetros, independentemente de qual seja.
+
+Implementação do Componente CampoDeEntrada  
+Para elementos HTML, como o input, estamos passando várias propriedades. Vou aumentar o tamanho no VSCode para melhor visualização. Estamos passando type, id, placeholder, e o fechamento do input é separado, totalizando três parâmetros. Vamos continuar separando componentes menores.
+
+Criamos uma função chamada campoDeEntrada, pois é um input, que pode ser um texto ou uma data. Como estamos retornando apenas o input, podemos usar um retorno de linha única. Precisamos abrir e adicionar type, id, placeholder, entre outros atributos que podemos passar para um input. Temos todos os atributos de área e várias outras propriedades, como name, que ainda não utilizamos.
+
+```JSX
+function CampoDeEntrada(props) {
+  return <input {...props} />;
+}
+```
+
+Utilizando o Spread Operator  
+Em vez de pegar cada propriedade individualmente, como este é um componente React que envolve um componente HTML, podemos pegar todas as propriedades. Vamos usar o spread operator do JavaScript, que não é específico do React. Utilizando ...props, ele espalha todas as propriedades recebidas como atributos do input. Se colarmos isso no campoDeEntrada, veremos que no HTML continuam todos os valores: id, placeholder, type e name. O spread operator renderiza todas as propriedades, inclusive aquelas que não funcionam. Por exemplo, se adicionarmos musica="rock", isso será impresso no HTML. Assim, não precisamos nos preocupar em pegar cada propriedade individualmente.
+
+Reflexão sobre a Estrutura do Código  
+Essas são formas diferentes de trabalhar com passagem de props em componentes React. Algo para começarmos a prestar atenção, pois será o assunto da próxima aula, é o crescimento do arquivo. Já estamos com 74 linhas e ainda não chegamos à metade. Temos um arquivo grande com todos os componentes. Será que isso é uma boa prática? Vamos refletir sobre isso, pois responderemos essa pergunta na sequência.
+
+### Aula 2 - Boas práticas e estruturas do projeto - Vídeo 3
+
+Transcrição  
+Vamos começar a organizar a transcrição didática com base nas explicações fornecidas. Como não há snippets de código específicos fornecidos, vamos estruturar o conteúdo de forma a refletir o desenvolvimento progressivo do código conforme descrito na transcrição.
+
+Criando Componentes com Parâmetros  
+Já começamos a dar nossos primeiros passos, passando parâmetros próprios para nossos componentes. Iniciamos pelo children. Não nomeamos isso nem fizemos nada específico, mas agora vamos evoluir, continuando a separar pequenos blocos do nosso código em componentes.
+
+Implementação do Componente CampoDeFormulario  
+No arquivo app.jsx, seguindo a mesma linha de raciocínio, vamos criar uma função chamada CampoDeFormulario. Estamos codificando em português para facilitar a sintaxe. Podemos fazer um return, entre parênteses, de um fieldset. Agora sim, vamos renderizar o children. Já aprendemos sobre o children e sabemos como utilizá-lo.
+
+```JSX
+function CampoDeFormulario({ children }) {
+  return (
+    <fieldset>
+      {children}
+    </fieldset>
+  );
+}
+```
+
+Desconstrução de Parâmetros em JavaScript  
+Agora, vamos aprender algo novo. Deixaremos conteúdo no "Para Saber Mais" para aprofundamento, mas isso é do JavaScript, não do React. Para evitar ficar usando props.children, queremos usar diretamente, destruindo esse parâmetro que estamos recebendo, e pegar apenas o children. Como fazemos isso? Em vez de receber diretamente props, colocamos um objeto JavaScript, abrimos e fechamos chaves, e pegamos o children. Estamos desconstruindo o objeto que chegou, pegando a propriedade children e guardando em uma variável chamada children. Isso se chama destructuring (desconstrução), e é uma forma diferente de manipular parâmetros que uma função recebe dentro do JavaScript.
+
+Criando o Componente Label  
+Podemos pegar esse CampoDeFormulario e trocar o fieldset por CampoDeFormulario, que continuará funcionando. Podemos criar uma terceira função, Label. Não chamaremos de "etiqueta", pois "etiqueta" soa estranho. Vamos chamá-la de Label. Faremos um return de uma tag label. Já sabemos como lidar com o children, então vamos copiar do fieldset até o parâmetro que recebemos. O fieldset recebe children, então podemos trocar agora o label por esse componente.
+
+```JSX
+function Label({ children, htmlFor }) {
+  return (
+    <label htmlFor={htmlFor}>
+      {children}
+    </label>
+  );
+}
+```
+
+Considerações sobre o htmlFor e Consistência de Código  
+Agora, temos mais um detalhe para considerar: o htmlFor. Vamos inspecionar o elemento, aumentar o zoom e fechar o console, que não precisamos. Repare que não estamos capturando o htmlFor. Como fazemos para pegar outros parâmetros? Podemos chamar nosso htmlFor e passá-lo para baixo. Recebemos por parâmetro.
+
+Repare que estamos desconstruindo. Se tivéssemos props, teríamos que fazer props.htmlFor, props.children. A sintaxe não influencia o resultado final; podemos desconstruir ou chamar props.algumaCoisa, conforme acharmos mais elegante. A única sugestão é seguir sempre o mesmo padrão. Se usamos sempre props, continuemos com props. Se desconstruímos, façamos isso sempre, para manter o código homogêneo. No meu caso, prefiro o outro jeito, então vou remover o props.
+
+Ajustes e Testes de Parâmetros  
+Vamos deixar o código desconstruído. Vou ajustar o título do formulário para manter a consistência. Desconstruindo tudo, nada quebrou e tudo continua funcionando. Se passarmos qualquer valor, como "hello", e definirmos o valor como "terezinha", podemos receber essa variável e imprimi-la ao invés do children. No HTML, ao dar um zoom, vemos que o valor foi alterado para "terezinha". Essa é a forma de passarmos parâmetros, independentemente de qual seja.
+
+Implementação do Componente CampoDeEntrada  
+Para elementos HTML, como o input, estamos passando várias propriedades. Vou aumentar o tamanho no VSCode para melhor visualização. Estamos passando type, id, placeholder, e o fechamento do input é separado, totalizando três parâmetros. Vamos continuar separando componentes menores.
+
+Criamos uma função chamada campoDeEntrada, pois é um input, que pode ser um texto ou uma data. Como estamos retornando apenas o input, podemos usar um retorno de linha única. Precisamos abrir e adicionar type, id, placeholder, entre outros atributos que podemos passar para um input. Temos todos os atributos de área e várias outras propriedades, como name, que ainda não utilizamos.
+
+```JSX
+function CampoDeEntrada(props) {
+  return <input {...props} />;
+}
+```
+
+Utilizando o Spread Operator  
+Em vez de pegar cada propriedade individualmente, como este é um componente React que envolve um componente HTML, podemos pegar todas as propriedades. Vamos usar o spread operator do JavaScript, que não é específico do React. Utilizando ...props, ele espalha todas as propriedades recebidas como atributos do input. Se colarmos isso no campoDeEntrada, veremos que no HTML continuam todos os valores: id, placeholder, type e name. O spread operator renderiza todas as propriedades, inclusive aquelas que não funcionam. Por exemplo, se adicionarmos musica="rock", isso será impresso no HTML. Assim, não precisamos nos preocupar em pegar cada propriedade individualmente.
+
+Reflexão sobre a Estrutura do Código  
+Essas são formas diferentes de trabalhar com passagem de props em componentes React. Algo para começarmos a prestar atenção, pois será o assunto da próxima aula, é o crescimento do arquivo. Já estamos com 74 linhas e ainda não chegamos à metade. Temos um arquivo grande com todos os componentes. Será que isso é uma boa prática? Vamos refletir sobre isso, pois responderemos essa pergunta na sequência.
+
+### Aula 2 - Estilizando componetes - Vídeo 4
+
+Transcrição  
+Vamos agora ajustar o projeto para que ele fique mais parecido com o que está no Figma, observando nossa aplicação. O título e o label input não estão adequados, então vamos trabalhar no CSS. Já aprendemos boas práticas e vamos aplicá-las corretamente.
+
+Importação de Fontes do Google Fonts  
+Primeiramente, todos os headings que não são títulos, como o que separa o front-end e até mesmo o título do banner, utilizarão a fonte WORKSANS, disponível no Google Fonts. Acessando o Google Fonts, encontramos a opção "Get Fonts" e "Get Embedded Code". Precisamos do link que traz três links: dois pré-conexões e um da própria fonte. Vamos copiar esse código diretamente do Google Fonts. Se já tivermos usado antes e outras fontes estiverem marcadas, elas podem aparecer no menu lateral esquerdo. No nosso caso, apenas a WORKSANS está selecionada, então o código está correto.
+
+Configuração do VS Code e Aplicação da Fonte  
+No VS Code, vamos maximizar e abrir o arquivo index.html, que está na raiz do projeto. Como essa importação é global, colaremos abaixo do title, onde está "vítimas React". Podemos aproveitar para ajustar para "Tech Board". Vamos formatar o documento no VS Code para que fique bem identado. Com isso, a fonte já está disponível.
+
+No Chrome, é indicado como aplicar o font-family. Vamos copiar o código font-family: WORKSANS, sans-serif e inserir no nosso código. Vamos colocá-lo no index.css, que é global para toda a aplicação. No arquivo main.jsx, na linha 3, o index.css está sendo importado. Agora, podemos usar a fonte. No Chrome, a fonte já mudou, ficando mais próxima do que precisamos.
+
+Estilização do Título e Label  
+Vamos agora codificar tudo isso. Deixaremos o Figma e o VS Code lado a lado para trazer os estilos. Vamos começar pelos detalhes do título. Criamos um novo arquivo titulo-formulario.estilos.css e já o importamos no index.jsx. Na linha 1, fazemos o import do formulário estilos CSS. Temos um h2 e podemos usar um className chamado titulo-form.
+
+No CSS, criamos .titulo-form. No Figma, ao selecionar a tipografia e clicar em copiar, obtemos todos os estilos necessários. Vamos colar e formatar o documento no VS Code. Podemos remover vertical-align, letter-spacing e font-family, pois já definimos globalmente. O weight 400 é padrão, mas podemos deixar explícito. O font-size e line-height foram trazidos. Precisamos adicionar a cor do texto, que é branco (#FFFFFF).
+
+Agora, vamos organizar mais estilos. Criamos label.estilos.css e importamos no index. Vamos trazer os estilos da label. Selecionamos a label no Figma, copiamos a tipografia e criamos uma classe label. Removemos font-family, letter-spacing e vertical-align. Adicionamos a cor branca (#FFFFFF). Formatamos o documento e adicionamos o className label.
+
+Estilização do Campo de Formulário  
+Vamos agora para o input. Estamos codificando sem mistérios. Criamos campo-formulario.estilos.css dentro da pasta do componente. No index, fazemos o import. O campo de formulário é o fieldset, que envolve o conteúdo. Adicionamos className campo-form para manter o padrão. Corrigimos um erro de digitação no fechamento da chave.
+
+Nos estilos, definimos .campo-form com display: flex, flex-direction: column e gap: 8. Verificamos no Tech Board e está mais parecido com o que precisamos. A borda no fieldset não existe, então ajustaremos isso.
+
+Ajustes Finais no Formulário  
+Vamos aplicar algumas alterações no estilo do nosso formulário. Primeiro, vamos remover a borda, o padding e a margem, definindo-os como zero. Isso já deixa o formulário mais próximo do que precisamos. Agora, vamos estilizar o campo de entrada.
+
+No arquivo campo-entrada.estilos.css, vamos importar o estilo no index na linha 1, para não esquecermos. Utilizaremos o className como campo-entrada-form, pois já temos um campo-form no CSS, que é global por padrão.
+
+No Figma, selecionamos o campo de entrada e ajustamos o border-radius e a cor de fundo para transparente. A borda será de 1 pixel, sólida, com a cor #4A4949. Também ajustaremos a cor do placeholder usando um pseudo-seletor no CSS, definindo-a como cinza médio.
+
+Para a tipografia, vamos ajustar a cor do texto digitado para branco (#FFFFFF), igual à cor da label. O padding será de 8 pixels para cima e para baixo, e 16 pixels para os lados. Isso garante que o campo de entrada esteja bem estilizado.
+
+Adição de Novos Campos e Preparação para Componentes  
+Ao testar, percebemos que a borda fica branca quando o campo está selecionado, o que é importante para acessibilidade. Agora, vamos adicionar um segundo campo no formulário, abaixo do primeiro. No Figma, verificamos que o label será "Data do Evento", e o tipo do campo será date.
+
+No HTML, padronizamos o id e o name para "nome do evento". Assim, tudo fica consistente. No CSS, vamos garantir que os campos tenham um espaçamento de 16 pixels entre si. Para isso, colocamos todos os campos dentro de uma div com a classe campos, definindo o display como flex, flex-direction como column, e o gap como 16 pixels.
+
+Com isso, o formulário já está bem mais próximo do que precisamos. No próximo passo, vamos criar um componente de lista suspensa (select) e um botão reaproveitável. Antes de assistir ao próximo vídeo, recomendamos que tentem criar esses componentes por conta própria, utilizando os conceitos que discutimos até agora.
+
+Para isso, vamos criar novas pastas dentro de "componentes": uma para o botão e outra para a lista suspensa. Esses componentes serão criados e estilizados no próximo vídeo, mas já lançamos o desafio para que pratiquem e desenvolvam suas habilidades.
+
+### Aula 2 - Lista suspensa e botões - Vídeo 5
+
+Transcrição  
+Vamos prosseguir com a criação dos nossos componentes em React. Começaremos pelo componente de botão e, em seguida, passaremos para a lista suspensa.
+
+Criando o Componente de Botão  
+Primeiro, dentro da pasta "botão", vamos criar dois arquivos: index.jsx e botão.estilos.css. No arquivo index.jsx, começaremos importando o arquivo de estilos:
+
+```JSX
+import './botão.estilos.css';
+```
+
+Agora, vamos criar o componente de botão. Sabemos que componentes em React são funções, então vamos definir a função Botão e exportá-la:
+
+```JSX
+export function Botão({ children }) {
+  return (
+    <button className="botão">
+      {children}
+    </button>
+  );
+}
+```
+
+Neste código, utilizamos o destructuring para acessar children, que será o conteúdo passado para o botão. O className "botão" será usado para aplicar estilos específicos que definiremos em botão.estilos.css.
+
+Estilizando o Botão  
+No arquivo botão.estilos.css, vamos definir os estilos para o botão e o efeito de hover:
+
+```css
+.botão {
+  padding: 8px 16px;
+  background-color: #212121;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.botão:hover {
+  opacity: 0.8;
+}
+```
+
+Aqui, aplicamos um padding de 8 pixels verticalmente e 16 pixels horizontalmente, definimos a cor de fundo como grafite (#212121), removemos a borda padrão e adicionamos um border-radius de 8 pixels. O efeito de hover reduz a opacidade para 0.8 e o cursor: pointer faz com que o cursor mude para uma mãozinha ao passar sobre o botão.
+
+Integrando o Botão no Formulário  
+No arquivo index.jsx do formulário, vamos adicionar o botão dentro de uma div com o className "ações":
+
+```JSX
+import Botão from './Botão';
+
+function Formulario() {
+  return (
+    <div className="ações">
+      <Botão>Criar evento</Botão>
+    </div>
+  );
+}
+```
+
+Para centralizar o botão e ajustar o espaçamento, no CSS do formulário, adicionamos:
+
+```CSS
+.ações {
+  margin-top: 32px;
+  text-align: center;
+}
+```
+
+Criando o Componente de Lista Suspensa  
+Agora, vamos criar o componente de lista suspensa. Crie os arquivos index.jsx e lista-suspensa.styles.css. No index.jsx, começamos importando o CSS:
+
+```JSX
+import './lista-suspensa.styles.css';
+```
+
+Definimos a função ListaSuspensa que retornará um select com options:
+
+```JSX
+export function ListaSuspensa() {
+  return (
+    <select className="lista-suspensa">
+      <option value="opcao1">Opção 1</option>
+      <option value="opcao2">Opção 2</option>
+    </select>
+  );
+}
+```
+
+Estilizando a Lista Suspensa  
+No arquivo lista-suspensa.styles.css, copiamos e ajustamos os estilos do campo de entrada:
+
+```CSS
+.lista-suspensa {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+```
+
+Conclusão  
+Com isso, temos nossos componentes de botão e lista suspensa criados e estilizados. No próximo passo, vamos abordar componentes mais complexos, como os cards. Nos vemos na próxima sessão!
+
+### Aula 2 - Para saber mais: mergulho profundo - destructuring no JS
+
+Mergulho profundo: destructuring no JS  
+Chega uma hora, enquanto você estuda React, que começa a aparecer uns códigos assim:
+
+```JSX
+const { nome } = props
+```
+
+Ou então:
+
+```JSX
+function MeuComponente({ titulo, descricao }) {
+// ...
+}
+```
+
+E aí bate a dúvida: o que é isso? De onde vem?
+
+Isso é uma feature do próprio JavaScript chamada destructuring — e não algo exclusivo do React. A gente só usa muito por aqui porque o React trabalha bastante com objetos e props.
+
+O que é destructuring?  
+O destructuring (ou "desestruturação") é uma forma mais rápida de extrair dados de objetos ou arrays. Ao invés de acessar cada propriedade individualmente, você pode extrair várias de uma vez só.
+
+Exemplo com objeto:
+
+```JSX
+const pessoa = {
+nome: 'joana',
+idade: 28,
+cidade: 'lisboa'
+}
+
+// sem destructuring:
+const nome = pessoa.nome
+const idade = pessoa.idade
+
+// com destructuring:
+const { nome, idade } = pessoa
+```
+
+Isso cria duas variáveis chamadas nome e idade, com os valores correspondentes do objeto. O nome da variável precisa ser igual ao nome da chave.
+
+Destructuring em parâmetros de função  
+Quando um componente recebe props, na real ele tá recebendo um objeto. Por isso dá pra aplicar destructuring direto nos parâmetros da função:
+
+```JSX
+function Cartao({ titulo, subtitulo }) {
+// uso direto das variáveis
+return (
+<>
+<h2>{titulo}</h2>
+<p>{subtitulo}</p>
+</>
+)
+}
+```
+
+Isso é equivalente a:
+
+```JSX
+function Cartao(props) {
+const { titulo, subtitulo } = props
+// ...
+}
+```
+
+#### Destructuring em arrays
+
+O destructuring também funciona com arrays, só que a sintaxe muda um pouco:
+
+```JSX
+const numeros = [1, 2, 3]
+const [a, b, c] = numeros
+```
+
+Isso cria as variáveis a, b e c com os valores 1, 2 e 3.
+
+A ordem importa, e nesse caso você pode até ignorar valores:
+
+```JSX
+const [primeiro, , terceiro] = numeros
+```
+
+Por que isso aparece tanto em React?  
+Porque quase tudo que você vai trabalhar em React é objeto: props, event.target, e vários dados que chegam nas funções como argumentos. Então você acaba usando destructuring o tempo inteiro pra deixar o código mais limpo e direto.
+
+Mas lembra: isso é JavaScript puro. Uma vez que você entende como funciona, dá pra usar em qualquer lugar, com ou sem React.
+
+Um passo de cada vez, e a gente vai destrinchando tudo isso.
+
+### Aula 2 - Para saber mais: relembrando operadores spread e rest
+
+Relembrando operadores spread e rest  
+Sabe aquele momento em que você vê três pontinhos no meio do código (...) e pensa "Ué, isso é o quê?"? Pois é, isso aí pode ser duas coisas diferentes, dependendo de onde aparece: o operador spread ou o operador rest.
+
+Calma que é simples. Os dois usam a mesma sintaxe, mas fazem coisas opostas:
+
+- O spread espalha
+- O rest junta
+
+Operador spread: espalha o conteúdo de algo
+
+O spread é usado pra pegar os itens de um array ou as propriedades de um objeto e espalhar dentro de outro lugar. Por exemplo:
+
+```JavaScript
+const frutas = ['banana', 'maçã']
+const maisFrutas = [...frutas, 'uva']
+
+console.log(maisFrutas)
+// ['banana', 'maçã', 'uva']
+```
+
+No exemplo acima, os três pontinhos estão dizendo: "Espalha tudo que tem dentro de frutas aqui dentro".
+
+Também funciona com objetos:
+
+```JavaScript
+const usuario = { nome: 'ana', idade: 30 }
+const usuarioAtualizado = { ...usuario, cidade: 'porto' }
+
+console.log(usuarioAtualizado)
+// { nome: 'ana', idade: 30, cidade: 'porto' }
+```
+
+Nessa lógica, se você sobrescrever alguma propriedade depois do spread, ela assume o novo valor.
+
+Operador rest: junta o que sobrou
+
+O rest é o oposto. Ele junta tudo que sobrou em uma variável. Funciona muito em parâmetros de função ou no destructuring:
+
+```JavaScript
+const [primeiro, ...resto] = [1, 2, 3, 4]
+console.log(primeiro) // 1
+console.log(resto) // [2, 3, 4]
+```
+
+Com objetos:
+
+```JavaScript
+const { nome, ...resto } = {
+nome: 'joana',
+idade: 25,
+cidade: 'lisboa'
+}
+
+console.log(nome) // 'joana'
+console.log(resto) // { idade: 25, cidade: 'lisboa' }
+```
+
+Em funções:
+
+```JavaScript
+function somar(...numeros) {
+return numeros.reduce((total, atual) => total + atual, 0)
+}
+
+console.log(somar(1, 2, 3)) // 6
+```
+
+Por que isso aparece tanto em React?  
+Porque o tempo todo você tá lidando com objetos, arrays e props. Às vezes você quer passar todas as props pra outro componente (<Botao {...props} />) ou quer extrair só o que importa e ignorar o resto. O spread e o rest ajudam demais nesse tipo de situação.
+
+Mas lembra: isso aqui é tudo do próprio JavaScript. Dá pra usar em qualquer projeto, com ou sem React.
+
+Fica de olho nesses três pontinhos, porque eles aparecem muito — e entender o que eles estão fazendo ajuda a ler (e escrever) melhor qualquer código.
+
+Um passo de cada vez, e vamo que vamo.
+
+### Aula 2 - JSX e destructuring - Exercício
+
+Você foi contratado para desenvolver uma aplicação de fãs de celebridades usando React. A aplicação deve exibir informações sobre diferentes celebridades, como nome, idade e profissão. Para isso, você decidiu usar componentes React e passar dados através de props. Além disso, você quer usar destructuring para tornar o código mais limpo e legível.
+
+Dado o componente CelebrityCard abaixo, qual das opções de código corretamente utiliza destructuring para acessar as props passadas ao componente?
+
+```JSX
+function CelebrityCard(props) {
+  // Código a ser completado
+  return (
+    <div>
+      <h2>{name}</h2>
+      <p>Idade: {age}</p>
+      <p>Profissão: {profession}</p>
+    </div>
+  );
+}
+```
+
+Alternativa incorreta
+
+```JSX
+const { name, age, profession } = props;
+```
+
+Esta alternativa usa destructuring para extrair name, age e profession diretamente de props, o que é a prática correta para tornar o código mais limpo.
+
+### Aula 2 - Faça como eu fiz: Componentização React
+
+Nesta aula, aprendemos a dividir o código em componentes React reutilizáveis, utilizando funções, props, children, destructuring e spread operator, além de organizar e migrar os estilos para arquivos CSS modulares.
+
+Agora é a sua chance de revisar e aplicar os conceitos desta aula, se ainda não colocou em prática. Para isso:
+
+- Crie um componente para o título do formulário que receba o texto via children;
+- Implemente um componente para o campo de formulário utilizando o elemento fieldset e destructuring nas props;
+- Desenvolva um componente label que capture o atributo htmlFor por meio de props;
+- Construa um componente de entrada que utilize o spread operator para receber todos os atributos;
+- Organize cada componente em pastas e arquivos separados conforme a estrutura de componentes;
+- Importe e utilize os componentes no App substituindo o código inline;
+- Extraia os estilos de cada componente para arquivos CSS modulares específicos;
+- Crie um componente botão com estilos de hover e centralização na interface;
+- Desenvolva um componente lista suspensa replicando os estilos do campo de entrada.
+
+Para mais detalhes, consulte as transcrições da aula.
+
+### Aula 2 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Criar componentes reaproveitáveis no React para encapsular elementos comuns.
+- Passagem de propriedades (props) para customizar componentes React dinamicamente.
+- Uso de props.children para acessar e renderizar conteúdo entre tags de componentes.
+- Aplicação de destructuring e spread operator para manipulação de props.
+- Importância da organização modular do código, separando componentes e seus estilos.
+- Criação e estilização de componentes como botões e listas suspensas.
+- Incorporação de fontes externas.
+
+## Aula 3 - Trabalahndo com listas
+
+### Aula 3 - Projeto da aula anterior
+
+Você pode acompanhar todo o progresso que fizemos na aula anterior [acessando o GitHub do projeto](https://github.com/alura-cursos/4654-tecboard/tree/aula-2).
+
+Se preferir, [baixe o arquivo zip](https://github.com/alura-cursos/4654-tecboard/archive/refs/heads/aula-2.zip) do código desenvolvido até aqui.
+
+### Aula 3 - Como o React funciona - Vídeo 1
+
+Transcrição  
+Parece que não há snippets de código fornecidos para complementar a transcrição. No entanto, posso ajudar a explicar e expandir os conceitos discutidos na transcrição sobre o React e o virtual DOM.
+
+Entendendo o JSX e o createElement
+No React, o JSX é uma sintaxe que permite escrever HTML dentro do JavaScript. Ele é transformado em chamadas para React.createElement, que é uma função que cria objetos JavaScript representando elementos do DOM. Por exemplo, o JSX:
+
+<h2>Hello, World!</h2>
+Copiar código
+É transformado em:
+
+React.createElement('h2', null, 'Hello, World!');
+Copiar código
+Aqui, React.createElement recebe três argumentos: o tipo do elemento ('h2'), as propriedades do elemento (neste caso, null porque não há propriedades), e os filhos do elemento (o texto 'Hello, World!').
+
+Funcionamento do Virtual DOM
+O Virtual DOM
+O virtual DOM é uma representação em memória do DOM real. Quando o estado de um componente React muda, o React cria um novo virtual DOM e o compara com o anterior. Essa comparação é chamada de "reconciliação". O React então calcula a diferença (ou "diff") e atualiza apenas as partes do DOM real que mudaram.
+
+Processo de Renderização e Atualização
+Renderização e Atualização
+Após calcular as diferenças, o React usa a função render para atualizar o DOM real. A função render é responsável por inserir os elementos no DOM real, mas isso só acontece depois que o React determina quais partes do DOM precisam ser atualizadas.
+
+Exemplo de Uso do render
+Embora não tenhamos snippets de código, podemos imaginar como a função render é usada em um aplicativo React:
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+const element = <h1>Hello, world!</h1>;
+ReactDOM.render(element, document.getElementById('root'));
+Copiar código
+Neste exemplo, ReactDOM.render pega o elemento React (<h1>Hello, world!</h1>) e o insere no DOM real dentro do elemento com o ID root.
+
+Conclusão sobre o Uso do React
+Conclusão
+Compreender como o JSX é transformado em chamadas para createElement, como o virtual DOM funciona, e como o React atualiza o DOM real de forma eficiente são conceitos fundamentais para trabalhar com React. Isso nos permite criar interfaces de usuário de forma declarativa e eficiente, aproveitando ao máximo o poder do React para gerenciar atualizações de interface.
+
+### Aula 3 -  - Vídeo 2
+### Aula 3 -  - Vídeo 3
+### Aula 3 -  - Vídeo 4
+### Aula 3 -  - Vídeo 5
+### Aula 3 -  - Vídeo 6
+### Aula 3 -  - Vídeo 7
+### Aula 3 -  - Vídeo 8
+### Aula 3 -  - Vídeo 9

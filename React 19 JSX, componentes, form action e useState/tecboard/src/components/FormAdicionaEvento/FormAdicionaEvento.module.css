@@ -1,0 +1,17 @@
+.formStilos {
+    width: 484px;
+    max-width: 90%;
+    padding: 32px 28px;
+    border-radius: 16px;
+    background-color: #212121;
+    margin: 64px auto;
+}
+.formCamposContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.formDivContainerBotao{
+    margin-top: 32px;
+    text-align: center;
+}

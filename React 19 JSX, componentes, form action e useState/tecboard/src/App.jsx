@@ -1,7 +1,7 @@
 import './App.module.css';
-import FormularioDeEvento from './components/FormularioDeEvento/FormularioDeEvento';
+import FormAdicionaEvento from './components/FormAdicionaEvento/FormAdicionaEvento';
 
-function App() {
+export default function App() {
   return (
     <main>
       <header>
@@ -10,8 +10,7 @@ function App() {
       <section>
         <img src='./banner.png' alt='Banner' />
       </section>
-      <FormularioDeEvento />
+      <FormAdicionaEvento />
     </main>
-  )
+  );
 };
-export default App;
