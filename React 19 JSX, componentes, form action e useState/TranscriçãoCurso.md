@@ -1301,44 +1301,480 @@ Transcrição
 Parece que não há snippets de código fornecidos para complementar a transcrição. No entanto, posso ajudar a explicar e expandir os conceitos discutidos na transcrição sobre o React e o virtual DOM.
 
 Entendendo o JSX e o createElement
+
 No React, o JSX é uma sintaxe que permite escrever HTML dentro do JavaScript. Ele é transformado em chamadas para React.createElement, que é uma função que cria objetos JavaScript representando elementos do DOM. Por exemplo, o JSX:
 
+```JSX
 <h2>Hello, World!</h2>
-Copiar código
+```
+
 É transformado em:
 
+```JSX
 React.createElement('h2', null, 'Hello, World!');
-Copiar código
+```
+
 Aqui, React.createElement recebe três argumentos: o tipo do elemento ('h2'), as propriedades do elemento (neste caso, null porque não há propriedades), e os filhos do elemento (o texto 'Hello, World!').
 
 Funcionamento do Virtual DOM
-O Virtual DOM
+
+O Virtual DOM  
 O virtual DOM é uma representação em memória do DOM real. Quando o estado de um componente React muda, o React cria um novo virtual DOM e o compara com o anterior. Essa comparação é chamada de "reconciliação". O React então calcula a diferença (ou "diff") e atualiza apenas as partes do DOM real que mudaram.
 
 Processo de Renderização e Atualização
-Renderização e Atualização
+
+Renderização e Atualização  
 Após calcular as diferenças, o React usa a função render para atualizar o DOM real. A função render é responsável por inserir os elementos no DOM real, mas isso só acontece depois que o React determina quais partes do DOM precisam ser atualizadas.
 
-Exemplo de Uso do render
+Exemplo de Uso do render  
 Embora não tenhamos snippets de código, podemos imaginar como a função render é usada em um aplicativo React:
 
+```JSX
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 const element = <h1>Hello, world!</h1>;
 ReactDOM.render(element, document.getElementById('root'));
-Copiar código
-Neste exemplo, ReactDOM.render pega o elemento React (<h1>Hello, world!</h1>) e o insere no DOM real dentro do elemento com o ID root.
+```
 
-Conclusão sobre o Uso do React
-Conclusão
+Neste exemplo, ReactDOM.render pega o elemento React (`<h1>`Hello, world!`</h1>`) e o insere no DOM real dentro do elemento com o ID root.
+
+Conclusão sobre o Uso do React  
 Compreender como o JSX é transformado em chamadas para createElement, como o virtual DOM funciona, e como o React atualiza o DOM real de forma eficiente são conceitos fundamentais para trabalhar com React. Isso nos permite criar interfaces de usuário de forma declarativa e eficiente, aproveitando ao máximo o poder do React para gerenciar atualizações de interface.
 
-### Aula 3 -  - Vídeo 2
-### Aula 3 -  - Vídeo 3
-### Aula 3 -  - Vídeo 4
-### Aula 3 -  - Vídeo 5
-### Aula 3 -  - Vídeo 6
-### Aula 3 -  - Vídeo 7
-### Aula 3 -  - Vídeo 8
-### Aula 3 -  - Vídeo 9
+### Aula 3 - Preparando o Layout - Vídeo 2
+
+Transcrição  
+Parece que não há snippets de código fornecidos para complementar a transcrição. No entanto, posso ajudar a estruturar o que foi discutido na transcrição e sugerir como o código poderia ser desenvolvido com base nas explicações fornecidas.
+
+Criação da Lista de Temas:
+
+A transcrição menciona a criação de uma lista de temas como um array de objetos. Cada objeto deve ter um ID e um nome. Vamos começar criando essa lista:
+
+```JSX
+const temas = [
+  { id: 1, nome: 'front-end' },
+  { id: 2, nome: 'back-end' },
+  { id: 3, nome: 'devops' },
+  { id: 4, nome: 'inteligência artificial' },
+  { id: 5, nome: 'data science' },
+  { id: 6, nome: 'cloud' }
+];
+```
+
+Explicação: Aqui, criamos um array chamado temas que contém objetos. Cada objeto representa um tema com um id e um nome.
+
+Renderização dos Temas:
+
+A transcrição sugere que cada tema deve ser renderizado em uma seção com um componente chamado Tema. Vamos ver como isso pode ser feito em JSX:
+
+import React from 'react';
+import Tema from './tema';
+
+```JSX
+function App() {
+  return (
+    <div>
+      {temas.map((tema) => (
+        <section key={tema.id}>
+          <Tema tema={tema} />
+        </section>
+      ))}
+    </div>
+  );
+}
+
+export default App;
+```
+
+Explicação: Aqui, estamos mapeando sobre o array temas e para cada tema, renderizamos uma `<section>` que contém o componente Tema. Passamos o objeto tema como uma propriedade para o componente Tema.
+
+Criação do Componente Tema:
+
+A transcrição menciona a criação de um componente Tema que recebe propriedades. Vamos criar esse componente:
+
+```JSX
+// src/tema/index.jsx
+import React from 'react';
+
+function Tema({ tema }) {
+  return (
+    <h3>{tema.nome}</h3>
+  );
+}
+
+export default Tema;
+```
+
+Explicação: O componente Tema é uma função que recebe um objeto tema como propriedade e retorna um elemento `<h3>` que exibe o nome do tema.
+
+Estilização e Ajustes:
+
+A transcrição menciona ajustes de CSS e a necessidade de estilizar o componente. Embora não tenhamos detalhes específicos sobre o CSS, podemos sugerir que o CSS seja aplicado para estilizar a `<section>` e o `<h3>` conforme necessário.
+
+```CSS
+/* Exemplo de CSS */
+section {
+  background-color: #f0f0f0;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+h3 {
+  font-family: 'Arial, sans-serif';
+  color: #333;
+}
+```
+
+Explicação: Este CSS básico aplica um fundo cinza claro às seções e estiliza o texto do `<h3>`.
+
+Com essas etapas, você terá uma estrutura básica para renderizar e estilizar os temas conforme descrito na transcrição. Se houver mais detalhes ou ajustes específicos, eles podem ser incorporados conforme necessário.
+
+### Aula 3 - Estilizando o título do tema - Vídeo 3
+
+Transcrição  
+Vamos começar a organizar a transcrição didática, detalhando cada passo e inserindo os snippets de código conforme necessário. Como não há snippets de código fornecidos, vamos focar na explicação detalhada do processo.
+
+Criação do Componente Banner  
+Temos a missão de separar o banner para ajustar o estilo e o fundo gradiente que identificamos anteriormente. Vamos criar o componente banner. Dentro da pasta "banner", criamos o arquivo index.jsx e também o banner.estilos.css. No index.jsx, importamos o banner.estilos.css.
+
+```JSX
+// index.jsx
+import './banner.estilos.css';
+```
+
+No arquivo app.css, vamos transferir tanto a section quanto o seletor da imagem dentro da section para o banner.estilos.css, garantindo que a imagem não fique maior que a tela. Substituímos o seletor section por .banner.
+
+```JSX
+/* banner.estilos.css */
+.banner {
+  /* Estilos transferidos de app.css */
+}
+```
+
+No index.jsx, criamos o componente banner com a função export function banner. Este componente não recebe props, mas retorna múltiplas linhas de HTML, incluindo a section com a imagem banner.png.
+
+```JSX
+// index.jsx
+export function Banner() {
+  return (
+    <section className="banner">
+      <img src="banner.png" alt="Banner" />
+    </section>
+  );
+}
+```
+
+Integração do Componente Banner no App  
+Transferimos o conteúdo do app.jsx para dentro do banner e formatamos o documento no VS Code. Adicionamos o className banner à section, conforme utilizado no app.css.
+
+No app.jsx, de onde removemos a marcação, importamos o componente banner. O VS Code identifica automaticamente a origem da importação, que é import banner from './componentes/banner'.
+
+```JSX
+// app.jsx
+import { Banner } from './componentes/banner';
+```
+
+Salvamos e verificamos o resultado no Tech Board no Chrome. Tudo está correto, com o gradiente no local certo e a lista de temas visível.
+
+Ajustes de Estilo e Importação de Fontes  
+Precisamos ajustar mais alguns estilos. O fundo da página está branco e deve ser alterado. A cor do título deve ser branca, e precisamos importar a fonte correta. A fonte desejada é Orbitron. No Chrome, buscamos "Google Fonte" e encontramos Orbitron. Clicamos em "Get Fonte" e observamos que temos duas fontes selecionadas: Work Sans e Orbitron. Clicamos em "Get Embedded Code" e copiamos o link para o index.html, substituindo as linhas 9 a 12. Com uma única importação, todas as fontes são carregadas. Formatamos o documento no VS Code.
+
+No index.css, onde estão os estilos globais, podemos definir uma cor de fundo para o body, utilizando a cor mais escura disponível no Figma.
+
+```JSX
+/* index.css */
+body {
+  background-color: #06151A;
+}
+```
+
+Aplicação de Estilos no Figma e Criação do Tema  
+Vamos iniciar o processo no Figma. Selecionamos o elemento e identificamos o background como 06151A. Em seguida, verificamos no Tech Board se a cor de fundo foi aplicada corretamente, e funcionou.
+
+Agora, precisamos criar o arquivo CSS para o nosso tema, nomeando-o como tema.estilos.css. É importante lembrar que podemos escolher qualquer nome para esse arquivo, mas, uma vez definido, devemos fazer um import usando o caminho correto e o nome do arquivo. Optamos por usar o padrão nome.estilos.css para facilitar a identificação do tipo de arquivo, o que é uma prática recomendada.
+
+Para criar o estilo, começamos definindo uma classe para o tema, especificamente para o elemento H3, que chamaremos de título-tema. No CSS, utilizamos esse seletor para ajustar a cor, definindo-a como branca com o código #ffffff. Além disso, configuramos a propriedade font-family para usar a fonte Orbitron, com uma alternativa sem serifa caso a fonte principal não esteja disponível.
+
+```JSX
+/* tema.estilos.css */
+.título-tema {
+  color: #ffffff;
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+}
+```
+
+Verificação e Ajustes Finais  
+Após verificar no Tech Board, observamos que o resultado está próximo do desejado. No Figma, identificamos que precisamos ajustar o tamanho, o espaçamento e aplicar letras maiúsculas. Selecionamos os estilos de tipografia e os aplicamos ao título-tema, ajustando a indentação e removendo propriedades desnecessárias, como font-family duplicado, letter-spacing e vertical-align.
+
+Por fim, aplicamos text-transform: uppercase para garantir que o texto fique em maiúsculas. No Chrome, verificamos novamente no Tech Board e confirmamos que o resultado está conforme o esperado.
+
+Planejamento para Estrutura do Card  
+Ainda precisamos nos preocupar com o layout, especificamente com a criação da estrutura do nosso card. No código app.jsx, nas linhas 44 a 47, percebemos que não queremos adicionar temas manualmente. Em vez disso, desejamos percorrer um array e renderizar um componente de section para cada item. Vamos implementar essa funcionalidade na sequência.
+
+Conclusão  
+Essa abordagem detalhada e progressiva ajuda a entender como cada parte do código se integra ao projeto, garantindo que o aprendizado seja claro e eficaz.
+
+### Aula 3 - Iterando por uma lista - Vídeo 4
+
+Transcrição  
+Vamos começar a organizar a transcrição didática e inserir os snippets de código conforme o desenvolvimento das explicações.
+
+Automação do Processo de Percorrer Arrays  
+Já sabemos que não queremos realizar essa tarefa manualmente. Vamos colapsar a estrutura de pastas e fechar todos os arquivos abertos. Existe uma opção chamada "close à direita". Vamos diminuir um pouco o zoom para aumentar a área visível, pois queremos selecionar todo este bloco. São várias seções, seis no total, uma para cada tema. Não queremos fazer isso manualmente; desejamos automatizar o processo. Queremos, de alguma forma, percorrer um array.
+
+Utilização do Método map em Arrays  
+Quando falamos em percorrer um array, referimo-nos ao nosso array de temas. Antes de realizar o return, se utilizarmos temas. temos várias formas de percorrer um array. Poderíamos usar o forEach, que possui suas peculiaridades. No entanto, embora o forEach percorra todo o array, ele não retorna nada. No caso do JSX, precisamos sempre retornar algo, ou seja, o que está sendo renderizado. Para alterar ou mapear nosso array em algo diferente, utilizamos o método map.
+
+Implementação do map no Código JSX  
+O que faremos com o map? Em vez de apenas percorrer o array, ele o transformará. Para cada objeto do nosso array, ou seja, para cada tema dentro da lista de temas, retornaremos o JSX. O map transforma um array em outro array modificado, enquanto o forEach, por exemplo, apenas percorre. Essa é uma peculiaridade do JavaScript, sobre o que os métodos que percorrem arrays fazem ou não fazem. No caso do JSX, quando queremos percorrer uma lista e renderizar um item para cada elemento da lista, utilizamos o map.
+
+Para acessar uma variável dentro do JSX, abrimos e fechamos chaves. Chamamos nosso temas. Como vamos percorrê-lo modificando, observamos que na linha 36 temos um map. Passamos uma função para dentro do map. Vamos chamar uma função que recebe um item da lista, que podemos chamar de item, e precisamos retornar algo. Como é JSX, colocamos entre parênteses. O que queremos retornar é uma section com um componente tema dentro.
+
+Exemplo de Código com map  
+Aqui está como podemos começar a implementar isso no código:
+
+```JSX
+temas.map((item) => (
+  <section key={item.id}>
+    {/* Componente tema aqui */}
+  </section>
+))
+```
+
+Esse trecho de código utiliza o método map para transformar cada item do array temas em uma section JSX. Note que adicionamos a propriedade key com item.id para garantir que cada elemento seja único, conforme a mensagem de erro que discutimos.
+
+Verificação e Correção de Erros  
+Vamos verificar se isso funciona. No VS Code, não há indicação de erro. No Chrome, verificamos se tudo está correto. Acessamos o Deckboard e não há erros na tela; tudo continua sendo renderizado corretamente. Podemos deixar lado a lado e alterar para verificar se está funcionando. Na lista de temas, onde está "front-end", substituímos por "front". Vamos ver se isso reflete a mudança e se o array está sendo percorrido corretamente. Ao trocar para "front", a atualização ocorreu imediatamente.
+
+O Vite já cuidou do reload automático e ficou no front-end. Portanto, está funcionando como desejávamos. Vamos dar uma olhada no console? Já percebemos que há um ícone de erro, indicando que algo está errado. No console, a mensagem diz que cada filho de uma lista deveria ter uma chave chamada key única. Ou seja, precisamos identificar os filhos da lista, tudo que estamos renderizando, com um valor único através de uma propriedade chamada key.
+
+Importância da Propriedade key no JSX  
+Lembramos que é importante aprender a interpretar os erros que o console nos apresenta. A mensagem está em inglês, então, se não dominamos o idioma, podemos usar o Google Tradutor ou outra ferramenta. Basicamente, a mensagem indica que cada item de uma lista precisa ter uma chave única para identificá-lo, que é a propriedade key. Vamos implementar isso. Sabemos o que é uma propriedade, então vamos ao nosso map e adicionar a key à nossa section. O VS Code já oferece o autocomplete para isso, mas ainda não criamos essa propriedade. A section não é um componente customizado, é um elemento HTML, mas podemos passar isso como uma propriedade. Passando um valor único, como item.id, resolvemos o problema. O id é único, começando em 1 e terminando em 6. Vamos salvar.
+
+Teste Final e Conclusão  
+Voltamos ao Chrome, recarregamos a página e a mensagem de erro desapareceu. Agora, cada filho de uma lista, que no nosso caso é a section, tem uma propriedade que o identifica de forma única. Interpretamos o erro e corrigimos. Isso é comum no processo de aprendizagem: ler o console, entender a mensagem e corrigir o problema. O React, por trás dos panos, utiliza essa chave única para otimizar a atualização dos itens. Se um item específico mudar, em vez de renderizar a lista inteira, ele atualiza apenas o item modificado. Assim como alteramos o front-end, ele ajusta apenas a parte necessária, sem renderizar toda a lista novamente.
+
+Próximos Passos: Criação do Card e Integração do Formulário  
+Com isso, aprendemos a renderizar uma lista de objetos, transformando-os em componentes no código JSX. Agora que temos a base pronta, vamos avançar. Vamos ao Figma, pois queremos criar o card. Faremos isso em dois passos: primeiro, o passo visual, criando o card para que ele seja visível e igual ao layout. No segundo passo, vamos integrar a lógica de adicionar novos eventos ao formulário. Temos um formulário pronto, mas atualmente ele não faz nada. No nosso Tech Board, ao clicar em Criar Evento, a página apenas recarrega e passa os parâmetros na URL, mas não realiza nenhuma ação.
+
+Nossos próximos passos são criar o HTML e o CSS do componente de card e, em seguida, pensar em como fazer a submissão desse formulário funcionar. Ainda há bastante a fazer. Vamos em frente!
+
+### Aula 3 - Card de eventos - Vídeo 5
+
+Transcrição  
+Vamos prosseguir criando nossos componentes e, para isso, vamos ao código. Com o editor de código aberto, vamos pensar no que queremos utilizar. Vamos deixar logo abaixo do tema e inserir um card de evento que ainda não existe, pois não criamos esse componente. Vamos chamá-lo de cardEvento, já que é assim que estamos nos referindo a ele constantemente. Queremos passar o evento para ele. Que evento é esse? Vamos refletir sobre isso.
+
+Estruturação do Array de Eventos  
+Vamos colapsar a estrutura de temas e criar um array de eventos. Assim, const eventos receberá um array de objetos. Como será nosso objeto de evento? Vamos nos guiar pelo Figma. Deixaremos o Figma aberto e posicionaremos o VS Code ao lado para visualizarmos ambos.
+
+A primeira coisa que observamos é uma imagem, então um evento possui uma capa, que é uma URL. Posteriormente, veremos como fazer isso funcionar. A segunda preocupação é o tema do evento. Temos uma propriedade chamada tema, que pode ser front-end, back-end ou algo semelhante. Vamos acessar nosso array de temas e pegar o tema da posição zero, que é front-end.
+
+Outra característica do evento é a data. Vamos criar uma propriedade chamada data, que será um new Date, um objeto de data do JavaScript. Por fim, precisamos de um título para o evento. Vamos chamá-lo de "Mulheres no Front", conforme está no Figma.
+
+Configuração da URL da Imagem  
+Agora, podemos nos preocupar com a URL da imagem. Vamos verificar como será a URL da imagem. Já copiamos a URL e vamos mostrar como utilizá-la. Temos um conjunto de 15 imagens para usar, cujo endereço varia de 1 a 15. Podemos começar utilizando a imagem 1. Vamos copiar e colar a URL para que fique correta. Assim, a capa será essa imagem.
+
+Implementação do Componente cardEvento  
+Para o nosso cardEvento, queremos passar um evento. Vamos chamar nosso array eventos e pegar a posição 0. Sabemos que podemos iterar sobre a lista, mas, por enquanto, queremos apenas ver funcionando, então podemos passar dessa forma.
+
+Se olharmos o tech board no navegador agora e recarregarmos, ele indicará que cardEvento não existe, pois ainda não o criamos. Vamos deixar a referência visual novamente e voltar ao VS Code. Vamos criar o arquivo? Na pasta "Componentes", clicamos com o botão direito, selecionamos "novo arquivo" e criamos cardEvento/index.jsx para codificá-lo. Além disso, criaremos card-evento.estilos.css.
+
+Codificação do Componente cardEvento  
+No arquivo index.jsx, a primeira ação que realizamos é a importação do CSS, card-evento.estilos.css. Em seguida, exportamos a função card-evento, que recebe um objeto. Realizamos o destructuring para obter apenas o evento e retornamos o JSX. Colocamos entre parênteses e pressionamos enter. Agora, podemos importar o componente. Está importado. O próximo passo é preencher tudo.
+
+Estrutura do JSX e Estilização  
+Um detalhe importante é que, no JSX, só podemos retornar um elemento. Portanto, não podemos colocar a imagem ao lado do título, por exemplo. Para resolver isso, criamos uma div e, dentro dela, inserimos uma tag img. O src dessa imagem não será fixo, mas virá do evento, especificamente de evento.capa. A propriedade capa foi definida anteriormente como a URL da imagem. Podemos usar qualquer nome para a propriedade, mas neste caso, utilizamos evento.capa. Também passamos um texto alternativo para essa imagem, que será evento.título.
+
+Pensando na estrutura, temos o corpo do card. Criamos uma div com uma classe chamada corpo. Se fosse em inglês, seria body. Podemos adicionar um className no topo, chamando-o de card-evento. Dentro do corpo do card, exibimos algumas informações. Primeiro, criamos uma tag p com a classe tag para exibir evento.tema.nome, que é o nome do evento. Em seguida, exibimos a data em outro parágrafo, evento.data, que é um objeto de data do JavaScript. Utilizamos o método toLocaleDateString com o parâmetro pt-BR para formatar a data no padrão dia/mês/ano.
+
+Por último, adicionamos um título. Utilizamos um h4 com o className título, exibindo evento.título. Salvamos as alterações e verificamos se funcionou. No techboard, observamos que os estilos ainda não estão aplicados, mas já temos um evento para cada categoria. Embora esteja fixo, é um progresso. O próximo passo é estilizar esse trecho de código. Vamos fazer isso.
+
+### Aula 3 - Para saber mais: diferenças entre o .map e o .forEach
+
+Quando você começa a estudar React, uma hora chega aquela situação clássica: você tem uma lista de dados e quer exibir cada item dessa lista na tela. Aí alguém diz: "Usa o .map()".
+
+E aí você se pergunta: por que .map()? Por que não forEach, for, ou qualquer outro jeito?
+
+Calma que eu te explico. Vamos por partes.
+
+Um passo atrás: arrays em JavaScript  
+Em JavaScript, arrays são listas. Listas de qualquer coisa: números, textos, objetos... E o que importa é que o array tem métodos que ajudam a percorrer cada item da lista — tipo o forEach, o map, o filter, e por aí vai.
+
+O que o forEach faz?  
+forEach é um método que executa uma função pra cada item do array. Mas ele não retorna nada. Ele só passa pelos itens.
+
+```JavaScript
+const nomes = ['ana', 'joão', 'bia']
+nomes.forEach(function (nome) {
+console.log(nome)
+})
+```
+
+Isso imprime os nomes no console, mas não te devolve nada com o resultado disso. Ou seja, não dá pra usar forEach dentro do JSX esperando que ele te entregue um array de elementos visuais.
+
+O que o map faz?  
+O map é parecido, mas com uma diferença importante: ele retorna um novo array com o resultado da função que você passou.
+
+```JavaScript
+const nomes = ['ana', 'joão', 'bia']
+const emMaiusculo = nomes.map(function (nome) {
+return nome.toUpperCase()
+})
+
+console.log(nomes)
+// ['ana', 'joão', 'bia']
+
+console.log(emMaiusculo)
+// ['ANA', 'JOÃO', 'BIA']
+```
+
+Isso cria um novo array com os nomes em maiúsculo. E é justamente isso que a gente quer quando vai exibir coisas no React: gerar uma nova lista de elementos pra renderizar na tela.
+
+No React, precisamos de um array de elementos JSX
+Quando você escreve:
+
+```JavaScript
+<ul>
+{nomes.map(function (nome) {
+return <li>{nome}</li>
+})}
+</ul>
+```
+
+O que tá acontecendo aqui é: estamos pegando um array (nomes) e transformando ele em outro array, mas agora com elementos JSX (<li>). Esse array é o que o React entende e sabe renderizar.
+
+Por que não podemos usar forEach?
+Porque o forEach não retorna nada. Então, se você fizer isso:
+
+```JavaScript
+<ul>
+{nomes.forEach(function (nome) {
+return <li>{nome}</li>
+})}
+</ul>
+```
+
+Não vai funcionar. O forEach vai rodar, mas o React não vai receber nenhum array de elementos.
+
+Concluindo o raciocínio
+
+- Queremos transformar dados em elementos visuais
+- Pra isso, precisamos de um array de JSX
+- O .map() é perfeito pra isso, porque transforma e retorna
+- O forEach não serve nesse caso, porque só executa mas não retorna nada
+- Isso não quer dizer que forEach é ruim — ele só serve pra outro tipo de coisa. Dentro do JSX, a gente quer sempre trabalhar com dados que viram estrutura visual. E pra isso, o .map() é o seu melhor amigo.
+
+Um passo de cada vez. Renderizar listas pode parecer estranho no começo, mas logo logo vira natural.
+
+Se quiser mergulhar mais fundo em arrays e métodos como o map, filter, forEach e outros, vale conferir estes materiais:
+
+- Curso: [JavaScript: métodos de array](https://cursos.alura.com.br/course/javascript-metodos-array)
+- Curso: [Praticando JavaScript com arrays](https://cursos.alura.com.br/course/praticando-javascript-arrays)
+- Artigo: [JavaScript: para que serve um Array](https://www.alura.com.br/artigos/javascript-para-que-serve-array)
+
+### Aula 3 - Para saber mais: expressões JS dentro do JSX
+
+Expressões JS dentro do JSX: o que podemos (e não podemos) fazer
+
+Quando você começa a misturar JavaScript com JSX, bate aquela dúvida: o que exatamente dá pra colocar entre as chaves ({})? Dá pra colocar tudo que é JavaScript? E se eu quiser usar um if, um loop, ou criar um componente ali mesmo?
+
+Respira. Vamos conversar sobre isso.
+
+JSX é JavaScript, mas com algumas regrinhas  
+O JSX é como uma ponte entre o HTML e o JavaScript. Ele parece HTML, mas vive dentro do seu arquivo .js ou .jsx, então ele obedece às regras do JavaScript. E quando a gente coloca chaves {} dentro do JSX, estamos abrindo uma janelinha pro mundo do JavaScript.
+
+Mas nem tudo cabe nessa janela. A regra é: só podemos colocar expressões dentro das chaves.
+
+O que é uma expressão?
+No JavaScript, expressão é tudo aquilo que tem um valor no final. Ou seja, algo que pode ser avaliado e que retorna um resultado. Alguns exemplos:
+
+Variáveis: {nome}
+Funções sendo chamadas: {formatarData(data)}
+Operadores matemáticos: {1 + 2}
+Operadores lógicos ou ternários: {estaLogado ? 'Sair' : 'Entrar'}
+Propriedades de objetos: {pessoa.nome}
+
+Tudo isso funciona dentro do JSX. Mas estruturas de controle como if, for, while, switch... aí não rola.
+
+O que não funciona dentro do JSX
+Como JSX espera uma expressão, você não pode colocar um bloco de código que seja uma declaração ou uma estrutura de controle. Coisas assim não funcionam:
+
+```JSX
+<h1>{if (condicao) { return 'Olá' }}</h1>
+```
+
+```JSX
+<h1>{for (let i = 0; i < 3; i++) { console.log(i) }}</h1>
+```
+
+Isso vai dar erro. O React não consegue lidar com esse tipo de código direto dentro do JSX.
+
+Como contornar essas limitações?  
+Se você precisa usar lógica mais complexa, faz isso fora do JSX, antes do return, e aí passa o resultado como uma variável ou expressão simples:
+
+```JSX
+function Saudacao({ estaLogado }) {
+let mensagem
+
+if (estaLogado) {
+mensagem = 'Bem-vindo de volta!'
+} else {
+mensagem = 'Faça login para continuar.'
+}
+
+return <p>{mensagem}</p>
+}
+```
+
+Ou então usa operadores ternários dentro do JSX, quando a lógica for simples:
+
+```JSX
+<p>{estaLogado ? 'Bem-vindo de volta!' : 'Faça login para continuar.'}</p>
+```
+
+Conclusão  
+Pensar em JSX é pensar em expressões. Sempre que tiver dúvida, se pergunta: "O que eu tô tentando colocar aqui retorna um valor?" Se sim, beleza. Se não, move a lógica pra fora do JSX e depois usa o resultado dentro.
+
+Essa divisão ajuda a manter o JSX mais limpo e fácil de entender.
+
+Você tá indo muito bem. Cada pedacinho desse quebra-cabeça vai se encaixando com o tempo. Um passo de cada vez.
+
+### Aula 3 - Explorando o uso do .map() no JSX - Exercício
+
+Por que é importante usar o método .map() para renderizar listas no JSX?
+
+Resposta:  
+Usar .map() permite que você transforme cada elemento de uma lista em um componente React, garantindo que cada elemento tenha uma chave única, o que ajuda o React a identificar quais itens mudaram, foram adicionados ou removidos.
+
+> O uso de .map() é essencial para garantir que cada elemento renderizado tenha uma chave única, o que otimiza a atualização do DOM virtual pelo React.
+
+### Aula 3 - Faça como eu fiz: React e Virtual DOM
+
+Nesta aula, aprendemos a explorar desde a conversão do JSX com React.createElement até a renderização otimizada pelo Virtual DOM, além de criar e estilizar componentes dinâmicos.
+
+Agora é a sua chance de colocar em prática os conceitos abordados. Para isso:
+
+- Organize um array de objetos para representar os temas e crie um componente que os exiba;
+- Extraia os estilos do banner para um componente próprio, migrando o CSS conforme o padrão adotado;
+- Utilize o método map para iterar sobre a lista de temas, garantindo que cada item possua uma key única;
+- Desenvolva um componente CardEvento que receba dados do evento (capa, data e título) e os renderize conforme o design;
+- Implemente e ajuste os estilos dos componentes, importando e configurando os arquivos CSS e fontes corretamente.
+
+Para acessar o guia completo, consulte as transcrições da aula.
+
+### Aula 3 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Como o React transforma JSX em chamadas para React.createElement e utiliza o Virtual DOM para atualizar eficientemente o DOM real.
+- A criar e estruturar arrays de objetos em JavaScript e a renderizar itens de lista com componentes React.
+- A utilizar destructuring para extrair propriedades de objetos em componentes React.
+- A percorrer arrays em React com o método map e a importância da propriedade key para otimização de renderização.
+- A interpretar mensagens de erro no console para diagnosticar problemas em código React.
+- A formatar datas em JavaScript utilizando o método toLocaleString.
+
+### Aula 4 - 
+
+### Aula 4 -  - Vídeo 1

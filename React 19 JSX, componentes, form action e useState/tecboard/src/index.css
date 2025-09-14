@@ -2,14 +2,19 @@
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
+}
+
+body {
+  background-color: #06151A;
+  color: rgb(49, 49, 49);
   font-family: "Work Sans", sans-serif;
+    /* font-family: "Orbitron", sans-serif; */
 }
-body{
-  color: aquamarine;
-}
-a{
+
+a {
   text-decoration: none;
 }
-ul{
+
+ul {
   list-style: none;
 }
