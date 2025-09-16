@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './App.module.css';
+import styles from './App.module.css';
 import Banner from './components/Banner/Banner';
 import CardEvento from './components/CardTema/CardEvento';
 import FormAdicionaEvento from './components/FormAdicionaEvento/FormAdicionaEvento';
@@ -14,36 +14,52 @@ export default function App() {
     { id: 5, nome: 'Data Science' },
     { id: 6, nome: 'Cloud' }
   ];
-
+  //========================================
   const [eventos, setEventos] = useState([
     {
-      capa: './assets/Imagem1.png',
+      // capa: 'https://raw.githubusercontent.com/viniciosneves/tecboard-assets/refs/heads/main/imagem_1.png',
+      capa: 'Imagem1.png',
       tema: temas[0],
       data: new Date(),
       titulo: 'Mulheres no Front'
     }
-  ])
-
+  ]);
+  //==================================
   function adicionarEvento(evento) {
     // eventos.push(evento);
     // console.log('Eventos -->', eventos);
     setEventos([...eventos, evento])
   }
+  //Renderização condicional, pode ser feita de várias formas
+  //1ª forma - if ternário
+  //2ª forma - operador lógico && (curto circuito)
+  //3ª forma - if comum (fora do JSX)
+  //4ª forma - switch case (fora do JSX)
+  //==================================
   return (
     <main>
-      <header>
+      <header className={styles.headerEstilos}>
         <img src='./logo.png' alt='Logo' />
       </header>
       <Banner />
       <FormAdicionaEvento temas={temas} aoSubmeter={adicionarEvento} />
-      {temas.map((tema) => (
-        <section key={tema.id}>
-          {<Tema tema={tema} />}
-          {eventos.map(function(item, index) {
-            return <CardEvento evento={item} key={index} />
-          })}
-        </section>
-      ))}
-    </main>
+      <section className={styles.sectionTemasContainer}>
+        {temas.map(tema => {
+          const eventosDoTema = eventos.filter(evento => evento.tema.id === tema.id);
+          if (eventosDoTema.length === 0) return null;
+          return (
+            <section key={tema.id}>
+              <Tema tema={tema} />
+              <div className={styles.divEventosContainer}>
+                {eventosDoTema.map((evento, indice) => (
+                  <CardEvento evento={evento} key={indice} />
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </section>
+    </main >
   );
 };
+

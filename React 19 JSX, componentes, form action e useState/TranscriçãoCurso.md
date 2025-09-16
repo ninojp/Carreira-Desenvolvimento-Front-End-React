@@ -2223,13 +2223,567 @@ Nesta aula, aprendemos:
 
 ### Aula 5 - Grid de eventos - Vídeo 1
 
+Transcrição  
+Vamos organizar na tela e ajustar o layout, colocando um cartão de evento ao lado do outro, conforme está no Figma. Depois, pensaremos em como filtrar isso.
 
-### Aula 5 -  - Vídeo 2
-### Aula 5 -  - Vídeo 3
-### Aula 5 -  - Vídeo 4
-### Aula 5 -  - Vídeo 5
-### Aula 5 -  - Vídeo 6
-### Aula 5 -  - Vídeo 7
-### Aula 5 -  - Vídeo 8
-### Aula 5 -  - Vídeo 9
-### Aula 5 -  - Vídeo 10
+A primeira ação será, em vez de iterar sobre a lista de temas diretamente no menu, criar uma nova seção e atribuir a ela um class name chamado container. Em seguida, traremos a listagem de temas para essa seção. Assim, teremos a estrutura em uma única seção do HTML.
+
+Definição de Estilos no CSS  
+Com o class name definido, podemos ir ao app.css e trabalhar no .container. Observando o Figma, podemos definir uma largura máxima e centralizá-la na tela. Para alcançar esse resultado, definiremos o tamanho como 1.000 pixels. Se a tela tiver menos de 1.000 pixels, aplicaremos um tamanho máximo de 90%. Com a largura definida, podemos aplicar uma margem zero automática, centralizando assim o conteúdo.
+
+Organização dos Cartões de Evento  
+No Tech Board, já estamos quase lá. O que mais podemos fazer? Podemos, ao invés de colocar todos os eventos diretamente ali, criar uma div com uma classe chamada eventos. Em seguida, colocamos nossos cartões de evento dentro dessa div e adicionamos estilos.
+
+No arquivo app.css, temos a classe .eventos. Podemos definir um display como flex em vez de inline. Vamos verificar o Figma para o espaçamento. O espaçamento entre os elementos é de 24 pixels, então definimos gap: 24px. Outra coisa que podemos fazer é, se os elementos não couberem na mesma linha, aplicar flex-wrap. Assim, se não couberem, eles serão movidos para a próxima linha, em vez de crescerem indefinidamente para o lado. Dessa forma, se os cartões não couberem, eles serão dispostos um abaixo do outro.
+
+Implementação de Filtros  
+Já temos um resultado bem próximo do que desejamos. O que está faltando agora? Aplicar um filtro. Queremos exibir apenas os itens de front-end, cloud ou outros, conforme necessário. Vamos ver como fazer isso na sequência.
+
+Se você tiver snippets de código específicos que gostaria de integrar, por favor, forneça-os para que eu possa ajudar a construir a transcrição de forma mais completa e didática.
+
+### Aula 5 - Renderização condicional - Vídeo 2
+
+Transcrição  
+Já estamos quase finalizando. Agora, temos duas tarefas a realizar. Primeiro, precisamos filtrar os eventos do tema. Para isso, utilizaremos o método de array do JavaScript chamado filter. Não estamos falando de React, mas sim de métodos de array do JavaScript. O método filter recebe uma função que nos dá acesso ao item atual, que pode ser um evento ou outro elemento.
+
+Renomeação de Elementos para Clareza  
+É importante notar que estamos utilizando o termo "item" repetidamente. Vamos parar de usar "item" para tudo e renomear de forma mais clara. Se estamos lidando com um array de temas, chamaremos cada elemento de "tema". Se estamos lidando com um array de eventos, chamaremos cada elemento de "evento". Assim, se estamos filtrando eventos, queremos filtrar o "evento".
+
+Correção de Sintaxe e Aplicação do Filtro  
+Verificamos que havia um erro de sintaxe, pois faltava fechar algo no código. Após corrigir, temos eventos.filter, onde temos acesso ao "evento" e precisamos retornar um valor booleano para filtrar. Queremos fazer um return se evento.tema.id for igual a tema.id. Se o tema atual for igual ao tema do evento, filtramos e exibimos. Após salvar, o filtro já mostra os dois primeiros eventos que são de front-end: "Mulheres no Front" e "Summer Dev Hits". O "Summer Dev Hits 2", que é de Cloud, também está correto e é exibido mais abaixo.
+
+Renderização Condicional de Temas  
+Agora, se não houver nenhum evento dessa categoria, não queremos exibi-la, pois não faz sentido. Na linha 65, utilizamos temas.map. Existem várias formas de lidar com renderização condicional no React. Uma delas é retornar null quando não queremos renderizar nada. A condição que queremos verificar é se há eventos para aquele tema. Para isso, utilizamos o método some do array, que verifica se pelo menos um elemento atende a uma condição específica.
+
+Implementação da Lógica de Verificação  
+Queremos que o sistema retorne um valor booleano true se houver pelo menos um evento, ou false se não houver nenhum. Para isso, utilizamos uma função que verifica a presença de eventos. Essa função tem acesso a dois itens: o evento em si e o contexto em que está sendo executada. Dentro desse bloco, a lógica é a seguinte: verificamos se o id do tema do evento é igual ao id do tema atual. Se não houver pelo menos um evento desse tema, retornamos null. Assim, se não houver eventos, não prosseguimos com a execução.
+
+Resultado da Renderização Condicional  
+Após salvarmos as alterações, verificamos que a interface já escondeu os elementos irrelevantes, mostrando apenas o front-end e o cloud. Essa é uma das formas de realizar renderização condicional. Existem outras maneiras de fazer isso, como utilizando operadores específicos. Vamos comentar o código para ilustrar essa alternativa. A sintaxe é diferente, mas o resultado final é o mesmo: renderizamos algo com base na existência de uma variável ou se ela é maior que zero.
+
+Conclusão e Próximos Passos  
+Concluímos a renderização condicional e entendemos que os estados são imutáveis. Precisamos controlar o estado para que, quando ele mudar, o JSX seja re-renderizado, executando novamente o código JavaScript contido nele. Assim, finalizamos o funcionamento básico da nossa aplicação, que adiciona eventos de tecnologia no TecBoard.
+
+Publicação da Aplicação  
+Agora que terminamos a aplicação, precisamos publicá-la. Como fazemos para que o navegador entenda esse código? Vamos explorar o que acontece nos bastidores para descobrir como proceder.
+
+### Aula 5 - Vite e processo de Built - Vídeo 3
+
+Transcrição
+Durante todo o curso, mantivemos o terminal executando o comando npm run dev. Esse processo registrou todos os erros e eventos ocorridos, mas é importante lembrar que estamos em um ambiente de desenvolvimento, utilizando o localhost 5173 em nossa máquina local.
+
+Preparação para Produção
+Agora, precisamos transformar esse ambiente em uma versão de produção, ou seja, uma versão definitiva que contenha código que o navegador possa entender sem depender do npm run dev. Isso se assemelha ao que estamos acostumados a fazer ao criar HTML, CSS e JavaScript estáticos.
+
+Realizando o Build Local
+Primeiramente, vamos aprender a realizar um build local. Queremos entender como o Vite compila e constrói a aplicação. Para isso, vamos fechar todos os arquivos abertos, acessar a estrutura de pastas do projeto e abrir o arquivo package.json localizado na raiz.
+
+Na linha 6 do package.json, encontramos uma propriedade chamada scripts. Na linha 7, está o dev, que utilizamos durante todo o processo. Além disso, há outras três opções: build, lint e preview. O build é responsável por construir a aplicação, transformando-a em código que o navegador entende.
+
+Executando o Build
+No terminal, interrompemos a execução atual com ctrl + c e, em seguida, executamos o comando npm run build. O processo leva alguns segundos e, ao final, informa que 50 módulos foram transformados e que o build da aplicação está na pasta dist.
+
+Estrutura de Pastas Pós-Build
+Ao abrir a estrutura de pastas, observamos que temos a pasta "dist", que contém o arquivo index.html. Este arquivo aponta para a pasta "assets", onde há dois arquivos: um .jsx e um arquivo de CSS, ambos minificados e compilados. Isso significa que foram construídos e otimizados, removendo espaços e outros elementos desnecessários para que o navegador possa entender, mesmo que não seja legível para nós, seres humanos.
+
+Verificando a Aplicação
+Como temos um index.html na raiz, podemos abrir o terminal dentro do VSCode e acessar a pasta "dist". Alternativamente, podemos abrir uma nova janela do VSCode, selecionar "open folder", navegar até "desktop", "techboard", "dist" e abrir essa pasta. Nela, encontramos o index.html e os arquivos de "assets". Com o index.html na raiz, podemos utilizar a funcionalidade "Go Live" da extensão Live Server do VSCode. Assim, acessamos o index.html e verificamos que nossa aplicação está funcionando.
+
+Testando a Aplicação
+Podemos criar um novo evento, como o "Summer Dev Hits 2". Vamos pegar a imagem utilizada nas últimas aulas, alterá-la para a imagem 3 para variar um pouco, definir a data como 1º de abril e nomear o evento como "DevOps". Ao criar o evento, ele é gerado corretamente, demonstrando que a versão construída, compilada e traduzida para o código que o navegador entende está funcionando. Isso significa que não há mais JSX, que é utilizado apenas durante o desenvolvimento.
+
+Próximos Passos
+Realizamos um build local, e nossa aplicação está rodando localmente. No entanto, também podemos publicar essa aplicação em um servidor para torná-la acessível ao mundo. Vamos fazer isso na sequência.
+
+### Aula 5 - Para saber mais - Evolução do React: da versão 15 à 19
+
+Se você tá começando agora no mundo do React, talvez ainda não tenha ouvido falar sobre o tal do "software legado". Mas olha só: por mais empolgante que seja aprender as últimas novidades da biblioteca (como o React 19), existe um cenário muito comum na vida real que talvez não tenha aparecido ainda nos seus estudos.
+
+Na prática, muitas empresas e equipes mantêm sistemas que foram criados há anos. E esses sistemas continuam funcionando, atendendo milhares de pessoas, gerando valor. Esses sistemas são o que chamamos de legado — ou seja, eles foram construídos em uma época anterior, com as versões de ferramentas disponíveis naquele momento. E mesmo que o React continue evoluindo, esse código legado segue ali, firme e forte, exigindo manutenção, correções e até novas funcionalidades.
+
+No mercado a gebte encontra muitas aplicações usando React 16, 17 e até 15 por aí. E isso não é um problema — é parte da realidade. Por isso, conhecer um pouco da história do React e como ele foi evoluindo ao longo do tempo te prepara melhor pra esse tipo de desafio. Agora que já aprendemos muitas coisas sobre essa biblioteca tão famosa, vamos conversar sobre a evolução do React das versões 15 até a 19 — com calma, clareza e sempre pensando no que isso significa pra você que tá começando agora.
+
+React 15: a era dos componentes de classe
+Se você encontrar um projeto antigo feito com React, é bem possível que ele esteja usando a versão 15 — ou algo por ali. Esse foi um dos primeiros grandes marcos do React e, por muito tempo, foi o padrão usado por milhares de empresas. Mas o jeito de escrever componentes nessa época era bem diferente do que fazemos hoje.
+
+Componentes de classe eram a regra
+Naquela época, os componentes que tinham lógica de estado, manipulação de ciclo de vida ou qualquer tipo de interação mais complexa eram quase sempre escritos com class. A estrutura típica era assim:
+
+```JSX
+class MeuComponente extends React.Component {
+constructor(props) {
+super(props);
+this.state = { contador: 0 };
+}
+
+render() {
+return (
+<button onClick={() => this.setState({ contador: this.state.contador + 1 })}>
+Cliquei {this.state.contador} vezes
+</button>
+);
+}
+}
+```
+
+Esse código funcionava perfeitamente, mas vinha com uma série de desafios:
+
+era preciso entender como funciona o this no JavaScript.
+,uitos métodos diferentes para lidar com momentos do ciclo de vida: componentDidMount, componentDidUpdate, componentWillUnmount, etc.
+compartilhar lógica entre componentes era difícil — exigia padrões mais avançados como HOC (Higher-Order Components) ou Render Props.
+Tudo isso tornava o React mais complexo, especialmente pra quem estava começando.
+
+HTML "travado" e sem fragmentos  
+Outro detalhe importante: o React 15 não tinha suporte a Fragmentos (<>...</>). Ou seja, todo componente precisava retornar um único elemento pai. Se você tentasse retornar dois elementos lado a lado, tomava erro. A solução era enfiar tudo dentro de uma `<div>` desnecessária só pra agradar o React:
+
+```JSX
+render() {
+return (
+<div>
+<h1>Olá</h1>
+<p>Bem-vindo</p>
+</div>
+);
+}
+```
+
+Hoje a gente usa fragmentos (<>...</>) sem nem pensar, mas naquela época não existia.
+
+Performance e renderização  
+O motor de renderização do React 15 era síncrono, o que significa que ele executava tudo de uma vez só. Em projetos grandes, isso podia causar travadinhas na interface. Atualizações pesadas impactavam diretamente a fluidez da aplicação, especialmente se muitas mudanças ocorressem ao mesmo tempo.
+
+Apesar dessas limitações, o React 15 foi extremamente importante. Ele consolidou a ideia de que poderíamos construir interfaces por meio de componentes reutilizáveis. Abriu caminho pra o que viria depois. E até hoje há muito sistema rodando com essa versão ou com componentes escritos desse jeito.
+
+Se você topar com um projeto React usando classes, agora já sabe: você está lidando com um legado da versão 15 (ou do comecinho da 16). E entender isso vai te ajudar a não estranhar a sintaxe, saber o que está acontecendo — e até ajudar a modernizar esse código se for o caso.
+
+React 16: a base para o futuro  
+Se o React 15 foi a versão que consolidou o uso de componentes de classe, o React 16 foi o grande passo estrutural pra preparar a biblioteca pro futuro. E olha que interessante: ele trouxe mudanças profundas no motor do React — mas de um jeito tão bem feito que, na prática, você mal percebia.
+
+Vamos começar por aí:
+
+O que mudou  
+O React 16 reescreveu completamente sua engine de renderização. Esse novo motor foi batizado de Fiber.
+
+O que é esse tal de Fiber?
+
+É um sistema que permite ao React dividir o trabalho de atualização da interface em pedaços menores. Isso faz com que a UI fique mais fluida, porque o React pode pausar o que está fazendo, fazer outra coisa mais urgente (como responder um clique do usuário) e depois continuar de onde parou. Isso prepara o caminho para recursos como Suspense e modo concorrente.
+
+Mas o mais legal: mesmo com essa reescrita enorme, o React 16 manteve compatibilidade com tudo que funcionava antes. Ou seja, o código que rodava no React 15 geralmente rodava igualzinho no 16.
+
+Agora vamos pras novidades visíveis.
+
+1. Fragments: tchau div desnecessária
+Antes do React 16, todo componente precisava retornar um único elemento pai. Se você queria retornar dois <p>, por exemplo, era obrigado a colocar os dois dentro de uma `<div>` só:
+
+```JSX
+return (
+<div>
+<p>Texto 1</p>
+<p>Texto 2</p>
+</div>
+)
+```
+
+O problema é que isso criava divs extras e desnecessárias no HTML final. No React 16, surgiu o Fragment:
+
+```JSX
+import { Fragment } from 'react'
+
+return (
+<Fragment>
+<p>Texto 1</p>
+<p>Texto 2</p>
+</Fragment>
+)
+```
+
+Ou, na forma abreviada:
+
+```JSX
+return (
+<>
+<p>Texto 1</p>
+<p>Texto 2</p>
+</>
+)
+```
+
+Isso deixa o código mais limpo e o HTML final mais semântico.
+
+2. Error boundaries: proteção contra falhas  
+No React 15, se um componente quebrasse (por exemplo, por um erro de JavaScript), a aplicação inteira podia cair.
+
+No React 16, chegou a ideia de Error Boundaries: componentes que "abraçam" parte da interface e impedem que erros em componentes filhos derrubem tudo.
+
+Um exemplo clássico:
+
+```JSX
+class LimiteDeErro extends React.Component {
+constructor(props) {
+super(props)
+this.state = { erro: false }
+}
+
+componentDidCatch(error, info) {
+this.setState({ erro: true })
+}
+
+render() {
+if (this.state.erro) {
+return <p>Algo deu errado. Tente novamente.</p>
+}
+
+return this.props.children
+}
+}
+```
+
+Aí, você usa assim:
+
+```JSX
+<LimiteDeErro>
+<ComponenteQuePodeFalhar />
+</LimiteDeErro>
+```
+
+3. Portals: desenhar fora da hierarquia  
+React 16 também trouxe os portals, que permitem renderizar um componente React fora da árvore DOM principal.
+
+É super útil pra modais, tooltips, dropdowns etc. Por exemplo:
+
+```JSX
+import ReactDOM from 'react-dom'
+
+function Modal({ children }) {
+return ReactDOM.createPortal(
+children,
+document.getElementById('modal-root')
+)
+}
+```
+
+Com isso, mesmo que seu modal esteja dentro do componente App, ele pode aparecer fora no HTML final — e mesmo assim continuar funcionando com estado e contexto normalmente.
+
+4. Suporte completo a renderização no servidor (SSR)  
+O React 16 também melhorou a server-side rendering, reescrevendo a implementação pra ser mais rápida e permitir até streaming de HTML.
+
+Se você trabalha com frameworks como Next.js, muito do que o React 16 introduziu tornou isso mais performático e confiável.
+
+O React 16 é uma daquelas versões que parece discreta, mas que mudou tudo por dentro e trouxe recursos valiosos que usamos até hoje. Destaques dessa versão:
+
+- graças ao Fiber, o React ficou preparado pra tarefas mais complexas sem travar a interface.
+- com fragments, escrevemos menos código desnecessário.
+- com error boundaries, ganhamos segurança.
+- com portals, criamos modais e pop-ups com muito mais controle.
+- React 17: nenhuma grande novidade, mas um passo importantíssimo
+- Se você está vindo da jornada do React 16, com tudo aquilo de Fiber, Fragments e Error Boundaries, talvez espere que o React 17 tenha trazido outra leva de novidades. Mas não foi bem assim.
+
+Na verdade, o React 17 é conhecido como a versão que não trouxe novos recursos visíveis. Pode parecer estranho, mas isso foi uma escolha bem planejada pelo time do React. O foco aqui foi preparar o terreno para o futuro.
+
+O que o React 17 trouxe, então?  
+Apesar de não ter novos recursos na superfície, o React 17 fez algumas mudanças importantes por baixo dos panos:
+
+Novo sistema de delegação de eventos  
+Antes do React 17, os eventos do React (como onClick, onChange, etc.) eram sempre ouvidos no document, o que podia gerar problemas em casos com múltiplas versões do React na mesma página.
+
+No React 17, os eventos são registrados no container onde o React foi renderizado. Isso abre caminho pra usar múltiplas versões do React na mesma página sem conflito. Imagina um time que quer migrar um sistema enorme pra uma nova versão de React sem reescrever tudo de uma vez: isso agora é possível, e com segurança.
+
+Melhor compatibilidade com migrações graduais  
+Graças a esse novo sistema de eventos e a outras melhorias internas, o React 17 se tornou uma "ponte" entre versões antigas e futuras. Ou seja, você pode estar com React 16 hoje e começar a atualizar parte do código com React 17, depois ir pra 18... sem precisar reescrever tudo ao mesmo tempo.
+
+Isso também é ótimo pra projetos grandes ou legados (agora já sabemos o que são os famosos legados), onde a atualização tem que ser aos poucos.
+
+Então por que conhecer o React 17?  
+Porque ele ensina um conceito muito importante na vida de quem desenvolve software: estabilidade e retrocompatibilidade.
+
+O time do React mostrou que nem toda versão precisa de novos recursos pra ser valiosa. Às vezes, o que precisamos é de um código mais estável, de menos quebra e mais previsibilidade.
+
+Se você estiver estudando sistemas antigos, pode encontrar apps que estão no React 17. Agora você sabe que provavelmente esse código vai parecer igual ao React 16. Isso é normal. O 17 foi uma versão de transição.
+
+O React 17 é uma lição de engenharia de software. Ele nos mostra que evoluir também significa cuidar da base, sem necessariamente adicionar coisas novas.
+
+Ao estudá-lo, você não está aprendendo um novo recurso, mas sim uma filosofia de como manter projetos grandes com saúde, pensando no futuro.
+
+E como próximo passo da nossa jornada, vamos conhecer o React 18, que finalmente entrega algumas das novidades que o 17 ajudou a preparar.
+
+React 18: interfaces mais fluídas sem esforço  
+Depois de uma versão de transição como foi o React 17, chegou a hora da revolução. Em 2022, o React 18 trouxe várias melhorias poderosas, principalmente nos bastidores. A proposta dessa versão era clara: deixar a interface mais fluída para quem usa o app e reduzir a quantidade de código que a gente escreve pra isso acontecer.
+
+Se no React 17 a gente preparou o terreno, no React 18 começamos a colher os frutos com uma nova forma de renderizar as interfaces.
+
+Renderização concorrente (concurrent rendering)  
+Até o React 17, o comportamento era assim: cada atualização na interface era síncrona e bloqueante — o React fazia uma alteração por vez e só passava para a próxima quando terminava a anterior. Isso funcionava bem para muitas aplicações, mas em apps maiores ou com muitos dados, a interface podia travar em interações mais pesadas.
+
+O React 18 introduziu o conceito de modo concorrente, onde a renderização da interface pode ser dividida em etapas e pausada para priorizar interações mais urgentes (como digitar em um campo de texto ou clicar em um botão).
+
+Por exemplo, se você atualiza uma lista grande:
+
+```JSX
+setListaDeItens(grandeLista)
+```
+
+O React pode dividir essa atualização em partes e deixar o usuário continuar interagindo com o app enquanto a lista é renderizada.
+
+Pra usar esse poder de forma manual, foi introduzido o startTransition, que marca uma atualização como "não urgente":
+
+```JSX
+import { startTransition } from 'react'
+
+function atualizarBusca(valor) {
+startTransition(() => {
+setFiltro(valor)
+})
+}
+```
+
+Com isso, o React sabe que pode priorizar outras tarefas e deixar essa atualização para depois.
+
+Batching automático  
+Outra melhoria legal é o batching automático.
+
+Antes, o React já agrupava várias atualizações de estado dentro de um mesmo evento (como um clique). Mas se essas atualizações ocorressem dentro de um setTimeout, por exemplo, ele tratava cada uma separadamente, gerando múltiplos re-renders.
+
+No React 18, mesmo atualizações assíncronas são agrupadas automaticamente:
+
+```JSX
+setTimeout(() => {
+setContador(c => c + 1)
+setNome(n => n.toUpperCase())
+}, 1000)
+```
+
+Essas duas atualizações agora vão gerar um único re-render.
+
+useTransition e useDeferredValue  
+O React 18 também trouxe novos hooks relacionados ao modo concorrente:
+
+useTransition permite tratar atualizações como "leves" ou "pesadas" e mostrar um loading se for o caso.
+useDeferredValue adia a atualização de um valor quando outras atualizações mais urgentes estiverem acontecendo.
+Ao utilizar o useTransition, temos algo mais ou menos assim:
+
+```JSX
+const [isPending, startTransition] = useTransition()
+
+function buscar(evento) {
+startTransition(() => {
+setConsulta(evento.target.value)
+})
+}
+
+return (
+<>
+<input onChange={buscar} />
+{isPending && <p>Carregando...</p>}
+</>
+)
+```
+
+Novos hooks auxiliares  
+Além dos relacionados à concorrência, vieram novos hooks úteis:
+
+useId: pra gerar um ID único (importante em formulários e acessibilidade)
+useSyncExternalStore: ajuda a integrar o React com stores externos com segurança
+useInsertionEffect: otimiza bibliotecas de CSS-in-JS
+O React 18 marca o início de uma nova fase. Muito do que mudou está "por trás das cortinas", mas o impacto na fluidez e performance é grande. A principal mensagem dessa versão é: o React agora consegue ser mais inteligente na hora de renderizar a interface, priorizando interações e evitando travadinhas — e tudo isso com pouco ou nenhum código extra do nosso lado.
+
+Aprender React 18 é perceber que o React continua evoluindo pra oferecer experiências melhores, tanto pra quem desenvolve quanto pra quem usa os apps.
+
+React 19: otimizações automáticas e interfaces mais inteligentes  
+Se o React 18 foi um grande salto em performance com a introdução da renderização concorrente e do batching automático, o React 19 veio com a proposta de simplificar ainda mais o nosso código e tirar um pouco do peso que a gente costumava carregar nos componentes. Ele mantém o foco na performance, mas dessa vez apostando na ergonomia: a ideia é que o código React fique cada vez mais direto, limpo e eficiente.
+
+O React Compiler  
+A principal novidade é o React Compiler. Ele roda durante a build da aplicação e faz um trabalho parecido com o que fazíamos manualmente usando React.memo, useMemo e useCallback. Mas agora isso pode acontecer automaticamente. Em vez de decorar o código com essas ferramentas, o compilador consegue analisar dependências e gerar versões otimizadas dos seus componentes.
+
+Antes (React 18):
+
+```JSX
+const MeuComponente = React.memo(function MeuComponente({ texto }) {
+const handleClick = useCallback(() => {
+console.log(texto);
+}, [texto]);
+
+return <button onClick={handleClick}>Clique</button>;
+});
+```
+
+Agora (React 19):
+
+```JSX
+function MeuComponente({ texto }) {
+function handleClick() {
+console.log(texto);
+}
+
+return <button onClick={handleClick}>Clique</button>;
+}
+```
+
+O React Compiler entende que handleClick depende de texto e otimiza isso pra você.
+
+Formulários com action  
+O React 19 também traz um novo modelo para lidar com formulários. Agora podemos usar a prop action em um <form> com uma função assíncrona diretamente:
+
+```JSX
+function buscar(formData) {
+const consulta = formData.get("consulta");
+alert(`Buscando por ${consulta}`);
+}
+
+<form action={buscar}>
+<input name="consulta" />
+<button type="submit">Buscar</button>
+</form>
+```
+
+Sem precisar de onSubmit, preventDefault ou useState para cada campo. Isso facilita muito o código de formulários simples.
+
+Hooks novos  
+Com esse novo modelo de formulário, vieram também novos hooks:
+
+- useFormStatus: pra saber se o formulário está sendo enviado.
+- useActionState: pra tratar estados do resultado de uma action.
+- useOptimistic: pra mostrar um resultado temporário na interface enquanto uma action é processada.
+
+Esses hooks ajudam a construir uma experiência mais fluida para quem está usando o app.
+
+Outras melhorias
+
+- Melhor tratamento de erros: o console agora mostra mensagens mais claras e evita logs duplicados.
+- Refs como props nomeadas: podemos passar ref como qualquer outra prop.
+- Renderização de contexto simplificada: em certos casos, podemos usar o próprio `<MeuContexto>` diretamente, sem precisar do . Provider.
+- Tags de metadata no JSX: podemos declarar `<title>`, `<meta>`, etc., direto nos componentes.
+
+Conclusão  
+O React 19 mostra que amadurecer também é simplificar. A proposta dessa versão é reduzir o código cerimonial, tirar o peso de otimizações manuais e melhorar a legibilidade.
+
+Pra quem está começando agora, é um ótimo momento: o React está mais amigável, direto e acessível. E pra quem já conhece as versões anteriores, a sensação é de alívio. Menos boilerplate, mais foco no que importa.
+
+### Aula 5 - Para saber mais: conhecendo a Vercel e o GitHub
+
+Se você tá chegando agora no mundo do React (ou mesmo da programação), pode ter se perguntado: como é que o Vinny compartilhou os arquivos do projeto de cada aula com a gente? Como ele salvou, organizou e disponibilizou tudo aquilo de forma que a gente consiga acompanhar passo a passo?
+
+A resposta passa por três palavras que você vai ouvir bastante daqui pra frente: Git e GitHub.
+
+Versionamento de código: o que é e por que a gente usa? 
+Antes do Git, muita gente salvava versões dos projetos manualmente: projeto-final-v1, projeto-com-menu-final, projeto-arrumado-agora-vai. Não é difícil imaginar a bagunça que isso vira com o tempo.
+
+O Git é um sistema de controle de versão. Ele registra cada passo do desenvolvimento de um projeto, como um histórico de tudo o que foi feito no código. Isso é útil pra voltar atrás se algo der errado, pra entender o que mudou entre uma versão e outra e, claro, pra colaborar com outras pessoas sem quebrar o trabalho umas das outras.
+
+GitHub: a nuvem do nosso código  
+O Git funciona localmente no seu computador. Já o GitHub é uma plataforma que usa o Git como base, mas permite que você guarde esse histórico de versões na nuvem. Ou seja, você pode acessar seu projeto de qualquer lugar, compartilhar com colegas, contribuir com outros projetos ou mesmo usar como portfólio.
+
+No nosso curso, no começo de todas as aulas têm um link com os arquivos atualizados até aquele ponto. Isso foi possível porque o projeto está num repositório no GitHub, e cada aula foi salva em uma branch diferente.
+
+O que são branches?  
+Branches (ou "ramificações") são versões paralelas de um mesmo projeto. Elas permitem que você experimente, crie novas funcionalidades ou mantenha versões separadas sem interferir na versão principal. No nosso curso, usamos uma branch por aula:
+
+aula-01
+aula-02
+aula-03
+
+Isso facilita muito sua vida como estudante: você pode baixar só o código de uma aula específica e continuar dali, sem medo de se perder.
+
+Se quiser se aprofundar mais em Git e GitHub, deixo aqui alguns cursos bem completos:
+
+- https://cursos.alura.com.br/course/git-github-compartilhando-colaborando-projetos
+- https://cursos.alura.com.br/course/git-github-dominando-controle-versao-codigo
+
+E onde entra a Vercel?  
+Depois que o projeto está versionado no GitHub, a gente pode querer colocar ele no ar, pra mostrar pra alguém ou testar com mais facilidade.
+
+É aí que entra a Vercel, uma plataforma que hospeda projetos web de forma super simples.
+
+O mais legal é que ela se conecta direto com o GitHub. Você só precisa criar uma conta na Vercel, conectar seu repositório do GitHub e pronto: a Vercel já faz o deploy (publicação) do projeto automaticamente. E toda vez que você atualiza o projeto no GitHub, a Vercel atualiza a versão publicada também.
+
+Se quiser ver isso funcionando na prática:
+
+- https://cursos.alura.com.br/extra/alura-mais/fazendo-deploy-de-um-projeto-na-vercel-c9239
+- https://www.alura.com.br/artigos/heroku-vercel-outras-opcoes-cloud-plataforma
+
+Tudo isso pode parecer muito novo no começo – e tá tudo bem. A ideia aqui é te apresentar essas ferramentas com calma, no ritmo do curso. Aos poucos, você vai entender melhor como o Git organiza seu código, como o GitHub te ajuda a guardar e compartilhar, e como a Vercel facilita colocar o projeto no ar.
+
+Agora que você conhece os bastidores, pode aproveitar melhor os links de cada aula e até usar isso em seus próprios projetos. Bora continuar?
+
+### Aula 5 - Por que precisamos de um processo de build ao usar React? - Exercício
+
+Imagine que você escreveu uma aplicação em React usando componentes, JSX e imports. O que aconteceria se tentasse abrir esse projeto diretamente no navegador, sem passar por nenhum processo de build?
+
+Resposta:  
+O navegador mostraria erros, porque precisa que o código React passe por um build que converta JSX e outras sintaxes modernas em JavaScript puro.
+
+> O processo de build transforma nosso código moderno em algo que o navegador entende. Por exemplo, converte JSX em chamadas React.createElement e resolve os módulos importados.
+
+### Aula 5 - Faça como eu fiz: layout e deploy
+
+Nesta aula, organizamos a interface dos eventos, filtramos os dados e publicamos a aplicação.
+
+Agora é a sua chance de praticar os conteúdos vistos. Para isso:
+
+- Estruture o layout criando uma section com classe 'container' e uma div para agrupar os cards, aplicando estilos de largura, centralização e flex com gap e wrap.
+- Implemente a filtragem condicional dos eventos utilizando os métodos Array.filter e Array.some para exibir apenas os temas desejados.
+- Compile a aplicação com 'npm run build' para analisar o resultado localmente.
+- Publique o projeto no GitHub e na Vercel, verificando o deploy final via navegador.
+
+Consulte as transcrições da aula para mais detalhes.
+
+### Aula 5 - Projeto final do curso
+
+Terminei o curso, e agora?  
+Parabéns! Sério. Que orgulho de ver você chegando até aqui.
+
+Se você tá lendo isso, é porque você mergulhou com a gente no universo do React 19, enfrentou cada conceito novo, escreveu muito JSX, explorou estado, eventos, props e componentes — e agora tem nas mãos o seu próprio TecBoard funcionando.
+
+Esse é um baita marco! Eu sei que nem sempre foi fácil. Às vezes o terminal reclamou, o Vite deu pau, o JSX que "parecia HTML" não colaborou... mas você seguiu. E isso é o que mais importa.
+
+Baixe o projeto final
+
+Você pode [baixar a versão final do projeto aqui](https://github.com/alura-cursos/4654-tecboard/archive/refs/heads/main.zip)
+
+Se quiser clonar com Git (mais uma ferramenta pra conta!):
+
+> git clone https://github.com/alura-cursos/4654-tecboard.git
+
+E agora, como seguir?
+
+O melhor jeito de consolidar o que você aprendeu é botar a mão no código de novo. Aqui vão algumas ideias:
+
+- Suba o projeto no seu GitHub. Crie um repositório e comece a registrar sua jornada como dev.
+- Publique na Vercel: conecte o repositório e veja seu app rodando na web com um link lindo pra compartilhar.
+- Que tal fazer um post no LinkedIn ou no Instagram contando como foi o processo de criar seu primeiro projeto com React 19? Me marca! Vou adorar ver o seu progresso.
+- Expanda o TecBoard: você pode adicionar novos campos ao formulário, estilizar os cards de forma diferente, mudar completamente o tema do projeto (que tal organizar livros, filmes, séries...), ou até ir além: salvar os eventos no localStorage para que eles não sumam quando a página for recarregada.
+- Lembre-se: ninguém vira especialista do dia pra noite. Mas você já deu um passo que muita gente só fica sonhando em dar. Aproveita essa energia, segue explorando, errando, ajustando e evoluindo.
+
+Se quiser ideias de próximos cursos, práticas ou projetos, pode me chamar. Tô sempre pelo discord da Alura, no LinkedIn ou no Instagram.
+
+Vida longa e próspera no mundo do React. Você merece.
+
+Um forte abraço do seu mais novo amigo careca e barbudo o/
+
+### Aula 5 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A condição de renderização em React com a função some.
+- A compilar aplicações React com npm run build usando Vite.
+- A publicar aplicações React na Vercel integrando com o GitHub.
+
+### Aula 5 - Conclusão - Vídeo 9
+
+Transcrição  
+É incrível termos chegado até aqui, ao final de mais um curso na Alura, desta vez aprendendo React do zero, focando na versão 19 da biblioteca. Foi uma jornada na qual começamos com um Figma e um sonho. No final, publicamos o techboard.versell.web com nossa aplicação funcionando diariamente, com os eventos que estamos cadastrando. Esse processo é realmente incrível.
+
+Revisão dos Tópicos Abordados  
+Passamos por vários tópicos. Vamos dar uma última olhada no VS Code? Trabalhamos bastante no app.jsx, que é o coração da nossa aplicação. Aprendemos um hook muito importante do React, que é o useState. Para chegar lá, passamos por criar componentes, passar props para componentes, manipular variáveis, e entendemos o que é do React e o que é JavaScript. Além disso, criamos bastante CSS para estilizar a aplicação.
+
+Incentivo à Personalização e Compartilhamento  
+Foi uma jornada incrível e esperamos que vocês tenham se divertido tanto quanto nós. Mas ainda não acabou. Criamos juntos o techboard.
+
+Podemos seguir todo o passo a passo e chegar com o projeto na mesma versão, publicá-lo no GitHub, no Vercel, e no LinkedIn, impressionando a todos com o portfólio que estamos construindo. No entanto, seria incrível se criássemos nossa própria versão do techboard. Ao invés de focar em eventos de tecnologia, podemos fazer sobre nossos filmes, séries, animes favoritos, cartas ou jogos de cartas preferidos. Existem muitas possibilidades diferentes. Podemos trocar a paleta de cores, imagens, banners, enfim, criar uma aplicação que reflita nosso estilo e personalidade.
+
+Depois, podemos compartilhar nossa jornada de construção dessa aplicação em plataformas como LinkedIn ou Instagram, onde preferirmos. Seria ótimo se nos marcassem, pois gostaríamos de ver o resultado e acharemos incrível.
+
+Recursos e Agradecimentos Finais
+
+Lembremos que temos sempre o Discord à disposição, além do fórum do curso, onde podemos publicar dúvidas, sugestões ou mesmo o resultado final do projeto.
+
+Foi um prazer imenso acompanhar essa jornada e esperamos nos encontrar em mais cursos de front-end na Alura. Um grande abraço e até a próxima.
