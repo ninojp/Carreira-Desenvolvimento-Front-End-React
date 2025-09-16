@@ -11,3 +11,7 @@
 .formSelect::placeholder {
     color: #4A4949;
 }
+.formSlectOption{
+    background-color: #212121;
+    color: #4A4949;
+}

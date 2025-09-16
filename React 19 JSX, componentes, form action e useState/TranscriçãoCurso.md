@@ -1775,6 +1775,461 @@ Nesta aula, aprendemos:
 - A interpretar mensagens de erro no console para diagnosticar problemas em código React.
 - A formatar datas em JavaScript utilizando o método toLocaleString.
 
-### Aula 4 - 
+### Aula 4 - Submetendo o Formulário
 
-### Aula 4 -  - Vídeo 1
+### Aula 4 - Projeto da aula anterior
+
+Você pode acompanhar todo o progresso que fizemos na aula anterior [acessando o GitHub do projeto.](https://github.com/alura-cursos/4654-tecboard/tree/aula-3)
+
+Se preferir, [baixe o arquivo zip](https://github.com/alura-cursos/4654-tecboard/archive/refs/heads/aula-3.zip) do código desenvolvido até aqui.
+
+### Aula 4 - Estilizando o card de evento - Vídeo 1
+
+Transcrição  
+Vamos começar a estilizar o CardEvento conforme descrito na transcrição. Primeiro, vamos definir a cor de fundo e a estrutura básica de layout usando flexbox.
+
+Cor de Fundo e Layout Flexível:
+
+Vamos adicionar a cor de fundo grafite e configurar o layout para usar flexbox, organizando os elementos em coluna.
+
+```CSS
+.card-evento {
+  background-color: #212121;
+  display: flex;
+  flex-direction: column;
+}
+```
+
+Com isso, garantimos que os elementos dentro do card estejam bem alinhados verticalmente.
+
+Definindo Largura Fixa:
+
+Conforme o design no Figma, o card deve ter uma largura fixa de 282 pixels.
+
+```CSS
+.card-evento {
+  width: 282px;
+}
+```
+
+Isso assegura que o card mantenha o tamanho desejado, independentemente do conteúdo.
+
+Removendo Margens Internas:
+
+Para garantir que não haja margens indesejadas nos elementos internos, aplicamos margin: 0 aos parágrafos e títulos.
+
+```CSS
+.card-evento p, .card-evento h4 {
+  margin: 0;
+}
+```
+
+Isso ajuda a controlar o espaçamento interno do card.
+
+Estilizando o Corpo do Card:
+
+Agora, vamos aplicar padding e ajustar o espaçamento entre os elementos no corpo do card.
+
+```CSS
+.card-evento .corpo {
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+```
+
+O padding e o gap garantem que os elementos tenham o espaçamento adequado, conforme o design.
+
+Estilizando a Tag:
+
+Para a tag dentro do card, definimos um fundo cinza médio, bordas arredondadas e padding.
+
+```CSS
+.tag {
+  background-color: #4A4949;
+  border-radius: 4px;
+  padding: 8px;
+  display: inline-block;
+  color: #FFFFFF;
+  text-transform: uppercase;
+}
+```
+
+O uso de inline-block permite que a tag se ajuste ao tamanho do texto, enquanto text-transform: uppercase garante que o texto esteja em maiúsculas.
+
+Ajustando a Data e o Título:
+
+Finalmente, aplicamos estilos à data e ao título, garantindo que a tipografia esteja correta.
+
+```CSS
+.card-evento .data, .card-evento .título {
+  color: #FFFFFF;
+  font-family: 'Orbitron', sans-serif;
+}
+```
+
+Com isso, asseguramos que todos os textos dentro do card tenham a mesma aparência estilizada.
+
+Conclusão da Estilização do CardEvento  
+Com essas etapas, completamos a estilização do CardEvento conforme descrito na transcrição. Agora, o card deve estar visualmente alinhado com o design no Figma e pronto para ser utilizado na interface.
+
+### Aula 4 - Finalizando o formulário - Vídeo 2
+
+Transcrição  
+Vamos agora interagir com o formulário. Antes de cuidarmos da submissão, precisamos popular os tipos de evento. Na verdade, não se trata de data do evento, mas sim do tema do evento. Corrigimos isso, pois estava incorreto há algum tempo. Se já corrigimos no código, ótimo, mas o que queremos aqui é o tema do evento. Ajustamos o label para refletir isso. Precisamos passar o HTML4, que não é o id, mas sim o tema. O name também deve ser tema.
+
+Além disso, precisamos passar para a lista os itens correspondentes. Os itens da lista suspensa são os temas que estamos passando, não tipos de evento. Vamos remover a action que estava digitada por último. Precisamos também receber esses temas por parâmetro, ou props. Se olharmos o tech board e recarregarmos a página, não haverá erro, pois ainda não estamos utilizando. No app.jsx, no formulário de evento, passaremos os temas que criamos anteriormente. Do lado esquerdo, temos o nome da prop, e do lado direito, o valor.
+
+Renderização da Lista de Temas  
+Se mudarmos para XPTO, o valor que passamos é XPTO e XPTO.map. No entanto, queremos deixar como temas para manter a consistência. É comum termos nomes de variáveis que correspondem ao nome da prop. Agora, precisamos entrar no formulário e na lista suspensa. Esta lista receberá um array de temas, e já sabemos como renderizar uma lista.
+
+Vamos transformar esse array de objetos em uma lista de elementos JSX. A função que utilizamos recebe um item da lista. Não se trata apenas de temas, mas de itens, pois a lista suspensa pode conter qualquer coisa. Vamos finalizar a sintaxe da função. Dado o item, retornamos uma option. Cada filho de uma lista precisa de uma propriedade única chamada key, que será o item.id. No corpo, o filho da option será o item.nome. Também precisamos passar o valor, ou value, que será o item.id, identificando-o de forma única.
+
+Configuração do Valor Padrão no Select  
+Para a option value, podemos definir que o vazio representa a ausência de seleção. Podemos desabilitar essa opção para evitar seleção e utilizar o placeholder do Figma, que é "selecione uma opção".
+
+Copiamos o texto "selecione uma opção", mas ele está desabilitado, então não é possível selecioná-lo. Há muito código. Será que funcionou? Recarregamos a página. Observamos que o front-end já está lá. Queríamos que, por padrão, esse elemento tivesse "selecione uma opção" como valor padrão. Não queríamos que ele ficasse trocando para a primeira opção ao recarregar a página, ao invés de manter o valor vazio que deixamos por padrão.
+
+Para resolver isso, definimos que o nosso select tem um valor padrão, defaultValue, como uma string vazia. Recarregamos a página para verificar se isso resolve o problema. E resolveu. Por padrão, o valor é vazio, que corresponde a "selecione uma opção". Agora está correto. Quando clicamos no select, ele solicita que selecionemos outra opção que não seja a desabilitada.
+
+Correção de Erros no Console  
+Agora, precisamos fechar tudo que está aberto e deixar apenas o formulário de evento aberto. Recarregamos a página e verificamos o console para ver se há algum erro. O console indica que um FormFieldElement deveria ter um ID ou um name. Ele não tem um name. Vamos verificar o código. Na nossa lista suspensa, estamos passando o ID e o tema. Ao fazer um control click, percebemos que não pegamos o restante das propriedades para passar para o select.
+
+Vamos utilizar o rest operator para pegar o restante das propriedades. Vamos espalhar o que sobrou dentro do select. Isso resolve o problema, e agora não há erros. Recapitulando, o rest operator é uma funcionalidade do JavaScript, não do React. No React, na linha 6, pegamos tudo que recebemos e colocamos lá. Já fizemos isso antes com props, mas agora não podemos fazer isso porque precisamos acessar o array de itens. Usamos o rest operator para pegar todas as outras propriedades, exceto a que tem o nome de itens.
+
+Adição de Campo para Capa do Evento  
+Agora, ao tentar criar um evento, percebemos que falta algo no formulário. Vamos adicionar um campo para a capa do evento. Qual é a URL da imagem de capa? Vamos trocar o nome do evento para capa e o placeholder para "http://alguma coisa". Agora podemos preencher a capa.
+
+Por exemplo, para o evento "SummerDevHeats", que é um nome incrível, inserimos a URL da imagem de capa, a data do evento como hoje, e o tema do evento como FrontEnd. Ao clicar em criar evento, a página recarrega e joga todos os parâmetros na URL, mas não é isso que queremos. Queremos capturar esse evento, ou seja, quando o formulário for submetido, queremos que uma ação seja criada. O React 19, junto com o React Compiler, oferece uma maneira simples de lidar com isso, e vamos abordar isso na sequência.
+
+### Aula 4 - Action do formulário - Vídeo 3
+
+Transcrição  
+Vamos começar a implementar a funcionalidade de submissão do formulário conforme descrito na transcrição. Primeiro, vamos criar a função alformsubmetido que será chamada quando o formulário for submetido.
+
+Criando a Função de Submissão  
+A primeira etapa é definir a função que será executada ao submeter o formulário. Vamos chamá-la de alformsubmetido:
+
+```JSX
+function alformsubmetido(event) {
+  event.preventDefault(); // Previne o comportamento padrão de recarregar a página
+  console.log("Está na hora de criar um novo evento.");
+}
+```
+
+Aqui, usamos event.preventDefault() para evitar que a página seja recarregada, o que é o comportamento padrão de um formulário HTML. Em seguida, registramos uma mensagem no console para confirmar que a função foi chamada.
+
+Acessando os Dados do Formulário  
+Agora, queremos acessar os dados do formulário usando a classe FormData. Vamos criar uma instância de FormData e registrar seus dados no console:
+
+```JSX
+function alformsubmetido(event) {
+  event.preventDefault();
+  console.log("Está na hora de criar um novo evento.");
+
+  const formData = new FormData(event.target);
+  console.log(formData);
+}
+```
+
+Com new FormData(event.target), criamos um objeto FormData que contém todos os dados do formulário submetido.
+
+Construindo o Objeto Evento  
+Com os dados do formulário em mãos, podemos construir um objeto evento que seguirá a estrutura definida no nosso aplicativo:
+
+```JSX
+function alformsubmetido(event) {
+  event.preventDefault();
+  console.log("Está na hora de criar um novo evento.");
+
+  const formData = new FormData(event.target);
+
+  const evento = {
+    capa: formData.get("capa"),
+    tema: temas.find(item => item.id === formData.get("tema")),
+    data: new Date(formData.get("dataEvento")),
+    titulo: formData.get("nomeEvento")
+  };
+
+  console.log("Este é o evento", evento);
+}
+```
+
+Neste trecho, usamos formData.get("campo") para obter os valores dos campos do formulário. Para o tema, utilizamos temas.find para encontrar o tema correspondente ao ID selecionado no formulário.
+
+Testando a Implementação  
+Agora que a função está completa, podemos testá-la submetendo o formulário no nosso ambiente de desenvolvimento. Ao clicar em "criar evento", devemos ver no console a mensagem "Este é o evento" seguida do objeto evento com os dados corretos.
+
+Com isso, concluímos a implementação básica da submissão do formulário. Na próxima etapa, vamos armazenar esse evento em uma lista para que possamos iterar sobre ele posteriormente.
+
+### Aula 4 - Listando eventos e imutabilidade - Vídeo 4
+
+Transcrição  
+Já temos o controle sobre o formulário que está sendo enviado. Não há mais o comportamento padrão de recarregar a página, pois o React está cuidando disso para nós. O que queremos fazer agora é cadastrar esse evento em algum lugar. No entanto, não é responsabilidade do formulário realizar essa tarefa; ele apenas envia os dados.
+
+Função para Adicionar Eventos  
+Podemos pensar da seguinte forma: se componentes React são funções e funções JavaScript recebem parâmetros, conseguimos passar uma função como parâmetro. Já temos nossa lista de eventos, que está na linha 37. Vamos criar uma função chamada adicionarEvento. Essa função receberá um evento como parâmetro. Queremos pegar nossa lista de eventos, que é um array tradicional JavaScript. Todo array JavaScript possui um método chamado push, que adiciona um item ao array. Vamos adicionar o evento que estamos recebendo.
+
+Submissão do Formulário e Execução da Função  
+Queremos que isso ocorra quando o formulário for submetido. Para isso, no nosso formulário de evento, passaremos uma propriedade chamada aoSubmeter, que executará a função adicionarEvento. Estamos passando uma prop, um parâmetro para esse componente, que é uma função, e queremos que o componente a execute.
+
+Para garantir que isso está acontecendo, faremos um console.log de todos os eventos. Colocaremos "eventos" seguido de uma seta entre aspas e os eventos, para verificar se está incrementando corretamente. Ao submeter, precisamos implementar isso. Vamos entrar no nosso formulário e, além de receber temas, ele receberá o aoSubmeter.
+
+Implementação e Teste do Formulário  
+Verificamos se digitamos corretamente: aoSubmeter, aoSubmeter, aoSubmeter, está tudo certo. Ao invés de fazer um console.log de um evento, queremos chamar essa função aoSubmeter. Qual evento queremos passar? O evento que está entre a linha 14 e a linha 20.
+
+Com isso, ao formulário ser submetido, ele não terá mais aquele comportamento padrão. Podemos até quebrar algumas linhas para melhorar a legibilidade: uma linha no tema, outra no aoSubmeter, e outra ao fechar o componente. Quando o formulário for submetido, ele executará essa função, que está implementada. Temos acesso ao nosso array de eventos, então fazemos um eventos.push para aumentar o tamanho do array.
+
+Renderização de Eventos  
+Vamos testar. Recarregaremos a página para limpar o console e todas as mensagens. Vamos cadastrar nosso evento "Summer Dev Hits". A imagem está em hall.githubusercontent.com/veniciusneves/ e toda aquela história. A data do evento será dia 30 de abril, e o tema será front-end. Clicaremos em "Criar Evento". Maravilha, o console.log do form data foi executado, indicando que o formulário executou a função corretamente.
+
+Exibição de Múltiplos Eventos  
+Além de chamar a função, recebemos uma função como parâmetro. Funções em JavaScript podem receber outras funções como parâmetro, e nós vamos executá-la. Assim, fechamos o ciclo. O que está faltando agora? Ao invés de exibir apenas um card de evento, vamos exibir todos os eventos sem nos preocupar em filtrar neste momento. Já sabemos como fazer isso, certo?
+
+Para chamar valores JavaScript, utilizamos chaves. Precisamos chamar nosso array de eventos. Quando queremos percorrer uma lista e renderizar um item React para cada item da lista, utilizamos o método .map. Neste caso, precisamos passar uma função. Note que, no nosso caso, um evento não possui um id. Portanto, vamos pegar duas coisas: o item em si e o índice dele. Usaremos o índice como chave. Se estivéssemos lidando com um back-end, poderíamos ter um id. Aqui, não temos nada para gerar um id único, então usaremos o índice.
+
+Correção e Teste da Renderização  
+O cardEvento que será criado receberá o item como evento. Todo filho de uma lista deve ter uma propriedade chamada key. Que chave é essa? O índice do array. O método .map recebe uma função que tem acesso a dois valores: o primeiro parâmetro é o item em si, e o segundo é o índice, que representa a posição do item na lista. Podemos chamar de índice ou qualquer outro nome que desejarmos.
+
+Para cada evento, utilizamos eventos.map, passando o item e o índice. Vamos verificar se está funcionando recarregando a página. Inicialmente, não houve erro, mas nada foi renderizado. Isso ocorreu porque esquecemos de incluir a palavra-chave return dentro do nosso eventos.map. Sem ela, nada será renderizado. Agora, com o return, o map faz a diferença no nosso cenário.
+
+Adição de Novos Eventos  
+Com a renderização funcionando, podemos adicionar um novo evento. Vamos copiar o URL da imagem e criar um evento chamado "Summer Dev Hits". O tema do evento será front-end. Ao clicar em "criar evento", o evento deveria aparecer. E funcionou, pois o tamanho aumentou.
+
+Se criarmos "Summer Dev Hits 2", imaginando que todos criem um evento por ano, incrementando o número, e colocarmos no dia 30 de maio com o tema data science, ao clicar em "criar evento", o tamanho do array é incrementado. No entanto, não está sendo renderizado. Quando queremos que o JSX renderize novamente ao mudar uma variável, há uma maneira especial de fazer isso, que abordaremos na sequência.
+
+### Aula 4 - Estado de um componente - Vídeo 5
+
+Transcrição  
+Estamos evoluindo com nossos passos, um de cada vez. No entanto, enfrentamos uma situação em que nossa variável foi alterada e nosso array mudou de tamanho, mas o React não reagiu a isso. O que acontece é que um componente React é uma função que será executada. Se quisermos que ela seja executada novamente, ou seja, renderizada de novo, precisamos informar ao React que esse array, no nosso caso, o array de eventos, é um estado. Se esse estado mudar, a interface do usuário deve ser atualizada. Este não é um array qualquer; é um array de eventos, e nossa aplicação é sobre eventos. Se alguém adicionar um evento, precisamos renderizar novamente.
+
+Programação Declarativa e o Uso de useState  
+Já discutimos isso em vídeos anteriores, mas de forma superficial. Mencionamos que temos programação declarativa, com o front-end declarativo do React, que reage ao estado. O estado do componente define como ele deve se parecer. Descrevemos o estado, e o React cuida de atualizar o DOM. Precisamos criar um estado para o aplicativo. Para isso, utilizaremos o primeiro hook do React. O React possui vários hooks, que são funções especiais com superpoderes. O hook não é o Hulk, mas sim um gancho. Queremos usar o hook especial chamado useState.
+
+Implementação do useState  
+O useState nos ajuda a informar ao motor do React que precisa ser renderizado novamente. Ele recebe como parâmetro o valor inicial. Não queremos mais o eventos; queremos passar nosso array inteiro. É um array de um único item. Este é o nosso useState. Agora, entra uma sintaxe específica do JavaScript. Vamos criar uma constante chamada estado, que é um array de duas posições. Se passarmos o mouse sobre ela, o React e o VS Code tentarão nos informar o que é. O estado é um array cuja primeira posição é outro array, nossa lista inicial, que é o valor inicial. O segundo valor é uma função que faz um dispatch para definir o estado.
+
+Acesso e Atualização do Estado  
+Se quisermos acessar o valor, ou seja, nossos eventos, seria estado na posição zero. Note que é um array cuja posição zero é o valor do estado. Pode ser um array, um objeto, uma string, ou qualquer coisa que desejarmos. Normalmente, não escrevemos com essa sintaxe. Se quisermos pegar a primeira posição do array, fazemos o destructuring novamente, usando a sintaxe de abrir e fechar colchetes. A primeira posição será nossa lista de eventos. A primeira posição do array é o valor que identifica nosso estado, o estado atual. Pode ser um array, string, objeto, booleano, número, qualquer coisa.
+
+Imutabilidade e Atualização de Estado  
+O React possui o conceito de imutabilidade. Isso significa que não alteraremos nosso estado diretamente, como fazemos na linha 49 com eventos.push. Isso não funcionará, pois o React não prestará atenção. Quando queremos mudar o estado, precisamos enviar um estado totalmente novo, uma variável totalmente nova para ser atualizada. Essa é a segunda posição do nosso array.
+
+Uso do setEventos e Spread Operator  
+Lembramos que o VS Code identificou que é um dispatch de setState. A segunda posição do array é uma função que atualiza o estado. Se ela atualiza o estado, se ela define um novo estado, é comum chamarmos de set, de "setar", e vamos chamar de eventos, que é o nome do estado. Essa função receberá o novo valor do estado, então setEventos. Não queremos mais fazer eventos.push, vamos deixar isso comentado. O que queremos é um setEventos. No entanto, precisamos passar uma nova variável. Não podemos fazer, por exemplo, eventos.push e passar eventos para o setEventos, pois seria a mesma variável, o mesmo array. Queremos passar um array novo.
+
+Ao invés disso, passaremos um novo array utilizando o Spread Operator da lista atual, pegando todos os itens que estão dentro e criando um novo array. Além disso, adicionamos o novo evento que acabou de ser cadastrado. O useState cuida do nosso estado, retornando um array de duas posições: a primeira posição é o valor do estado, e a segunda é uma função que altera o estado, definindo um novo valor. Não adianta alterar o valor de eventos, pois o React ignorará completamente, já que ele é imutável. Para alterá-lo, precisamos chamar a função setEventos, passando um novo valor, que, no caso de um array, será um novo array. Esse é o fluxo do useState.
+
+Testando a Implementação  
+Há conteúdo adicional para saber mais, um mix de texto e vídeo, para aprofundar o entendimento sobre o useState e outros casos de uso. Basicamente, se queremos que nosso estado seja alterado e que essa alteração se reflita na interface, essa é a fórmula para usar useState.
+
+Após toda essa explicação, vamos testar. Copiamos a URL da imagem e seguimos. Será que conseguiremos finalmente cadastrar o SummerDevHeats? A URL da imagem foi copiada. Seguimos para 30 de maio, no front-end. Criar evento. Funcionou! SummerDevHeats foi cadastrado. Funcionou! Era isso que queríamos, adicionar um novo evento. Vamos adicionar mais um: SummerDevHeats2. Colocamos uma imagem diferente agora, a imagem 2. Lembramos que há imagens de 1 a 15 disponíveis nessa URL. A data será 30 de maio. E será na categoria Cloud. Clicamos em criar evento. Fizemos um scroll e lá está: SummerDevHeats2. Ainda estamos exibindo todos os eventos, independentemente da categoria, então precisamos começar a filtrar isso. Mas nosso estado está funcionando.
+
+Considerações Finais e Próximos Passos  
+Antes de seguir para a próxima aula e continuar os estudos, é importante assistir ao conteúdo adicional sobre useState e imutabilidade. Lembrando, o que é React? O useState é uma função especial do React, um hook do React. O que é JavaScript? A sintaxe de colocar um array fazendo um destructuring é JavaScript. Por que precisamos passar um array novo para setEventos ao invés de fazer um push no mesmo array e passá-lo? Isso é React. O React verá que é a mesma referência para a mesma variável, o mesmo array, e não renderizará novamente. Precisa ser um array novo. O destructuring com colchetes pegando a posição 0 e 1 é JavaScript.
+
+Recomendamos dar uma olhada no conteúdo adicional para se acostumar com a sintaxe de useState, pois é muito comum de ser utilizada. Vamos usar isso frequentemente durante nossa jornada. Após assistir e ler tudo o que for necessário, daremos sequência. Agora, precisamos dar vida à nossa aplicação, que atualmente não filtra os eventos baseados na categoria. Vamos fazer isso juntos.
+
+### Aula 4 - Para saber mais: React compiler e formulários
+
+Formulários no React 19 (e como fazíamos antes)  
+Chega um momento em que a gente precisa criar um formulário em React. Coisa simples: um campo de busca, um botão de enviar... E aí você descobre que no React 19, dá pra fazer isso aqui:
+
+```JSX
+<form action={buscar}>
+<input name="consulta" />
+<button type="submit">Buscar</button>
+</form>
+```
+
+Simples, né? Parece até HTML puro. E de fato, esse jeito funciona graças ao React Compiler, que chegou junto com o React 19.
+
+O que muda com o React 19?  
+Antes do React 19, você não podia passar uma função direto no action de um formulário. Isso era coisa do HTML tradicional. Mas com o novo compilador, o React permite que a gente use funções diretamente no action — e essa função vai receber os dados do formulário automaticamente, via formData.get().
+
+Isso significa menos código, menos estado local e menos complicação.
+
+Mas e se o projeto for em React 18 (ou anterior)?  
+Aí o cenário muda.
+
+Você vai encontrar formulários bem diferentes. Em vez de usar formData, os dados dos inputs são controlados pelo estado da aplicação. A gente chama isso de input controlado.
+
+O que é um input controlado?  
+Antes de tudo, vale entender dois eventos importantes em formulários no React:
+
+- onSubmit: é o que acontece quando o formulário é enviado. Normalmente a gente intercepta esse evento pra impedir que a página recarregue e processa os dados manualmente.
+- onChange: é o que acontece sempre que o usuário digita ou muda algo em um campo. É esse evento que a gente usa pra atualizar o estado com o valor do input.
+É quando o valor do campo (input, textarea, etc.) está sempre ligado ao estado do componente. O usuário digita, e o useState registra o que tá sendo digitado. O valor do input é controlado 100% pelo React.
+
+Exemplo:
+
+```JSX
+function FormularioDeBusca() {
+const [consulta, setConsulta] = useState("");
+
+function aoSubmeter(evento) {
+evento.preventDefault();
+alert(`Você pesquisou por: ${consulta}`);
+}
+
+return (
+<form onSubmit={aoSubmeter}>
+<input
+value={consulta}
+onChange={(e) => setConsulta(e.target.value)}
+/>
+<button type="submit">Buscar</button>
+</form>
+);
+}
+```
+
+Por que isso ainda é importante?  
+Porque a maior parte das aplicações por aí ainda usam versões anteriores do React. E mesmo que você esteja começando já no React 19, entender como a gente fazia antes é importante pra:
+
+- Manter ou evoluir projetos legados
+- Conseguir ler código de outras pessoas
+- Entender melhor como o React funciona por baixo dos panos
+- E quando o formulário fica grande?
+
+Gerenciar muitos useState pode ficar bagunçado. É por isso que surgiram bibliotecas como:
+
+- React Hook Form (RHF): leve, rápido, funciona bem com validações
+- Formik: muito usado, ótimo pra formulários mais estruturados
+- Essas libs ajudam a lidar com formulários longos, regras de validação, erro, envio, loading... Tudo isso com menos código e mais organização.
+
+Conclusão  
+Se você tá usando React 19, aproveita esse novo jeito com form action={minhaFuncao}. É simples, limpo e moderno.
+
+Mas também é importante entender como lidávamos com formulários antes: com useState, inputs controlados, onChange, onSubmit... E como as bibliotecas de formulários vieram pra ajudar.
+
+Aprender essas duas abordagens — a nova e a clássica — te deixa mais preparado pra lidar com qualquer projeto React por aí.
+
+Um passo de cada vez. Tá tudo se encaixando!
+
+### Aula 4 - Para saber mais: useState e imutabilidade
+
+[Mergulho profundo: como funciona o useState](https://youtu.be/KdQa4Rd6K1A) - Vídeo YouTube
+
+Chegou a hora da gente ir um pouco além e entender de verdade o que acontece quando usamos o useState. Essa é uma das ferramentas mais importantes do React — é com ela que guardamos e atualizamos informações que afetam o que aparece na tela.
+
+Por que precisamos do useState?  
+Quando criamos uma aplicação com React, a tela (ou melhor, a interface) é resultado do que está guardado nos estados. Esses estados mudam conforme a pessoa interage com o app. Por exemplo, clicou num botão? Mudou um texto? Fez login? Tudo isso mexe com o estado.
+
+E pra lidar com isso, precisamos do useState, que é um hook do React. Ele serve pra armazenar um valor e atualizar esse valor depois — e toda vez que a gente atualiza, o componente renderiza de novo pra mostrar o novo estado.
+
+Como usamos  
+A estrutura padrão do useState é assim:
+
+```JSX
+const [valor, setValor] = useState(valorInicial)
+```
+
+Esse valorInicial só é usado na primeira vez que o componente renderiza. Depois disso, o React ignora.
+
+Por convenção, o primeiro item do array (valor) é o estado em si, e o segundo (setValor) é a função que usamos pra atualizar esse estado.
+
+Atualizando o estado corretamente  
+Agora vem a parte importante: nunca atualize o estado diretamente. Veja esse exemplo que parece inocente:
+
+```JSX
+eventos.push(novoEvento)
+setEventos(eventos)
+```
+
+Esse código não funciona como a gente espera. O React não vê que o estado mudou, porque estamos usando o mesmo array de antes — só que com um novo item. Isso é um problema porque o React compara os estados anteriores e atuais. Se forem "iguais", ele não renderiza de novo.
+
+O que fazer então?  
+Criar um novo array com os dados antigos + o novo:
+
+```JSX
+setEventos([...eventos, novoEvento])
+```
+
+Isso funciona porque estamos criando um novo objeto em memória, e aí o React percebe que algo mudou.
+
+Sobre imutabilidade  
+Esse comportamento do React vem da ideia de imutabilidade. Ao invés de alterar um objeto ou array existente, a gente cria uma nova versão dele com as alterações. Isso traz mais controle e previsibilidade pro app.
+
+Outras formas de atualizar o estado  
+Se o novo valor do estado depende do valor anterior, podemos usar uma função dentro do setValor, assim:
+
+```JSX
+setContador(c => c + 1)
+```
+
+Isso é útil quando fazemos múltiplas atualizações ou temos dependências que podem se misturar. O React vai enfileirar as atualizações e aplicar uma a uma com o valor mais recente.
+
+Podemos guardar objetos ou arrays?  
+Sim! O useState aceita qualquer tipo de dado: string, número, booleano, objeto, array...
+
+Mas o cuidado com imutabilidade continua. Se estivermos atualizando um objeto:
+
+```JSX
+setFormulario({
+...formulario,
+nome: 'Novo nome'
+})
+```
+
+O mesmo vale pra arrays:
+
+```JSX
+setLista([...lista, novoItem])
+```
+
+Conclusão  
+O useState é simples de usar, mas tem suas regrinhas. A mais importante: nunca mutar o estado original. Sempre criar uma nova versão, seja de número, string, objeto ou array. Isso garante que seu app se comporte como esperado e que o React saiba exatamente quando precisa atualizar a tela.
+
+No fundo, é como se o React dissesse: "me avisa quando algo mudar — mas eu só acredito se for um novo objeto". E a gente respeita, né?
+
+### Aula 4 - Aplicando o conceito de imutabilidade com useState - Exercício
+
+Ao adicionar um novo item a uma lista armazenada em um estado com useState, qual das opções abaixo representa a forma correta de garantir que o React perceba a mudança e atualize a interface?
+
+Resposta:
+setLista(lista.concat(novoItem));
+
+> O método .concat() retorna um novo array sem alterar o original, respeitando a imutabilidade e permitindo que o React identifique a mudança.
+
+### Aula 4 - Faça como eu fiz: estilizar card e eventos
+
+Nesta aula, vimos como estilizar um card e gerenciar a criação e renderização dinâmica de eventos utilizando React e CSS, com foco na manipulação de formulários e estado.
+
+Agora é a sua chance de colocar em prática o que foi ensinado. Para isso:
+
+- Estilize o CardEvento definindo background, display: flex com direção coluna e largura fixa conforme especificado.
+- Remova as margens de parágrafos e `<h4>` dentro do card para alinhar os elementos conforme o layout.
+- Configure o Corpo do card com padding (24px vertical e 16px horizontal) e gap de 8px utilizando display: flex em coluna.
+- Aplique os estilos na tag do evento, definindo background cinza (#4A4949), border-radius de 4px, padding de 8px.
+- Ajuste a tipografia dos textos (data e título) com cor branca, fonte Orbitron e text-transform uppercase.
+- Corrija os atributos do formulário, definindo names e ids corretos e populando o select com as opções de temas e placeholder - desabilitado.
+- Implemente a função de submissão que capture os dados do formulário via FormData e monte o objeto evento conforme os campos - preenchidos.
+- Utilize o hook useState para gerenciar o array de eventos e renderizá-los dinamicamente com map, garantindo a atualização da interface.
+
+Para mais detalhes, consulte as transcrições da aula.
+
+### Aula 4 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Como lidar com a submissão de formulários no React e manipulação de dados com FormData.
+- A passar funções como props para componentes e gerenciar listas com map e push.
+- O conceito de estado no React e gerenciamento com useState.
+- A imutabilidade e utilização do operador spread para atualizar o estado.
+
+## Aula 5 - Finalizando o Projeto
+
+### Aula 5 - Grid de eventos - Vídeo 1
+
+
+### Aula 5 -  - Vídeo 2
+### Aula 5 -  - Vídeo 3
+### Aula 5 -  - Vídeo 4
+### Aula 5 -  - Vídeo 5
+### Aula 5 -  - Vídeo 6
+### Aula 5 -  - Vídeo 7
+### Aula 5 -  - Vídeo 8
+### Aula 5 -  - Vídeo 9
+### Aula 5 -  - Vídeo 10
