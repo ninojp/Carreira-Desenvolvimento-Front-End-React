@@ -22,9 +22,9 @@ Antes de começar a Carreira, é fundamental ter domínio dos fundamentos da web
 
 Aqui na Alura, temos cursos livres para garantir esses pré-requisitos para que você possa potencializar o aproveitamento da Careira React.
 
-## !IMPORTANTE OS LINKS NÃO ESTÃO FUNCIONANOD AINDA, HOJE 11/09/2025 A CARREIRA FICOU DISPONIVEL RECENTEMENTE, 09/09/2025!
+#### !IMPORTANTE OS LINKS NÃO ESTÃO FUNCIONANOD AINDA, HOJE 11/09/2025 A CARREIRA FICOU DISPONIVEL RECENTEMENTE, 09/09/2025!
 
-#### Fundamentos da Web
+Fundamentos da Web
 
 - Internet: entendendo os fundamentos da web (novo)
 

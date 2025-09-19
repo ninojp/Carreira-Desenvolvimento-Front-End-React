@@ -1,0 +1,11 @@
+useState: aprenda o React Hook neste TUTORIAL
+https://www.youtube.com/watch?v=KdQa4Rd6K1A
+
+
+useRef: como funciona esse React Hook
+https://www.youtube.com/watch?v=BwRxBGsT_f0&ab_channel=Alura
+
+
+Hook useCallback x useMemo: performance no React 
+https://www.youtube.com/watch?v=VVmGrEZoBvM&t=239s&ab_channel=Alura
+
