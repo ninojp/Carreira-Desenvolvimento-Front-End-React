@@ -2121,16 +2121,20 @@ Vamos implementar a Content API para evitar a repetição de código, seguindo o
 Primeiramente, vamos criar um novo componente. Na pasta "Components", criaremos um TodoProvider, ou seja, um provedor de todos. Dentro dessa pasta, criaremos o arquivo index.jsx. Além do provedor, precisamos do contexto em si, então criaremos outro arquivo ao lado do index.jsx, chamado todocontext.js.
 
 Criando o contexto TodoContext
+
 Para criar o contexto, utilizaremos a função createContext do React. Inicialmente, o VS Code pode importar essa função usando require, mas vamos converter isso para o formato de módulo, utilizando import createContext from. Podemos armazenar isso em uma constante chamada TodoContext e fazer o export default desse contexto.
 
+```JSX
 import { createContext } from "react";
 
 const TodoContext = createContext();
 
 export default TodoContext;
-Copiar código
+```
+
 Agora, precisamos implementar o provedor em si. Vamos criar um componente React chamado TodoProvider, que é uma função que recebe props. Queremos extrair o children das props para utilizá-lo posteriormente. Dentro do nosso TodoProvider, faremos o return do TodoContext, renderizando o children. Isso é necessário para montar um provedor.
 
+```JSX
 import TodoContext from "./TodoContext";
 
 export function TodoProvider({ children }) {
@@ -2140,10 +2144,13 @@ export function TodoProvider({ children }) {
         </TodoContext>
     );
 }
-Copiar código
+```
+
 Definindo valores e funções no TodoProvider
+
 Temos dois passos a seguir. Primeiro, precisamos definir os valores que serão disponibilizados pelo provedor. Podemos reutilizar os valores que já definimos no app.jsx, elevando-os para o TodoProvider. Vamos copiar o trecho de código do useState no app.jsx, da linha 59 até o final do deleteTodo, e colá-lo no TodoProvider, antes do return. Vamos formatar o documento para garantir a legibilidade.
 
+```JSX
 import { useState } from "react";
 import TodoContext from "./TodoContext";
 
@@ -2231,8 +2238,10 @@ export function TodoProvider({ children }) {
         </TodoContext>
     );
 }
-Copiar código
+```
+
 Integrando o TodoProvider na aplicação
+
 O toggleDialog não será necessário por enquanto, pois o addTodo não precisa acionar o toggleDialog, já que ele é apenas um provedor de todos. O diálogo, por enquanto, não é necessário na nossa modal. Precisamos apenas dos todos em si, incluindo as funções add, toggle e delete.
 
 Como disponibilizamos o contexto para toda a aplicação? O TodoContext espera uma propriedade chamada value, que é um objeto, e dentro desse value, disponibilizamos tudo o que desejamos. Por exemplo, podemos disponibilizar a lista de todos em si. Não queremos disponibilizar o setTodos, pois é privado, mas queremos disponibilizar o addTodo, o toggleTodoCompleted e o deleteTodo.
@@ -2240,8 +2249,10 @@ Como disponibilizamos o contexto para toda a aplicação? O TodoContext espera u
 Esse é o nosso provider. Vamos verificar do que ele está reclamando. Não importamos o useState, então vamos importá-lo. Agora sim, parece que está tudo certo. O que faremos agora? No nosso app.jsx, vamos envolver toda a nossa aplicação. Como removemos o toggleDialog, precisamos adicioná-lo novamente, pois removemos mais do que deveríamos. O dialog permanecerá, assim como o toggleDialog, e apenas removeremos tudo relacionado a todos. Agora sim. Podemos comentar a linha do addTodo, pois não vamos utilizá-la agora.
 
 Testando e verificando a implementação
+
 O que queremos fazer é colocar o provider para funcionar. Vamos salvar para evitar erros de compilação. Vamos verificar no Chrome como está. Vou recarregar. Está sem erro, não está exibindo nada, mas ainda não implementamos. Criamos o nosso provider, o contexto, implementamos o provider, e agora queremos disponibilizá-lo. Poderíamos colocá-lo no app.jsx, logo abaixo do main, mas vamos deixá-lo ainda mais acessível, no main.jsx, logo abaixo do strictMode do React, chamando o nosso TodoProvider.
 
+```JSX
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
@@ -2255,15 +2266,365 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </TodoProvider>
   </React.StrictMode>,
 );
-Copiar código
+```
+
 Vamos colocar o app dentro dele, lembrando dos children. Dessa forma, todos os componentes dentro do provider, ou seja, todos os filhos, poderão acessar as funções que disponibilizamos no value. Criamos o contexto com createContext, criamos o provider, e todo o value do nosso provider será acessível para todos os children, todos os filhos desse componente. No nosso caso, toda a aplicação.
 
 Vamos verificar se há erros de compilação. Voltamos ao Chrome e recarregamos. Maravilha, não há erros de compilação, está tudo correto, e o console não está exibindo erros. O que precisamos fazer agora é integrar o restante da aplicação a essa nova fonte de dados, que é o nosso provider. Estamos no caminho certo, metade do trabalho está feito. Agora, vamos pensar no nosso próximo passo: como vamos acessar esse value que disponibilizamos no nosso provider?
 
-### Aula 4 -  - Vídeo 2
-### Aula 4 -  - Vídeo 3
-### Aula 4 -  - Vídeo 4
-### Aula 4 -  - Vídeo 5
-### Aula 4 -  - Vídeo 6
-### Aula 4 -  - Vídeo 7
-### Aula 4 -  - Vídeo 8
+### Aula 4 - Refatorando o app - Vídeo 2
+
+Transcrição  
+Vamos começar a refatorar o código utilizando o contexto. No aplicativo de AutoSX, a primeira coisa que queremos fazer é pegar o nosso AddToDo e os ToDos inteiros. Para isso, vamos usar o hook do React chamado use. Queremos usar o ToDoContext. O VS Code já está importando o use do React e o ToDoContext.
+
+```JSX
+import { use } from "react";
+import TodoContext from "../components/TodoProvider/TodoContext";
+```
+
+O use, quando utilizado com um contexto, retorna sempre um objeto, permitindo que façamos o destructuring. Podemos pegar tudo que está disponível no value.
+
+```JSX
+const { todos, addTodo } = use(TodoContext);
+```
+
+Implementando o handleFormSubmit
+
+No arquivo Components/StudioProvider/Index.AutoSX, na linha 54, temos o value. Podemos pegar, por exemplo, todos os ToDos e o AddToDo.
+
+É importante notar que o nosso provider é responsável apenas pelos ToDos; ele não controla o modal, pois isso está fora do seu escopo. Na linha 114, temos um ToDoForm com um onSubmit. O onSubmit agora precisa realizar múltiplas tarefas: queremos chamar o AddToDo e também fechar o modal ao finalizar. Vamos criar o AddToDo, mas ele não fará tudo isso sozinho, então vamos implementar um handleFormSubmit.
+
+```JSX
+<TodoForm onSubmit={handleFormSubmit} />
+```
+
+O handle manipula o FormSubmit, ou seja, o envio do formulário. Vamos implementar essa função const handleFormSubmit, que será uma arrow function recebendo formData.
+
+```JSX
+const handleFormSubmit = (formData) => {
+  addTodo(formData);
+  toggleDialog();
+}
+```
+
+Com isso, já temos o que precisamos para os ToDos.
+
+Criando o ToDoGroup
+
+Agora, precisamos implementar o nosso ToDoGroup. Vamos criar um novo arquivo ToDoGroup/index.jsx e exportar a função ToDoGroup.
+
+```JSX
+export function TodoGroup({ items, heading }) {
+  return (
+    <>
+      <SubHeading>{heading}</SubHeading>
+      <TodoList>
+        {items.map(function (t) {
+          return <TodoItem key={t.id} item={t} />
+        })}
+      </TodoList>
+    </>
+  );
+}
+```
+
+Vamos receber, via prop, os items e o heading, que é o título. Queremos retornar algo em JSX. Copiamos o ToDoList inteiro do aplicativo e também queremos pegar o subheading, que será colocado acima do ToDo.
+
+```JSX
+import { SubHeading } from "../SubHeading";
+import { TodoList } from "../TodoList";
+import { TodoItem } from "../TodoItem";
+```
+
+Chamando o ToDoGroup
+
+Os items e o heading são recebidos via prop. Agora, já estamos chamando o ToDoGroup duas vezes, então podemos deletar o código comentado. Teremos dois ToDoGroups.
+
+```JSX
+<TodoGroup
+  heading="Para estudar"
+  items={todos.filter(t => !t.completed)}
+/>
+<TodoGroup
+  heading="Concluído"
+  items={todos.filter(t => t.completed)}
+/>
+```
+
+O ToDoGroup precisa importar o subheading e o ToDoList. Não precisamos mais passar toggleToDoCompleted ou deleteToDo via prop, então vamos deletá-los. Podemos verificar se o aplicativo está compilando. Ao recarregar a página, ele reclamou que o ToDoGroup não estava definido no app.js, mas agora foi importado. Recarregando novamente, ele indicou que o ToDoItem não estava definido, então faltou importá-lo no ToDoGroup. Após recarregar, tudo está funcionando.
+
+Ajustando o ToDoItem
+
+Estamos chamando o ToDoGroup para estudar e passando o ToDoGroup como concluídos, sempre filtrando o que não está completo e o que está. O que não está completo é o "a fazer" e o que está completo é o "concluído". Por algum motivo, o segundo grupo de "concluídos" não está filtrando como deveria. Vamos verificar o nosso contexto. No valor padrão, vamos colocar o completed e verificar se há algum erro no console. Não há erros. O problema é que estamos aplicando um filtro que não é mais necessário. Não precisamos mais filtrar no ToDoGroup, pois ele apenas agrupa.
+
+Vamos agora verificar se tudo está no lugar como deveria. Se clicarmos em excluir ou em Toggle, ocorrerá um erro. Isso acontece porque não estamos mais recebendo OnDeleteToDo e OnToggleCompleted. Vamos resolver essa questão.
+
+No nosso ToDoItem, não precisamos mais receber essas informações via prop, pois agora conseguimos obtê-las do contexto.
+
+```JSX
+import { use } from 'react';
+import TodoContext from '../TodoProvider/TodoContext';
+
+const { toggleTodoCompleted, deleteTodo } = use(TodoContext);
+```
+
+Isso retornará um objeto que podemos desestruturar. Vamos pegar ToggleToDoCompleted e DeleteToDo do nosso Provider. Não temos mais o prefixo "On" porque o evento não existe mais; estamos acessando diretamente o contexto. Vamos ajustar o nome das nossas funções para ToggleToDoCompleted e DeleteToDo.
+
+```JSX
+export function TodoItem({ item }) {
+  return (
+    <div>
+      <button onClick={() => toggleTodoCompleted(item)}>Toggle</button>
+      <button onClick={() => deleteTodo(item)}>Delete</button>
+    </div>
+  );
+}
+```
+
+Testando e resumindo a refatoração
+
+Não há erros no VS Code. Vamos testar nosso aplicativo: recarregamos a página, fazemos o Toggle e verificamos que funciona corretamente. Se desmarcarmos, o inverso também funciona. Ao deletar, também funciona, e ao recarregar, o estado volta ao padrão.
+
+Refatoramos tudo. Vamos fazer um resumo. No VS Code, fechamos tudo que está aberto e começamos do início. Primeiro, criamos o contexto chamando a função CreateContext. Criamos e exportamos. Em seguida, criamos o ToDoProvider, um componente React que recebe children. O JSX que retornamos é o nosso ToDoContext, e o valor é um objeto JavaScript com todos os métodos e valores que queremos compartilhar.
+
+Depois disso, no Main.js, colocamos nosso componente app dentro do Provider. A partir de agora, qualquer componente filho do Provider terá acesso ao contexto. No app.jsx, fizemos nosso primeiro uso do contexto, removendo o array estático e os imports não utilizados. Importamos o useToDoContext e pegamos a lista de ToDos e o AddToDo.
+
+Considerações finais e curiosidades
+
+Agora, temos uma função que sabe adicionar o ToDo e fazer o ToggleDialog, além de termos a lista de ToDos. No ToDoGroup, usamos o contexto passando apenas o heading e a lista de itens, onde o filtro acontece. No ToDoGroup, não fazemos prop drilling, recebemos apenas as props que usamos: itens e heading. O ToDoItem ficou mais simples, pois recebe menos propriedades. Ele usa ToggleToDoCompleted e DeleteToDo do nosso contexto, sabendo o que fazer quando alguém clica.
+
+Podemos agora pensar em implementar o Edit sem nos preocupar com DRY ou prop drilling, pois a Context API resolveu isso. Ainda temos mais coisas para fazer, mas vamos trazer duas curiosidades. Primeiro, separamos o CreateContext em um arquivo separado, pois o Vite lida melhor com o Reload em tempo de desenvolvimento dessa forma. Segundo, em aplicações mais antigas, usávamos UseContext em vez de Use. Na versão 19 do React, não precisamos mais disso, podemos chamar apenas Use e Context.
+
+Por fim, no nosso Provider, antes usávamos ToDoContext.provider, mas isso era nas versões anteriores ao React 19. Agora, não precisamos mais fazer isso. Se encontrarmos essas diferenças em aplicações, saberemos que antigamente era assim. Nosso contexto já está disponível, sem prop drilling ou DRY, então podemos continuar adicionando funcionalidades à nossa checklist.
+
+### Aula 4 - Persistindo dados com a localStorage - Vídeo 3
+
+Transcrição  
+Muitas das funcionalidades que já implementamos até agora, como o ContextAPI, estão em funcionamento. Vamos continuar evoluindo nossa lista de tarefas e itens a serem estudados. Vou fechar tudo que está aberto e trazer o seguinte ponto: ao adicionar um item na lista de tarefas em nossa aplicação, utilizando React e useState, tudo funciona bem. No entanto, ao recarregar a aplicação, o item desaparece, pois ele só existe em memória. Até agora, não temos uma forma de persistir esses dados.
+
+Podemos considerar a comunicação com o back-end ou tentar resolver isso do lado do cliente, utilizando apenas o navegador. Para esse tipo de situação, existe um mecanismo muito interessante chamado localStorage. Vamos utilizá-lo para persistir os dados, de modo que, toda vez que alguém alterar a lista de tarefas, um efeito seja gerado.
+
+Implementando o useEffect para salvar dados
+
+Para isso, vamos implementar um useEffect que será responsável por salvar os dados no localStorage sempre que o array de tarefas for alterado. Vamos começar criando o esqueleto do nosso useEffect:
+
+```JSX
+useEffect(() => {
+
+}, [todos])
+```
+
+Esse useEffect será executado sempre que o array todos for alterado. Agora, precisamos salvar o array de tarefas no localStorage. Como o localStorage só lida com strings, utilizaremos JSON.stringify para serializar os dados:
+
+```JSX
+useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos))
+}, [todos])
+```
+
+Verificando a persistência no localStorage
+
+Conectando com um ponto discutido anteriormente, mencionamos a possibilidade de usar new Date em vez de uma data fixa em string. No entanto, um objeto de data não é serializável. Ao usar JSON.stringify, estamos serializando os dados. Se tivéssemos optado por usar new Date, teríamos que lidar com isso agora. Como estamos manipulando strings, que são serializáveis, estamos seguros. Assim, toda vez que a lista de tarefas for alterada, ela será salva no localStorage.
+
+Vamos verificar isso no Chrome, na aba de Application, onde podemos ver o localStorage da aplicação. A lista já está lá porque, ao fazer um setState pela primeira vez, alteramos nosso estado local, gerando um efeito. Por isso, já aparece no localStorage. Se adicionarmos mais um item, ele também aparecerá lá. Podemos visualizar no localStorage o id, a description e a data de hoje, tudo corretamente registrado, incluindo a hora e o minuto.
+
+Inicializando o estado com dados do localStorage
+
+No entanto, ao recarregar a página, percebemos que, embora os dados estejam no localStorage, não inicializamos esse valor. Vamos tratar disso agora. Antes de usar o useState, vamos buscar o valor salvo no localStorage. Para isso, criaremos uma constante chamada savedTodo e a inicializaremos com o valor obtido através de localStorage.getItem, referenciando nossos dados de tarefas:
+
+```JSX
+const savedTodo = localStorage.getItem('todos')
+```
+
+Boas práticas no uso de constantes e localStorage
+
+Ao discutirmos boas práticas no uso de recursos, é comum observarmos a repetição de strings em diferentes partes do código. Por exemplo, utilizamos a string todos na linha 6 para o getItem e na linha 24 para o setItem. Repetir essa string pode levar a erros, caso haja uma digitação incorreta, pois não estaremos usando a mesma chave.
+
+Uma prática recomendada é criar uma constante, que podemos chamar de TODOS, para armazenar o valor da string. Assim, em vez de passar a string diretamente, utilizamos a constante TODOS. Isso ajuda a evitar erros de digitação e é uma boa prática quando lidamos com constantes, como chaves. Além disso, ao capitalizar a constante, fica evidente que se trata de um valor fixo:
+
+```JSX
+const TODOS = 'todos';
+const savedTodo = localStorage.getItem(TODOS)
+```
+
+Utilizando operador ternário para inicialização segura
+
+No caso do save de todos, utilizamos o getItem. Vamos remover o estado padrão e implementar um operador ternário. A lógica é: se temos o save de todos, fazemos um JSON.parse do save. Caso contrário, retornamos um array vazio. Isso garante que, ao iniciar a aplicação pela primeira vez, ela não quebre. Se já houver dados no localStorage, eles serão carregados:
+
+```JSX
+const [todos, setTodos] = useState(savedTodo ? JSON.parse(savedTodo) : [])
+```
+
+O localStorage é uma funcionalidade do V8 do Chrome, relacionada ao navegador e JavaScript, não ao React. O operador ternário e o JSON.parse são recursos do JavaScript. O que é React, então? O useState. Implementamos um ternário com a condição: se temos o save de todos, usamos o JSON.parse; caso contrário, um array vazio.
+
+Testando a aplicação e recapitulando
+
+Ao salvar e recarregar a página, os itens permanecem. Adicionamos um novo item, e ele é exibido corretamente após a submissão. O useState marca o item como concluído, e tudo funciona mesmo após recarregar a página. Ao abrir a aplicação em uma aba anônima do Chrome, verificamos que não há erros no console, e tudo funciona, independentemente de o localStorage estar vazio ou já conter dados.
+
+Recapitulando
+
+O localStorage armazena apenas strings. Utilizamos JSON.stringify para salvar e JSON.parse para ler. Implementamos um operador ternário para evitar que o JSON.parse quebre ao tentar processar um valor que não é um JSON válido. Guardar a chave em uma constante é uma boa prática para evitar erros de digitação, como escrever to do em vez de todos.
+
+Se ocorrer um erro ao salvar algo inválido no localStorage, podemos resolver acessando a aplicação, clicando com o botão direito no localStorage e selecionando "clear". Isso limpa o localStorage e restaura o funcionamento da aplicação.
+
+Com a Context API implementada, estamos prontos para fechar nossa aplicação, pensando em editar um item de estudo. Vamos implementar isso na sequência. Até a próxima!
+
+### Aula 4 - Para saber mais: React 19 e o novo hook: use
+
+Chegou a hora de falar sobre o que há de mais novo e promissor no mundo React: o React 19 e seu novo hook use. Como ele é recente e pode confundir quem já usa React há um tempo, vamos esclarecer tudo e deixar você bem preparado pra lidar tanto com código novo quanto legado. Bora?
+
+Novo hook: use
+
+Com o React 19, temos um hook fresquinho chamado use. Mas calma, esse não é apenas mais um hook: ele traz flexibilidade extra que não existia antes! Dá só uma olhada na definição básica:
+
+```JSX
+import { use } from 'react'; 
+
+function MeuComponente({ recurso }) { 
+const valor = use(recurso); 
+} 
+```
+
+O hook use permite que você leia valores de recursos como Promises ou contextos diretamente dentro dos seus componentes. E sabe o que é mais legal? Diferente dos outros hooks, o use pode ser chamado dentro de estruturas condicionais (if) e loops (for). Isso mesmo, você não está mais preso à regra de "hooks sempre no topo"!
+
+Como fica o uso de contexto com o use?
+
+O hook use substitui o useContext de uma maneira mais flexível. Vamos ver um antes/depois pra clarear:
+
+Antes, com useContext:
+
+```JSX
+import { useContext } from 'react'; 
+
+function Botao() { 
+const tema = useContext(ThemeContext); 
+return <button className={tema}>Clique aqui</button>; 
+} 
+```
+
+Agora, com use:
+
+```JSX
+import { use } from 'react'; 
+
+function Botao({ mostrar }) { 
+if (mostrar) { 
+const tema = use(ThemeContext); 
+return <button className={tema}>Clique aqui</button>; 
+} 
+return null; 
+} 
+```
+
+Percebe a diferença? Agora você pode ter mais liberdade, chamando contextos apenas onde realmente precisa.
+
+Lidando com Promises e Suspense
+
+Outra vantagem do use é que ele integra diretamente com Suspense, permitindo uma forma mais elegante de lidar com Promises:
+
+```JSX
+import { Suspense, use } from 'react'; 
+
+function Mensagem({ promessa }) { 
+const conteudo = use(promessa); 
+return <p>{conteudo}</p>; 
+} 
+
+function App() { 
+const promessa = fetchMensagem(); 
+ 
+return ( 
+<Suspense fallback={<p>Carregando...</p>}> 
+<Mensagem promessa={promessa} /> 
+</Suspense> 
+); 
+} 
+```
+
+Cuidado com código legado!
+
+O hook use está disponível apenas a partir do React 19. Isso significa que em projetos antigos ou legados, você ainda vai precisar usar useContext ou outras soluções tradicionais.
+
+- React <19: continue com useContext e técnicas tradicionais.
+- React >=19: pode aproveitar o novo e poderoso use.
+
+Tratando erros e promessas rejeitadas
+
+Você não pode usar try-catch diretamente com o hook use. Para lidar com erros, você deve utilizar Error Boundaries:
+
+```JSX
+import { Suspense, use } from 'react'; 
+import { ErrorBoundary } from 'react-error-boundary'; 
+
+function Mensagem({ promessa }) { 
+const conteudo = use(promessa); 
+return <p>{conteudo}</p>; 
+} 
+
+function App() { 
+const promessa = fetchMensagem(); 
+
+return ( 
+<ErrorBoundary fallback={<p>Deu ruim!</p>}> 
+<Suspense fallback={<p>Carregando...</p>}> 
+<Mensagem promessa={promessa} /> 
+</Suspense> 
+</ErrorBoundary> 
+); 
+} 
+```
+
+Bora aprofundar ainda mais?
+
+Se quiser mais detalhes e exemplos práticos, dá uma conferida na [documentação oficial do React](https://pt-br.legacy.reactjs.org/docs/hooks-intro.html) sobre o hook use. Vale a pena também testar bastante pra pegar o jeito.
+
+Recapitulando rápido:
+
+- O hook use pode ler contextos e promessas;
+- Ele permite chamadas condicionais e em loops;
+- Disponível apenas no React 19;
+- Use useContext em versões anteriores ao React 19;
+- Integrado diretamente com Suspense e Error Boundaries.
+
+### Aula 4 - Otimizando a gestão de serviços com Context API
+
+A Petpark, uma plataforma de e-commerce e serviços personalizados para animais de estimação, está expandindo seus serviços de agendamento online para banhos, tosas e consultas veterinárias. A equipe de desenvolvimento que você faz parte percebeu que a gestão de estados relacionados aos agendamentos está se tornando complexa e repetitiva. Para resolver isso, a equipe decidiu implementar a Context API para centralizar e gerenciar o estado dos agendamentos de forma mais eficiente.
+
+Qual é a melhor maneira de implementar a Context API para gerenciar os estados de agendamentos, garantindo que todos os componentes relevantes possam acessar e modificar esses estados sem a necessidade de prop drilling?
+
+Resposta:  
+Criar um arquivo de contexto, como AppointmentContext.js, utilizando a função createContext do React, e desenvolver um componente provider, AppointmentProvider, que gerencia o estado dos agendamentos com useState ou useReducer. O provider deve disponibilizar o estado atual e funções para manipulação dos agendamentos através de um objeto value, envolvendo os componentes necessários com o AppointmentProvider.
+
+> Correta, pois essa abordagem utiliza a Context API de forma eficaz, centralizando o estado e permitindo que todos os componentes filhos acessem e modifiquem o estado dos agendamentos sem prop drilling, garantindo uma gestão de estado mais eficiente e organizada.
+
+### Aula 4 - Alternativa: persistência de dados no local storage
+
+Você é a pessoa responsável pela manutenção de um aplicativo React de lista de tarefas que utiliza o localStorage para persistir os itens (todos) entre as sessões do usuário. Recentemente, alguns usuários relataram que a aplicação "quebra" (crash) ao ser carregada, exibindo um erro no console relacionado à falha na conversão de dados do localStorage para um formato JavaScript. A investigação revelou que, em alguns casos, o localStorage está retornando uma string inválida ou um valor que não é um JSON válido para a chave que armazena os todos.
+
+A linha de código responsável por inicializar o estado dos todos no TodoProvider é semelhante a esta:
+
+const savedTodos = localStorage.getItem('todos');
+const initialTodos = savedTodos ? JSON.parse(savedTodos) : [];
+Copiar código
+Considerando o cenário descrito, qual a melhor estratégia teórica para garantir que a aplicação inicie de forma robusta e não falhe, mesmo que os dados recuperados do localStorage estejam corrompidos ou em um formato inesperado?
+
+Resposta:  
+Implementar uma lógica de "programação defensiva" ao tentar ler e parsear os dados do localStorage. Isso envolve usar um bloco try-catch em torno da operação JSON.parse() e, em caso de erro, tratar a falha revertendo para um estado inicial seguro (como um array vazio ou dados padrão).
+
+> Muito bem. A programação defensiva, através de um try-catch ou validações antes da conversão, permite que o aplicativo lide graciosamente com dados inesperados ou corrompidos do localStorage. Em vez de quebrar, ele pode se recuperar para um estado funcional, garantindo uma melhor experiência para o usuário e a resiliência da aplicação.
+
+### Aula 4 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A criar e usar contextos em React para gerenciar estado global.
+- A implementar providers para encapsular lógica e disponibilizar estados e funções.
+- O uso de hooks como use para consumir contextos de forma simplificada.
+- A evitar prop drilling acessando dados diretamente do contexto.
+- A utilizar localStorage para persistir dados e garantir sua disponibilidade.
+- A implementar useEffect para salvar dados no localStorage após alterações.
+- A serializar e desserializar dados usando JSON.stringify e JSON.parse.
+- A iniciar estados condicionalmente com dados do localStorage ou padrão vazio
+
+## Aula 5 - 
+### Aula 5 -  - Vídeo 8
