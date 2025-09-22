@@ -1,9 +1,20 @@
+*{
+  box-sizing: border-box;
+  /* PROBLEMA, com o posicionamento da Modal 
+  margin: 0;
+  padding: 0; */
+}
 body {
   font-family: "Montserrat", sans-serif;
-  margin: 0;
   background-color: #403C3B;
   background-image: url('/bg.png');
   background-repeat: no-repeat;
   background-position: top center;
   background-size: auto;
+}
+a{
+  text-decoration: none;
+}
+ul{
+  list-style: none;
 }

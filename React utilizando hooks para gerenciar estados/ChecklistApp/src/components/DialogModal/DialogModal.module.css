@@ -1,0 +1,27 @@
+.dialogModal::backdrop {
+  background-image: linear-gradient(
+    45deg,
+    rgb(0, 0, 0),
+    rgb(38, 19, 56),
+    rgba(0, 31, 62, 0.8),
+    rgb(0, 25, 0)
+  );
+  opacity: 0.85;
+}
+.dialogModal{
+  background-color: #1E1E1E;
+  border: none;
+  border-radius: 16px;
+  padding: 16px;
+}
+.divBtnFecharModal{
+  text-align: right;
+}
+.iconBtnFechar{
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+.corpoModal{
+  padding: 10px 0;
+}

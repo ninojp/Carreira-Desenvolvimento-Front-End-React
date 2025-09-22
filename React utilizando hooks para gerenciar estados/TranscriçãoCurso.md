@@ -757,12 +757,834 @@ Nesta aula, aprendemos:
 
 ## Aula 2 - Efeitos colaterais
 
-### Aula 2 -  - Vídeo 1
-### Aula 2 -  - Vídeo 2
-### Aula 2 -  - Vídeo 3
-### Aula 2 -  - Vídeo 4
-### Aula 2 -  - Vídeo 5
-### Aula 2 -  - Vídeo 6
-### Aula 2 -  - Vídeo 7
+### Aula 2 - Quem controla o estado - Vídeo 1
+
+Transcrição  
+Já estamos encaminhados, nossa modal e nosso dialogue já funcionam como deveriam. Agora, precisamos discutir um ponto importante: no Chrome, temos o botão "show the dialogue" que abre a modal e um botão para fechar, que é o oposto. Isso foi implementado para entendermos como o dialogue e o useRef funcionam. No entanto, chegou o momento de conectar o comportamento dessa modal a um botão que não está diretamente vinculado a ela.
+
+O que podemos considerar inicialmente? Podemos ir ao app.jsx e, em vez de manter o FAB button lá, copiá-lo para o local correto. No app.jsx, na linha 79, podemos copiar e mover o botão para o local desejado, organizando-o adequadamente. Isso resolveria o problema, mas queremos adotar uma abordagem ligeiramente diferente. Precisamos separar o comportamento, ou seja, a regra de negócio, da regra de exibição. Queremos que o dialogue não contenha a regra de negócio e não controle o estado internamente, deixando essa responsabilidade para quem consome o componente.
+
+Modificando o Componente FabButton
+
+Vamos fechar tudo que está aberto, exceto o app.jsx, que foi fechado acidentalmente. Queremos interagir com o FAB button (Float Action Button). Atualmente, ele só recebe children, mas queremos passar um evento de clique para reagir quando alguém clicar no botão. Podemos usar o spread operator para pegar as outras props e espalhá-las no botão, já que ele, além do onClick, aceita várias props que não queremos passar uma a uma. Vamos usar rest para isso. Assim, todas as props passadas para o FAB button serão aplicadas ao botão nativo.
+
+Primeiro, vamos modificar o componente FabButton para aceitar propriedades adicionais usando o operador spread:
+
+```JSX
+export function FabButton({ children, ...rest }) {
+    return (
+        <button className='fab' {...rest}>
+            {children}
+        </button>
+    )
+}
+```
+
+Agora, no jsx, na linha 79, podemos passar um evento de clique. Como não estamos usando TypeScript e não temos autocomplete, precisamos digitar corretamente: onClick, com "on" minúsculo e "Click" com "C" maiúsculo. Para testar se está funcionando, podemos usar um console.log. Ao clicar, faremos um console.log de "alternar modal".
+
+```JSX
+<FabButton onClick={() => {
+    console.log('alternar modal')
+}}>
+  <IconPlus />
+</FabButton>
+```
+
+Alternando o Estado de uma Modal
+
+Quando falamos em alternar, referimo-nos à ação de abrir ou fechar uma árvore de componentes. Se a árvore está fechada, ela deve ser aberta, e se está aberta, deve ser fechada. Queremos apenas alternar esse estado, portanto, vamos alternar a modal.
+
+No navegador Chrome, ao clicar no botão, o ajuste que fizemos no código já nos permite realizar essa ação. Podemos controlar essa modal com um simples estado booleano no React. O que isso significa?
+
+Voltando ao nosso código principal, podemos utilizar o useState. O useState é responsável por armazenar o estado dessa modal. Por padrão, ela começa como false, ou seja, está fechada quando a aplicação é carregada. Utilizamos a técnica de destructuring para pegar o valor do estado. Chamamos o valor de showDialog, e a função que altera o estado de setShowDialog.
+
+Primeiro, precisamos importar o useState:
+
+```JSX
+import { useState } from 'react'
+```
+
+Em seguida, definimos o estado inicial da modal:
+
+```JSX
+const [showDialog, setShowDialog] = useState(false)
+```
+
+Podemos criar uma função que alterna esse valor. A função toggleDialog irá inverter o valor atual, utilizando setShowDialog para negar o estado atual. Isso é feito com JavaScript puro: se o estado está true, ele se torna false, e vice-versa.
+
+```JSX
+const toggleDialog = () => {
+    setShowDialog(!showDialog)
+    console.log('alternar modal')
+}
+```
+
+No clique do botão, em vez de exibir uma função direta, chamamos toggleDialog. Isso cuidará do cenário de alternar o valor.
+
+```JSX
+<FabButton onClick={toggleDialog}>
+  <IconPlus />
+</FabButton>
+```
+
+Como nossa abordagem é declarativa, podemos mover a dialog para perto do botão fab, pois estão relacionados. Passamos uma prop chamada isOpen, que será o valor de showDialog. Se showDialog é true, a modal está aberta.
+
+```JSX
+<Dialog isOpen={showDialog}/>
+```
+
+Agora que temos esse mecanismo para gerenciar o estado, queremos reagir a essa alternância. Ou seja, quando o valor mudar de true para false ou de false para true, queremos abrir ou fechar a modal de fato. Para isso, precisamos conhecer outro hook do React que observa determinadas situações. Vamos explorar como reagir às mudanças desse estado na sequência. Nos encontramos na próxima etapa.
+
+### Aula 2 - Conhecendo o useEffect - Vídeo 2
+
+Transcrição  
+Vamos prosseguir e adicionar mais um hook do React ao nosso conjunto de ferramentas. Desta vez, estamos falando do useEffect. Queremos usar um efeito, em tradução literal livre, que acabamos de criar. Basicamente, queremos gerar efeitos. Se olharmos a descrição na documentação, que está em react.dev, é a mesma coisa que fizemos para usar o useRef. Abra a busca e digite useEffect. O "F" aparece duas vezes, então é E-F-F-E-C-T, useEffect. A definição diz que esse React Hook permite sincronizar um componente com um sistema externo. Lembrando que a ideia do nosso componente é não conter regra de negócio. Ou seja, a regra de negócio, como se a modal está exibida ou não, fica do lado de fora. Uma vez que alguém toma essa decisão, nossa modal, o diálogo em si, apenas reage.
+
+Vamos entender como esse hook funciona. No VS Code, no index.jsx da modal, do nosso diálogo, o que faremos? A primeira coisa é receber aquele valor que estamos passando. No app.jsx, estamos passando o isOpen, então vamos capturá-lo aqui.
+
+```JSX
+export function Dialog({ isOpen }) {
+```
+
+Implementando o useEffect no componente
+Repare que dentro dos parênteses já abrimos as chaves para fazer o destructuring e pegar apenas o que queremos. Logo após usar o useRef, chamaremos o useEffect. O VS Code já importou para nós.
+
+```JSX
+import React, { useEffect, useRef } from "react";
+```
+
+Agora, precisamos passar dois parâmetros: o efeito em si, ou seja, uma função, e a lista de dependências como segundo argumento. Primeiro, passamos uma arrow function e depois um array de dependências. No nosso caso, queremos gerar esse efeito toda vez que nossa dependência mudar. Qual é a nossa dependência? isOpen. Toda vez que esse valor mudar, queremos gerar esse efeito.
+
+```JSX
+useEffect(() => {
+
+}, [isOpen])
+```
+
+Vamos gerar um console.log e colocar primeiro uma pergunta: "Deveríamos mostrar a modal?" Em seguida, faremos o console.log do valor dessa variável, isOpen.
+
+```JSX
+useEffect(() => {
+    console.log('Deveríamos mostrar a modal?', isOpen)
+}, [isOpen])
+```
+
+Testando o comportamento do useEffect
+
+Chamamos o useEffect e passamos um array, ou um item do nosso array de dependências. Toda vez que isOpen mudar, ele gerará esse efeito. Vamos testar. Voltamos ao Chrome, na aplicação que está rodando na porta 5173, recarregamos a página e ele mostrou aqui agora, por padrão, duas vezes. Se clicarmos, precisamos remover o showTheDialog. Vamos removê-lo para não confundir nosso processo. Vou tirar isso aqui e comentar. Podemos deixar assim por enquanto. Apenas salvei para removê-lo de lá. Quando clicamos no botão, ele aparece: "Alternar modal", que está no nosso clique. "Deveríamos alternar a modal, true." Se clicarmos novamente, a mesma coisa, "false". Já estamos reagindo a efeitos colaterais, ou seja, toda vez que o valor muda, aquela função será executada.
+
+Se ela será executada, o que queremos fazer? Vamos fazer um if tradicional. Se está aberta, ou seja, se queremos abrir essa modal, podemos chamar a função openDialog diretamente. Se isso for true, abre.
+
+```JSX
+useEffect(() => {
+    console.log('Deveríamos mostrar a modal?', isOpen)
+    if (isOpen) {
+        openDialog()
+    }
+}, [isOpen])
+```
+
+Sincronizando o estado do componente
+
+Vamos voltar e testar. Recarregamos, clicamos e funcionou, ele abriu. Mas quando clicamos em fechar, ainda estamos dessincronizados. Se clicarmos novamente, "Deveríamos alternar modal, false". Agora, para abrir a modal, temos que clicar novamente. Se fecharmos por fora, o valor está true. Se clicarmos, ele fecha. Repare que agora estamos dessincronizados. Por quê? Se estamos deixando o estado, quem vai controlar o estado, quem está usando a modal, temos que dizer que, da mesma forma que alguém define se a modal está aberta, essa mesma pessoa também deveria fazer algo no onClose. Ou seja, quando essa modal for fechada.
+
+De onde saiu esse onClose? Ainda não saiu, estamos criando agora. O que queremos fazer? No onClose, vamos fazer um ToggleDialog, que vai inverter. Agora, o que precisamos fazer é, no nosso diálogo, receber o onClose.
+
+```JSX
+export function Dialog({ isOpen, onClose }) {
+```
+
+Implementando a função de fechamento
+
+Um botão de fechar, vamos chamar essa função que estamos recebendo via prop. Então, se alguém chamar o onClose, ao clicar, nós chamamos o onClose.
+
+```JSX
+<button autoFocus onClick={onClose}>Close</button>
+```
+
+Precisamos interagir com ele no nosso cenário: se isOpen é verdadeiro, abre; caso contrário, fecha o diálogo.
+
+```JSX
+useEffect(() => {
+    console.log('Deveríamos mostrar a modal?', isOpen)
+    if (isOpen) {
+        openDialog()
+    } else {
+        closeDialog()
+    }
+}, [isOpen])
+```
+
+Verificando a sincronização do estado
+
+Basicamente, é isso: se for verdadeiro, abre o modal; se for falso, fecha.
+
+Vamos verificar se isso agora está sincronizado corretamente. Voltamos ao Chrome, recarregamos a página, clicamos em adicionar, ou seja, clicamos no botão e ele abriu o modal. Clicamos em fechar, o modal abriu e alternou o valor. Se clicarmos novamente no botão de adicionar, agora o fechar funciona, ou seja, está sincronizado. Por quê? A fonte de verdade sobre esse modal, sobre esse diálogo, não é mais interna. Ou seja, o diálogo por si só apenas recebe isso e reage. Quem controla o estado é o nosso app.jsx. Esse é o tipo de técnica que chamamos de elevar o estado. Não queremos que o nosso diálogo conheça isso; queremos delegar para quem está usando o modal. Quem está usando o modal, o app.jsx ou qualquer outro componente, é quem deve cuidar desse estado. O diálogo não fará isso porque não queremos ter regra de negócio. Não queremos ser nós a decidir quando estará aberto ou não. Queremos receber um valor que indica se está aberto ou não e chamar uma função que será implementada se alguém clicar no botão de fechar.
+
+Concluindo a implementação e próximos passos
+
+Repare na inversão que fizemos: tiramos essa responsabilidade do diálogo e a elevamos para o app.jsx. Fizemos dessa forma, mas existem várias maneiras de construir modais usando React, muitas mesmo. Trouxemos essa forma específica porque queríamos passar por esses dois hooks, o useRef e o useEffect, para que possamos conhecer essas ferramentas e adicioná-las ao nosso cinto de utilidades. Agora, já estamos mais fluentes no React, ou seja, nosso repertório está aumentando. Já conhecemos o useState, o useRef e o useEffect quando temos uma rede de dependência.
+
+Deixamos como referência um vídeo sobre o useRef, e claro que o Careca Barbudo também deixou um de referência sobre o useEffect. Há uma aula extra na Alura que fala exatamente sobre isso, hooks do React e useEffect. Se quisermos fazer um mergulho profundo e entender todo o poder do useEffect, porque só vimos uma parcela dele, podemos assistir a esse vídeo.
+
+Para já, o que queríamos fazer era elevar esse estado. Não queremos que o diálogo seja responsável por controlar esse estado, mas sim o componente mais acima. Com isso, já concluímos o que tínhamos para fazer neste momento, mas ainda há bastante coisa para implementar, como a lógica inteira desse CRUD: adicionar tarefas, remover tarefas e editar tarefas também. Portanto, por enquanto, era isso. Vamos lá, ainda há bastante coisa para rodar.
+
+### Aula 2 - Para saber mais: useRef
+
+Salve o/
+
+Continuando firme na missão de explorar os Hooks do React, hoje vamos entender de forma leve e direta o useRef, um daqueles Hooks que, quando bem usados, resolvem vários probleminhas que poderiam dar dor de cabeça. Bora dominar mais esse?
+
+Primeiro, o que é o useRef?
+
+O useRef é um Hook do React que permite armazenar um valor ou referenciar elementos do DOM sem causar re-renderizações no seu componente. É tipo aquele bloquinho de anotações que você deixa ao lado do código pra guardar algo sem que o React precise reagir visualmente.
+
+Como usar?  
+Para usar o useRef, você primeiro o importa:
+
+```JSX
+import { useRef } from 'react'; 
+```
+
+Depois cria a referência:
+
+```JSX
+const minhaRef = useRef(valorInicial); 
+```
+
+O valor inicial (valorInicial) pode ser qualquer coisa (número, objeto, array, até mesmo null). Importante: esse valor só é definido na primeira renderização.
+
+Exemplos práticos
+
+Guardar valores sem causar re-render  
+Vamos supor que você queira guardar quantas vezes um botão foi clicado, mas sem re-renderizar o componente a cada clique. Olha só que tranquilo:
+
+```JSX
+function ContadorCliques() { 
+const contadorRef = useRef(0); 
+ 
+function handleClick() { 
+contadorRef.current += 1; 
+alert(`Você clicou ${contadorRef.current} vezes!`); 
+} 
+
+return <button onClick={handleClick}>Clique aqui</button>; 
+} 
+```
+
+Percebeu que não causa re-render? Maravilhoso, né?
+
+Referenciando elementos do DOM  
+Outra utilidade incrível é manipular diretamente elementos do DOM. Vamos ver um exemplo clássico:
+
+```JSX
+function FocarInput() { 
+const inputRef = useRef(null); 
+function handleClick() { 
+inputRef.current.focus(); 
+} 
+return ( 
+<> 
+<input ref={inputRef} /> 
+<button onClick={handleClick}>Focar input</button> 
+</> 
+); 
+} 
+```
+
+Clicou, focou! Simples assim.
+
+Coisas importantes sobre o useRef
+
+- O .current do ref pode ser alterado diretamente sem re-renderizar o componente.
+- Não leia nem escreva ref.current durante a renderização do componente, pois pode causar comportamento imprevisível.
+- Se precisar usar um ref em um componente personalizado, você precisa passar a ref com a técnica chamada "forwardRef". (confere mais no [vídeo sobre useRef aqui](https://www.youtube.com/watch?v=BwRxBGsT_f0)).
+
+Dicas práticas e boas práticas
+
+- Use refs para dados que não afetam a interface visual diretamente.
+- Evite usar refs para dados que precisam ser exibidos ou causar atualizações visuais. Use o estado (useState) pra isso.
+
+Problemas comuns
+
+Um problema comum ao tentar usar refs é tentar atribuir diretamente a componentes personalizados:
+
+```JSX
+// errado 
+const meuRef = useRef(null); 
+<MyComponente ref={meuRef} /> 
+```
+
+Se precisar fazer isso, precisa usar o forwardRef. Dá uma conferida na [documentação oficial](https://react.dev/) ou no vídeo [useRef: como funciona esse React Hook](https://www.youtube.com/watch?v=BwRxBGsT_f0), disponível no canal da Alura, para entender mais sobre isso!
+
+### Aula 2 - Criando um componente reaproveitável - Vídeo 3
+
+Transcrição  
+Já refatoramos nosso componente e agora temos uma modal funcional. No entanto, atualmente, o conteúdo dela está fixo. Nosso objetivo é criar um componente reaproveitável, sem regras de negócio embutidas. Vamos continuar nessa direção.
+
+Para começar, vamos definir a estrutura básica do nosso componente Dialog. Inicialmente, podemos criar o componente com as propriedades isOpen, onClose e children, que serão passadas de fora:
+
+```JSX
+export function Dialog({ isOpen, onClose, children }) {
+    return (
+        <dialog open={isOpen} className="dialog">
+            <div className="btn-close-wrapper">
+                <button autoFocus onClick={onClose} className="btn-close">
+                    <IconClose />
+                </button>
+            </div>
+            {children}
+        </dialog>
+    );
+}
+```
+
+Importando e utilizando ícones
+
+Ao recarregar a página, verificamos que não há erros no console. Vamos seguir com a estilização da modal no Figma. A primeira coisa que precisamos é do ícone de fechar. No arquivo de preparação do ambiente, há um arquivo com todos os ícones que utilizaremos, incluindo outros que também serão necessários. Podemos importar o ícone de fechar:
+
+```JSX
+import { IconClose } from "../icons";
+```
+
+Voltando ao dialog, não queremos mais exibir o parágrafo fixo. Queremos que ele seja dinâmico, vindo de fora. Sabemos como fazer isso no React. Vamos cortar o parágrafo e colá-lo no app.jsx. Em vez de fechar o dialog diretamente, vamos passar o parágrafo como children. Isso é feito pegando a propriedade children que o React injeta, e renderizando-a dentro do componente.
+
+```JSX
+<Dialog isOpen={showDialog} onClose={toggleDialog}>
+    <p>This modal dialog has a groovy backdrop!</p>
+</Dialog>
+```
+
+Estilizando a modal no Figma
+
+Após salvar, testamos para ver se funciona. Está rodando no S5173, e ao clicar em exibir, continua funcionando, mas agora de forma reaproveitável.
+
+No Figma, precisamos trocar a cor. O cinza utilizado é 54D4D. Vamos ajustar isso no dialog.styles, trocando de 0 para 54D4D. Ao voltar para a aplicação, vemos que está mais próximo do desejado.
+
+Precisamos também mudar o background da modal. No Figma, o background é 1e1e1e. Vamos criar um seletor CSS para isso, evitando estilizar diretamente o HTML. Usaremos .dialog e aplicaremos background-color: #1e1e1e.
+
+```CSS
+.dialog {
+    background-color: #1E1E1E;
+    border: none;
+    border-radius: 16px;
+    padding: 16px;
+}
+```
+
+Ajustando bordas e botões
+
+Vamos ajustar o className para dialog e verificar se funcionou. No checklist, já está mais escurecido.
+
+Precisamos mexer na borda, que é arredondada. No Figma, o corner radius é de 16 pixels, e não há borda. Vamos aplicar border: none e border-radius: 16px no nosso dialog.
+
+Por fim, ajustaremos o botão de fechar, que fica na extrema direita. Em vez de exibir o texto "close", vamos usar o ícone de fechar que pegamos no arquivo de preparação do ambiente. O ícone é um SVG e deve ser posicionado corretamente à direita.
+
+O que podemos fazer é organizar o HTML para que fique mais estruturado. Vamos criar uma div dentro da seção de dados e atribuir a ela um class name chamado close-btn-wrapper, que será responsável por envolver o nosso botão de fechar. Aqui, estamos lidando com CSS puro, e existem várias maneiras de alinhar à direita. Neste caso, um text-align à direita já resolverá o problema.
+
+```CSS
+.close-btn-wrapper {
+    text-align: right;
+}
+```
+
+Finalizando a estilização
+
+Queremos também estilizar esse botão, então adicionaremos mais um class name. Vamos quebrar a linha para melhorar a legibilidade, adicionando autofocus, clique e class name btn-close. Agora, vamos estilizar. Inicialmente, mencionamos close-btn-wrapper, mas vamos reorganizar para que faça sentido semanticamente. Em vez de close-btn, usaremos btn-close-wrapper, o que agora faz sentido.
+
+```CSS
+.btn-close {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+```
+
+Vamos ajustar o nosso estilo na área de style. No index, vamos inverter btn por close, resultando em btn-close-wrapper e btn-close. Isso foi feito para manter a consistência entre btn-close e o sufixo wrapper. Agora, o que queremos fazer com o btn-close é definir um background-color transparente, remover a borda com border: none e alterar o cursor para pointer. Isso deve ser suficiente para alcançar o resultado desejado.
+
+No Chrome, ao passar o mouse sobre o botão, ele já exibe o ícone de mãozinha, e o clique ainda funciona. Estamos quase lá. Precisamos verificar se o espaçamento interno está correto. No elemento dialog, o padding padrão é de 16 pixels para todos os lados. No Figma, o botão de fechar tem 8 pixels de espaçamento para cima e 16 para baixo. Podemos manter como está ou definir explicitamente um padding de 16 pixels no CSS para garantir consistência.
+
+Ajustando opacidade e finalizando
+
+Olhando no Figma, parece que é isso. O conteúdo interno da modal vem de fora, então não precisamos estilizar essa parte no componente dialog. Com isso, conseguimos deixar a modal na nossa dialog sem problemas. Ela já está bem parecida, recebendo o children, e agora podemos passar o input e o botão do app.jsx para dentro. Assim, temos uma modal reaproveitável e estilizada conforme o Figma.
+
+A única coisa que falta é ajustar a opacidade, pois no Figma ela não é tão baixa. Vamos aumentá-la para 85, o que a deixará mais parecida com o design original.
+
+```CSS
+::backdrop {
+    background-color: #504D4D;
+    opacity: 0.85;
+}
+```
+
+Agora está tudo certo para continuarmos evoluindo nossas funcionalidades.
+
+Resumindo o que fizemos: aplicamos muito CSS. No VS Code, formatamos o documento para garantir que tudo esteja correto. Criamos o seletor dialog e aplicamos vários estilos, como cor de fundo, borda, border-radius, padding, e alinhamos o botão de fechar à direita. Estilizamos o próprio botão de fechar para remover o estilo cinza padrão do HTML. A dialog agora está estilizada, mas ainda há muito a ser feito. Vamos continuar trabalhando.
+
+### Aula 2 - Para saber mais: useEffect e suas possibilidades
+
+Continuando firme na nossa trilha com React, hoje vamos aprofundar em um dos Hooks mais usados e que gera muitas dúvidas (e bugs também, sejamos sinceros): o useEffect. Bora desvendar esse carinha que é fundamental pra sua aplicação funcionar lindamente!
+
+O que é o useEffect?
+
+O useEffect é um Hook do React que permite executar efeitos colaterais nos componentes funcionais. Efeitos colaterais são operações que afetam algo fora do componente, como buscar dados numa API, adicionar ouvintes de eventos ou modificar o DOM diretamente.
+
+A estrutura básica é essa aqui:
+
+```JSX
+useEffect(() => { 
+// efeito colateral aqui 
+}, [dependências]); 
+```
+
+Mas calma, vamos explicar direitinho cada detalhe disso.
+
+Array de dependências
+
+Esse array mágico ([]) controla quando seu efeito vai rodar:
+
+- Sem array: o efeito roda sempre que o componente renderizar.
+- Array vazio ([]): o efeito roda só uma vez, logo após o componente montar.
+- Com dependências ([variável]): o efeito roda quando uma ou mais dependências mudarem.
+
+Array vazio - rodar uma vez só
+
+```JSX
+useEffect(() => { 
+console.log("Componente montado!"); 
+}, []); 
+```
+
+Perfeito pra buscar dados iniciais!
+
+```JSX
+Com dependências
+useEffect(() => { 
+console.log(`O valor mudou para: ${valor}`); 
+}, [valor]); 
+```
+
+Sempre que valor mudar, o efeito roda novamente.
+
+Função de cleanup (limpeza)
+
+Às vezes, precisamos "limpar" nosso efeito pra evitar bugs e vazamentos de memória. Para isso, usamos uma função de cleanup, que é executada antes do efeito rodar novamente ou quando o componente desmontar.
+
+Exemplo com cleanup:
+
+```JSX
+useEffect(() => { 
+const handleResize = () => console.log(window.innerWidth); 
+window.addEventListener('resize', handleResize); 
+
+// Função de cleanup 
+return () => window.removeEventListener('resize', handleResize); 
+}, []); 
+```
+
+Aqui, ao desmontar o componente, o evento de resize é removido. Show de bola!
+
+Cuidados importantes
+
+- Nunca minta pro array de dependências! Se você usa algo dentro do efeito, coloque no array.
+- Evite dependências desnecessárias que possam causar loops infinitos.
+
+Quer se aprofundar ainda mais?
+
+Dá uma conferida nesses materiais incríveis que vão reforçar seu aprendizado:
+
+- [Entenda de vez o hook useEffect e transforme seu código React](https://medium.com/@marcosviniciosneves/entenda-de-vez-o-hook-useeffect-e-transforme-seu-c%C3%B3digo-react-39245296ef7e)
+- [Alura+: Hooks do React - useEffect](https://cursos.alura.com.br/extra/alura-mais/hooks-do-react-useeffect-c1533)
+
+### Aula 2 - Criando o Input - Vídeo 4
+
+Transcrição  
+Vamos prosseguir com o desenvolvimento da nossa aplicação. Precisamos agora evoluir a aplicação implementando o TextInput, que é um input de texto. Este componente ainda não existe na aplicação, então vamos criá-lo juntos.
+
+Primeiramente, vamos criar um novo arquivo para o componente TextInput. O nome do arquivo deve ser TextInput, com "T" e "I" maiúsculos, dentro da pasta index.jsx. Também vamos criar o arquivo de estilo, text-input.style.css.
+
+Criando e exportando a função TextInput
+
+No index.jsx, logo na primeira linha, faremos um import do CSS para não esquecermos:
+
+```JSX
+import './text-input.style.css';
+```
+
+Em seguida, vamos exportar a função TextInput, com "T" e "I" maiúsculos. Esta função receberá props e retornará um input em código JSX:
+
+```JSX
+export function TextInput(props) {
+    return <input />;
+}
+```
+
+Tudo que recebermos em props será espalhado dentro do TextInput:
+
+```JSX
+export function TextInput(props) {
+    return <input {...props} />;
+}
+```
+
+E vamos sobrescrever com um className, que queremos controlar, chamado text-input:
+
+```JSX
+export function TextInput(props) {
+    return <input {...props} className='text-input'/>;
+}
+```
+
+Estilizando o componente TextInput
+
+Vamos trazer esse seletor para o nosso arquivo CSS e começar a aplicar os estilos:
+
+```CSS
+.text-input {
+    font-size: 16px;
+    line-height: 150%;
+    color: #EAEAEA;
+    border-radius: 24px;
+    border: 1px solid #EAEAEA;
+    width: 360px;
+    max-width: 100%;
+    padding: 12px;
+    text-align: center;
+    background-color: transparent;
+}
+```
+
+No Figma, ao selecionar o texto, podemos ver à direita, na seção de tipografia, que ele está como parágrafo médio. Ao clicar no ícone para editar esses estilos, vemos que a fonte é Montserrat, que é o padrão, com tamanho 16 e line-height de 150%. Vamos aplicar todas essas configurações.
+
+Definindo propriedades adicionais e ajustes de layout
+
+Text-input: queremos um font-size (tamanho da fonte) de 16 pixels, que pegamos anteriormente. Nosso line-height (altura da linha) é de 150%. Precisamos agora definir a cor, que será cinza claro. Vamos copiar o código hexadecimal do Figma. A cor será aplicada também no placeholder (texto de preenchimento) do text-input, já que o fundo é escuro:
+
+```CSS
+.text-input::placeholder {
+    color: #EAEAEA;
+}
+```
+
+Vamos agora definir o border-radius (raio da borda). O text-input terá um border-radius de 24 pixels. A borda em si será cinza claro, com 1 pixel de espessura, sólida, utilizando o código hexadecimal copiado. O padding (recuo interno) será de 12 pixels. Vamos definir que o tamanho máximo é de 100% para que não ultrapasse em telas menores. A largura será de 360 pixels, conforme indicado no auto layout do Figma.
+
+Aplicando box-sizing e verificando a implementação
+
+Para garantir que todos os elementos se ajustem corretamente, utilizaremos a propriedade box-sizing: border-box. Isso será aplicado globalmente no index.css, onde já temos estilos aplicados no body, como background (fundo), sem margem, e a fonte padrão. Vamos adicionar um asterisco para definir que o padrão é box-sizing: border-box:
+
+```CSS
+* {
+    box-sizing: border-box;
+}
+```
+
+Essa propriedade considera o espaçamento ao calcular o tamanho máximo do elemento, evitando que ele fique maior do que o desejado.
+
+Testando o componente TextInput no aplicativo
+
+Agora, vamos verificar se tudo está funcionando corretamente. Vamos copiar o texto que queremos passar como placeholder e inserir no nosso app.js. Vamos criar uma tag form e um text-input dentro dela:
+
+<Dialog isOpen={showDialog} onClose={toggleDialog}>
+    <form>
+        <TextInput placeholder="Digite o item que deseja adicionar"/>
+    </form>
+</Dialog>
+```
+
+O VS Code já identificou a prop (propriedade) que queremos passar: placeholder. Lembrando que, da forma como fizemos, recebemos props e as passamos adiante, permitindo que qualquer propriedade, como onChange, onBlur, ou id, seja utilizada.
+
+Ajustando detalhes de estilo e layout
+
+Vamos verificar como ficou. O fundo não está com a cor desejada, então ajustaremos para que o background-color (cor de fundo) seja transparente. No Figma, o texto do placeholder está alinhado corretamente, e a cor da fonte está adequada.
+
+Há um detalhe no espaçamento entre o botão de fechar e o corpo da modal. No Figma, o espaçamento é de 10 pixels. Vamos corrigir isso criando uma div para envolver o conteúdo e aplicando um className de body:
+
+```JSX
+<div className="body">
+    {children}
+</div>
+```
+
+No estilo, vamos adicionar um padding de 10 pixels no .dialog .body:
+
+```CSS
+.dialog .body {
+    padding: 10px 0;
+}
+```
+
+Agora, o espaçamento está correto, apenas para cima e para baixo, com 10 pixels.
+
+Nosso text-input está funcionando, e o formulário está ganhando vida, mas ainda temos mais ajustes a fazer. Vamos continuar!
+
+### Aula 2 - Desafio: estilizando o botão
+
+No próximo vídeo, vamos seguir com a construção do nosso formulário — e para isso, precisamos estilizar o botão “Salvar Item” de forma reutilizável, do jeitinho que o Figma está propondo.
+
+Mas antes de te mostrar como eu fiz, vou te propor um desafio: que tal você mesmo tentar criar esse componente primeiro?
+
+Use o que já aprendemos sobre props, estilização e componentização. Isse é um conteúdo que nós já temos, certo? Crie o botão, estilize com base no layout e teste como ele se comporta.
+
+Isso vai te ajudar a ganhar segurança e praticar como um dev de verdade.
+
+Feito isso, dá um play no vídeo e confere com a minha solução.
+
+Bora praticar?
+
+Opinião do instrutor
+
+Deixei a forma como solucionei essa estilização no vídeo. Dá um play ;)
+
+### Aula 2 - Finalizando o formulário - Vídeo 5
+
+Transcrição  
+Vamos iniciar a criação de um botão reaproveitável. Primeiramente, abrimos o VS Code, fechamos tudo que estava aberto e, dentro da pasta "componente", criamos um novo arquivo chamado button-index.jsx e, obviamente, o nosso estilo button.style.css.
+
+No arquivo index, antes de começarmos a codificar, propomos um desafio: utilizar o conhecimento que já temos sobre props e estilização para criar esse componente de botão. Com acesso ao Figma, sugerimos pausar o vídeo, criar o componente, experimentar e codificar. Após finalizar, podemos comparar nossa solução com a proposta. Lembramos que não há solução errada, apenas diferentes formas de estilizar um componente desse tipo. O desafio está lançado: pause, codifique e depois compare.
+
+Criando o componente de botão
+
+Agora, vamos discutir como criar esse componente de botão. No index.jsx, a primeira ação é importar o CSS com:
+
+```JSX
+import './button.style.css';
+```
+
+Em seguida, exportamos a função Button, que recebe props. Vamos fazer o retorno de um botão, mas precisamos considerar que teremos children. Assim, fazemos o return de um botão com children e um className de btn.
+
+```JSX
+export function Button({ children, ...rest }) {
+    return <button {...rest} className="btn">{children}</button>
+}
+```
+
+Utilizamos destructuring para pegar children e o restante das propriedades, que chamamos de rest. Podemos nomear como quisermos, mas o importante é o operador. Fazemos um spread de tudo que não é children e colocamos children dentro do botão.
+
+Estilizando o botão no Figma
+
+No app.jsx, logo abaixo do TextInput, chamamos o nosso Button com o texto "Salvar item". O VS Code já importa automaticamente para nós.
+
+```JSX
+import { Button } from "./components/Button";
+...
+
+<Button>Salvar item</Button>
+```
+
+Vamos ao Figma para estilizar o botão. Selecionamos o botão e copiamos o background roxo primário, hexadecimal #877EED, para o button.style.css. Definimos background-color, border-radius de 24px, e removemos a borda com border: none.
+
+```CSS
+.btn {
+    background-color: #877EED;
+    border-radius: 24px;
+    border: none;
+    padding: 16px 12px;
+    font-size: 16px;
+    line-height: 150%;
+    font-weight: 700;
+    color: #FFF;
+    cursor: pointer;
+}
+```
+
+Verificamos o estado hover no Figma, que muda apenas a cor do fundo.
+
+```CSS
+.btn:hover {
+    background-color: #544ACB;
+}
+```
+
+Ajustando o estilo do botão
+
+Após ajustes, percebemos que o font-weight estava muito alto, então reduzimos para 600 e depois para 500, para ficar mais próximo do desejado. Ajustamos o padding para 12px na horizontal, verificando se está de acordo com o Figma.
+
+Por fim, estruturamos o botão dentro de um formulário para que fique um abaixo do outro e centralizado, conforme o design no Figma.
+
+Criando o formulário de tarefas
+
+Para realizar essa tarefa, existem várias abordagens possíveis. Antes de lançar o desafio, é importante destacar que estamos tomando cuidado para criar componentes sem regras de negócio. Se continuarmos construindo o formulário onde ele está, o app.jsx conhecerá a implementação, ou seja, a camada visual desse formulário. Portanto, podemos separar isso em um componente cuja responsabilidade será apenas submeter o to-do.
+
+Atualmente, temos todo item e todo list. Vamos criar um novo arquivo todo form e criar um index.jsx. Nele, faremos o export da função todo form, que receberá uma propriedade chamada onSubmit. Quando alguém submeter esse formulário, algo será feito. Vamos retornar o JSX que já temos, retirando-o do app.jsx.
+
+```JSX
+export function ToDoForm({ onSubmit }) {
+    return (
+        <form action={onSubmit} className="todo-form">
+            <TextInput placeholder="Digite o item que deseja adicionar" />
+            <Button>Salvar item</Button>
+        </form>
+    )
+}
+```
+
+Estilizando o formulário de tarefas
+
+Após colar e formatar o documento, o onSubmit será configurado para chamar uma ação. A ação desse formulário será chamar a função onSubmit. Como estamos usando form e action, o próprio React Compiler cuidará para que a página não seja recarregada.
+
+Precisamos estilizar o formulário. Podemos organizá-lo de forma adequada. Existem várias maneiras de fazer isso, e optaremos por usar o Flex. A camada de estilização não possui um único jeito certo, e o fato de haver diferentes abordagens não significa que algumas estejam erradas. Devemos apenas evitar seguir um antepadrão, algo que discutiremos durante o curso.
+
+Desafio de organização do formulário
+
+O desafio está lançado: organizar o formulário para exibir tudo corretamente, um elemento abaixo do outro. Se você pausou para fazer isso, ótimo! Vamos agora para a solução. No VS Code, criaremos um novo arquivo chamado todo-form.style.css, seguindo o padrão de código que estamos utilizando. Importaremos esse arquivo no todo form com:
+
+```JSX
+import './todo-form.style.css';
+```
+
+No app.jsx, chamaremos o todo form, mas não passaremos nenhuma função inicialmente. No Chrome, ao recarregar a página, pode ocorrer um erro indicando que o text input não foi definido. Isso ocorre porque não o importamos. Portanto, importaremos o text input e o button.
+
+```JSX
+import { Button } from '../Button';
+import { TextInput } from '../TextInput';
+import './todo-form.style.css';
+
+export function ToDoForm({ onSubmit }) {
+    return (
+        <form action={onSubmit} className="todo-form">
+            <TextInput placeholder="Digite o item que deseja adicionar" />
+            <Button>Salvar item</Button>
+        </form>
+    )
+}
+```
+
+Ajustando o layout do formulário
+
+Após recarregar, se clicarmos no botão de adicionar, o formulário estará desorganizado. Vamos ajustar isso. No VS Code, adicionaremos um className ao formulário, chamando-o de todo-form para evitar colisões com outros formulários. Configuraremos o display como flex, flex-direction como column, e o gap como 10 pixels. Queremos centralizar tudo, então usaremos justify-content: center e align-items: center.
+
+```CSS
+.todo-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    padding: 0 40px;
+}
+```
+
+No Chrome, o formulário estará mais parecido com o desejado, mas o espaçamento lateral ainda não estará ideal. Não queremos alterar o espaçamento da modal, que é de 40 pixels apenas para os lados. Portanto, o formulário terá um padding de 0 para cima e para baixo, e 40 para os lados. O gap entre os elementos é de 10 pixels.
+
+Implementando a ação de submissão do formulário
+
+No checklist de estudo, ao salvar, a página recarrega e não faz nada, exibindo um objeto na URL. Precisamos implementar essa ação. No app.jsx, passaremos um onSubmit para adicionar um to-do. A função addToDo será uma arrow function. Optamos por usar arrow functions por estilo de código, pois a sintaxe é mais agradável visualmente. Em termos de performance, não há diferença entre usar uma ou outra, mas é importante seguir um padrão.
+
+```JSX
+const addTodo = () => {
+    console.log('precisamos add um novo todo');
+}
+```
+
+No cenário atual, queremos fazer um console.log para adicionar um novo to-do. Após recarregar a página, ao abrir o formulário e clicar em salvar item, a página ainda recarrega, o que não é o comportamento desejado. O submit do formulário está tentando enviar os parâmetros, mas não está funcionando corretamente. Precisamos corrigir essa ação do formulário para que ele não recarregue a página ao ser submetido. Estamos progredindo lentamente para alcançar o cenário desejado. Agora, precisamos resolver esse bug e finalizar a implementação. Quando alguém submeter o formulário, queremos adicionar um novo to-do à nossa lista. Vamos investigar o bug para entender o que está acontecendo.
+
+### Aula 2 - Desafio: estruturando layout
+
+No vídeo, eu te mostrei como estruturei o layout do nosso formulário, centralizando os elementos e organizando o espaçamento entre eles.
+
+Mas como comentei, existem várias formas diferentes de chegar no mesmo resultado — e isso é algo super comum no dia a dia de quem desenvolve interfaces.
+
+Então aqui vai o convite: tente fazer do seu jeito.
+
+Use flex, explore diferentes combinações de gap, padding, alinhamento… o importante é você praticar e começar a encontrar seu próprio estilo de resolver os desafios de layout.
+
+Se quiser, compartilha a sua solução com a gente! Vai ser massa ver como você pensou e trocarmos ideias sobre outras possibilidades.
+
+Bons estudos!
+
+Opinião do instrutor
+
+A solução da forma como resolvi esse desafio foi feita no vídeo "Finalizando o formulário" Se tiver com dúvida, dá um play nessa aula.
+
+### Aula 2 - Caçando bugs e aplicando boas práticas - Vídeo 6
+
+Transcrição  
+Vamos começar a integrar os snippets de código à transcrição, seguindo a ordem didática apresentada.
+
+Na transcrição, começamos discutindo um bug relacionado ao onSubmit no componente TodoForm. Inicialmente, o onSubmit não foi desestruturado corretamente, o que causou problemas na execução da função ao submeter o formulário.
+
+Primeiro, vamos ver como o TodoForm foi inicialmente definido:
+
+```JSX
+export function TodoForm(onSubmit)
+```
+
+Aqui, o onSubmit foi passado diretamente como argumento, mas isso não está correto, pois precisamos desestruturar as props.
+
+Corrigindo a desestruturação das props
+
+Em seguida, o código foi ajustado para:
+
+```JSX
+export function TodoForm(props)
+```
+
+No entanto, ainda não estamos utilizando o onSubmit corretamente. Precisamos desestruturar as props para acessar onSubmit diretamente. O código foi então corrigido para:
+
+```JSX
+export function TodoForm({ onSubmit })
+```
+
+Agora, com o onSubmit desestruturado, podemos utilizá-lo corretamente no formulário. Vamos ver como o formulário é construído:
+
+```JSX
+export function TodoForm({ onSubmit }) {
+  return (
+    <form action={onSubmit} className='todo-form'>
+      <TextInput placeholder='Digite o item que deseja adicionar' />
+      <Button>
+        Salvar item
+      </Button>
+    </form>
+  )
+}
+```
+
+Com essa estrutura, o onSubmit é passado corretamente para o formulário, permitindo que a função seja executada ao submeter.
+
+Implementando a função toggleDialog
+
+Voltando à transcrição, discutimos a necessidade de fechar o modal após adicionar um novo todo. Para isso, implementamos a função toggleDialog:
+
+```JSX
+const toggleDialog = () => {
+  setShowDialog(!showDialog)
+}
+```
+
+Essa função alterna o estado do diálogo, permitindo que o modal seja fechado após a adição de um novo item.
+
+Garantindo a validação do formulário
+
+Além disso, para garantir que o formulário não seja submetido sem preenchimento, adicionamos o atributo required ao TextInput:
+
+```JSX
+<TextInput
+  placeholder='Digite o item que deseja adicionar'
+  required
+/>
+```
+
+Com isso, o formulário agora exige que o campo seja preenchido antes de permitir o envio.
+
+Separando responsabilidades no projeto
+
+Por fim, a transcrição menciona a separação de responsabilidades e a importância de desacoplar a lógica da apresentação visual. Isso é refletido na estrutura do projeto, onde o app.jsx gerencia a lógica, enquanto componentes como TodoForm e Dialog cuidam da apresentação.
+
+A prática de separar responsabilidades é essencial para manter o código organizado e fácil de manter, especialmente em projetos React. Com essas correções e melhorias, o bug foi resolvido, e o comportamento do formulário e do modal está funcionando conforme esperado.
+
+### Aula 2 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A prática de separar a lógica de negócios da lógica de apresentação em componentes React.
+- O uso do hook useState para gerenciar o estado e useEffect para efeitos colaterais.
+- A técnica de elevar o estado para promover um fluxo de dados claro.
+- Como transformar componentes fixos em componentes reutilizáveis usando children.
+- A estilização de componentes com CSS personalizados seguindo especificações de design.
+- A criação de componentes de input de texto e botão reutilizáveis no React.
+- O controle de submissão de formulários em React sem recarregar a página.
+- A implementação da lógica de fechamento automático de modais com toggle.
+
 ### Aula 2 -  - Vídeo 8
 ### Aula 2 -  - Vídeo 9

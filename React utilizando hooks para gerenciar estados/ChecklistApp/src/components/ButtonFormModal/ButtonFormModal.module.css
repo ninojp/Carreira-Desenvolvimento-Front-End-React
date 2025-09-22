@@ -1,0 +1,14 @@
+.btnFormSalvar{
+    max-width: fit-content;
+    padding: 12px 16px;
+    background-color: #877EED;
+    line-height: 150%;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 500;
+    border: none;
+    border-radius: 24px;
+}
+.btnFormSalvar:hover{
+    background-color: #544ACB;
+}

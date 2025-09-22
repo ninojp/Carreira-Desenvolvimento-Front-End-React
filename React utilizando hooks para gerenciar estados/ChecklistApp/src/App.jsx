@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { ChecklistsWrapper } from "./components/ChecklistsWrapper"
 import { Container } from "./components/Container"
 import DialogModal from "./components/DialogModal/DialogModal"
@@ -10,8 +11,9 @@ import { SubHeading } from "./components/SubHeading"
 import TestesComponent from "./components/TestesComponent/TestesComponent"
 import { ToDoItem } from "./components/ToDoItem"
 import { ToDoList } from "./components/ToDoList"
+import ToDoForm from "./components/ToDoForm/ToDoForm"
 
-const todos = [
+const toDoLista = [
   {
     id: 1,
     description: "JSX e componentes",
@@ -53,6 +55,16 @@ const completed = [
 ]
 
 function App() {
+  //useState é usado para criar estado em componentes funcionais
+  const [mostraDialogST, setMostraDialogST] = useState(false);
+  const toggleDialogModal = () => {
+    setMostraDialogST(!mostraDialogST);
+    console.log('Alternar Modal Dialog', mostraDialogST);
+  };
+  const adicionaToDo = () => {
+    console.log('Adicionando novo ToDo');
+    toggleDialogModal();
+  };
 
   return (
     <main>
@@ -62,12 +74,10 @@ function App() {
             <IconSchool /> Plano de estudos
           </Heading>
         </Header>
-        <DialogModal />
-        <TestesComponent />
         <ChecklistsWrapper>
           <SubHeading>Para estudar</SubHeading>
           <ToDoList>
-            {todos.map(function (t) {
+            {toDoLista.map(function (t) {
               return <ToDoItem key={t.id} item={t} />
             })}
           </ToDoList>
@@ -78,10 +88,18 @@ function App() {
             })}
           </ToDoList>
           <Footer>
-            <FabButton>
+            <DialogModal estaAberta={mostraDialogST} estaFechada={toggleDialogModal}>
+              <ToDoForm onSubmit={adicionaToDo}/>
+            </DialogModal>
+            <FabButton onclick={toggleDialogModal} aria-label="Adicionar novo item">
               <IconPlus />
             </FabButton>
           </Footer>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginTop: '20px' }}>
+            <div>
+            <TestesComponent />
+            </div>
+          </div>
         </ChecklistsWrapper>
       </Container>
     </main>
