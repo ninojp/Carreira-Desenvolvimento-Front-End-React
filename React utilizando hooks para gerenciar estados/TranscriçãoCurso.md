@@ -2597,15 +2597,17 @@ Criar um arquivo de contexto, como AppointmentContext.js, utilizando a função 
 
 > Correta, pois essa abordagem utiliza a Context API de forma eficaz, centralizando o estado e permitindo que todos os componentes filhos acessem e modifiquem o estado dos agendamentos sem prop drilling, garantindo uma gestão de estado mais eficiente e organizada.
 
-### Aula 4 - Alternativa: persistência de dados no local storage
+### Aula 4 - Alternativa: persistência de dados no local storage - Exercício
 
 Você é a pessoa responsável pela manutenção de um aplicativo React de lista de tarefas que utiliza o localStorage para persistir os itens (todos) entre as sessões do usuário. Recentemente, alguns usuários relataram que a aplicação "quebra" (crash) ao ser carregada, exibindo um erro no console relacionado à falha na conversão de dados do localStorage para um formato JavaScript. A investigação revelou que, em alguns casos, o localStorage está retornando uma string inválida ou um valor que não é um JSON válido para a chave que armazena os todos.
 
 A linha de código responsável por inicializar o estado dos todos no TodoProvider é semelhante a esta:
 
+```JSX
 const savedTodos = localStorage.getItem('todos');
 const initialTodos = savedTodos ? JSON.parse(savedTodos) : [];
-Copiar código
+```
+
 Considerando o cenário descrito, qual a melhor estratégia teórica para garantir que a aplicação inicie de forma robusta e não falhe, mesmo que os dados recuperados do localStorage estejam corrompidos ou em um formato inesperado?
 
 Resposta:  
@@ -2626,5 +2628,722 @@ Nesta aula, aprendemos:
 - A serializar e desserializar dados usando JSON.stringify e JSON.parse.
 - A iniciar estados condicionalmente com dados do localStorage ou padrão vazio
 
-## Aula 5 - 
-### Aula 5 -  - Vídeo 8
+## Aula 5 - Finalizando o CRUD
+
+### Aula 5 - Contexto controlando a modal - Vídeo 1
+
+Transcrição  
+Vamos pensar agora no nosso modelo de edição. O que precisamos fazer? Quando clicarmos no botão de editar, queremos abrir a modal. No entanto, desejamos que o input esteja preenchido com o valor da descrição da tarefa. Ele não pode estar vazio. Se queremos editar, a modal deve abrir já preenchida.
+
+Podemos usar o VSCode para isso. Vamos abrir o nosso formulário. Temos uma propriedade chamada defaultValue. Se preenchermos esse defaultValue, ao recarregar a página, o valor padrão já estará presente quando abrirmos. Esse valor padrão pode ser vazio. Podemos receber esse defaultValue por props e vinculá-lo. O nosso formulário de tarefas não possui regra de negócio; ele apenas faz o broadcast, avisando que alguém submeteu o formulário. Queremos também informar que há um valor padrão a ser preenchido nesse input.
+
+Definindo o defaultValue no componente de formulário
+
+Para começar, vamos definir o defaultValue no nosso componente de formulário:
+
+```JSX
+export function TodoForm({ onSubmit, defaultValue }) {
+  // Aqui, utilizamos o defaultValue recebido por props
+}
+```
+
+Quem abre a modal é o nosso app.JTSX. Ele faz um showDialog, invertendo o estado com o toggle. Precisamos verificar se estamos editando ou inserindo um novo item. Se for um novo, o formulário deve estar padrão; caso contrário, devemos passar um defaultValue.
+
+Migrando lógica para o provider
+
+Vamos migrar essa lógica para o nosso provider. Ao abrir a modal, ela refletirá no cenário atual de edição. Vamos migrar o useState para o provider. Trouxemos o useState e o toggleDialog para lá. Queremos disponibilizar o showDialog e a função de toggle. No contexto, além de pegar o toDoos e o addToDoos, vamos pegar o showDialog e o toggleDialog também.
+
+Primeiro, definimos o estado para controlar a visibilidade do diálogo:
+
+```JSX
+const [showDialog, setShowDialog] = useState(false);
+```
+
+E criamos a função para alternar o estado do diálogo:
+
+```JSX
+const toggleDialog = () => {
+  setShowDialog(!showDialog);
+}
+```
+
+Testando a funcionalidade de abertura e fechamento da modal
+
+Transferimos essa lógica. O VSCode está reclamando que estamos chamando o useState sem uso. Vamos corrigir isso. Temos o handleSubmit, o showDialog e o toggleDialog. Vamos testar se o cenário continua funcionando. Ao recarregar a página, abrir e fechar a modal, tudo está funcionando corretamente.
+
+Agora, quando alguém clicar no nosso toDoItem, queremos abrir a edição. No botão de editar, que possui um ícone de lápis, queremos chamar uma função, seguindo o mesmo padrão do delete e do toggle. Vamos chamar openFormToDoDialog. Queremos passar o nosso item, mas esse método ainda não existe. Precisamos implementá-lo no nosso contexto.
+
+Implementando a função openFormTodoDialog
+
+No ToDoProvider, vamos implementar a função openFormTodoDialog, que receberá o toDo. Queremos disponibilizar isso no valor do nosso provider. Quando alguém abrir o formToDoDialog, queremos executar um toggleDialog.
+
+```JSX
+const openFormTodoDialog = (todo) => {
+  if (todo) {
+    setSelectedTodo(todo);
+  }
+  setShowDialog(true);
+}
+```
+
+Nosso ToGoDialog inverte o valor, mas em certos cenários isso pode ser um pouco frágil. Queremos garantir que, ao invés de usar o conceito de toggle, possamos abrir e fechar de forma mais semântica, como "abre por favor" e "fecha por favor". Assim, ao invés de usar ToGoDialog, podemos transformar isso em openFormToDoDialog, passando o valor true. Para fechar, faremos o inverso, utilizando close, que passará false. Vamos remover duplicações, pois isso estava gerando erros, como o close que foi declarado, mas não utilizado. Agora, não temos mais o ToGoDialog, mas sim open e close, onde open é usado uma vez para abrir ou fechar.
+
+Refatorando a lógica de abertura e fechamento
+
+No aplicativo, substituímos o ToGo por openForm. No clique para abrir, utilizamos open, e no clique para fechar, utilizamos close. A ideia de abrir e fechar a modal está agora separada.
+
+Por que estamos fazendo isso se já estava funcionando? Vamos implementar uma lógica onde, ao abrir uma modal, podemos ou não receber um todo. Se recebermos, precisamos selecioná-lo. Para isso, utilizaremos useState e guardaremos em uma constante selectedToDo e setSelectedToDo. Se tivermos um todo, faremos setSelectedToDo com o valor recebido. Caso contrário, podemos abrir a modal sem selecionar nada. Disponibilizaremos isso para todos, então selectedToDo estará acessível.
+
+```JSX
+const [selectedTodo, setSelectedTodo] = useState();
+```
+
+Se tivermos um todo, faremos setSelectedToDo, e no close, queremos limpar com setSelectedToDo nulo. Se não houver, não disponibilizaremos. Precisamos pegar selectedToDo e passá-lo como valor padrão no formulário. No nosso formulário, já temos isso. Vamos quebrar a linha no submit e passar um valor padrão: selectedToDo. Esse valor pode ser nulo, então utilizamos ?.description para evitar acessar a propriedade description se for nulo.
+
+```JSX
+defaultValue={selectedTodo?.description}
+```
+
+Testando e corrigindo o fechamento da modal com esc
+
+Refatoramos bastante código. Removemos ToggleModal e ToggleDialog, criamos funções para abrir e fechar, e agora, além de fechar, fazemos setSelectedToDo nulo. Vamos testar no Chrome. Recarregamos a página e verificamos o console para erros. Tudo está funcionando corretamente ao clicar em editar e fechar.
+
+No entanto, ao usar um dialog, ao pressionar esc, a modal fecha pelo evento do JavaScript, mas se abrirmos novamente, não funcionará, pois o estado está travado. Precisamos vincular o fechamento da modal com esc ao nosso contexto. O React precisa estar atento a esses eventos de fechamento de modal. Vamos implementar isso utilizando useEffect, mas de uma forma diferente.
+
+### Aula 5 - Ouvindo o evento de close - Vídeo 2
+
+Transcrição  
+O bug está presente, e agora precisamos resolver essa situação. Quando abrimos o modal e o fechamos com a tecla ESC, ele não abre novamente. Precisamos vincular e controlar esse evento de abrir o modal. Devemos ouvir e reagir a ele para que o comportamento de fechar o modal seja acionado mesmo quando alguém pressionar a tecla ESC.
+
+Vamos para o VS Code. O que queremos fazer? Abrir o dialog. Se já estamos usando o elemento correto, o HTML dialog, ele emite um evento quando é fechado, o evento de close. Assim, conseguimos reagir a ele. Precisamos de um efeito para fazer isso, e logo entenderemos o motivo. Vamos chamar o useEffect e passar uma arrow function. Já deixaremos a lista de dependências preparada.
+
+Implementando o useEffect para gerenciar eventos
+
+Primeiro, vamos iniciar o useEffect:
+
+```JSX
+useEffect()
+```
+
+Agora, vamos completar a estrutura básica do useEffect com uma função de efeito e uma lista de dependências vazia:
+
+```JSX
+useEffect(() => {
+
+}, [])
+```
+
+Em seguida, vamos pegar o nosso dialog com const dialog = dialogRef.current. Esse elemento pode ser nulo, então sempre devemos usar um operador de nulidade para evitar que o código quebre.
+
+```JSX
+const dialog = dialogRef.current
+```
+
+Queremos adicionar um EventListener. O evento que queremos ouvir é o de close. Como sabemos que o modal tem um evento de close? Porque conhecemos o elemento dialog. Se ainda não o conhecemos, podemos consultar a documentação da Mozilla, que contém muitas informações sobre isso.
+
+```JSX
+dialog?.addEventListener('close', onClose)
+```
+
+Finalizando o useEffect e testando a solução
+
+Toda vez que esse evento ocorrer, queremos chamar a função closeDialog, que é responsável por fechar o modal. Usamos essa função internamente, mas também fazemos um broadcast de um evento de close. A lista de dependências já indica que temos uma dependência, que é o closeDialog.
+
+Aqui está o código completo do useEffect até agora:
+
+```JSX
+useEffect(() => {
+    const dialog = dialogRef.current
+    dialog?.addEventListener('close', onClose)
+}, [onClose])
+```
+
+Ou declaramos ou removemos a rede de dependência. Vamos declarar. No entanto, quando esse componente for desmontado, não queremos que esse evento continue ouvindo. Não queremos mais ouvir esse evento. Se você assistiu ao vídeo anterior, já sabe o que faremos aqui. Queremos remover esse event listener quando o componente não existir mais na tela. Como fazemos isso? Fazemos um retorno do useEffect, ou seja, o useEffect terá um retorno, que é uma função. Essa função será executada quando o componente for desmontado. Se o componente for desmontado por algum motivo, não queremos mais reagir a esse evento.
+
+```JSX
+Vamos adicionar o retorno ao useEffect:
+
+return () => {
+    dialog?.removeEventListener('close', onClose)
+}
+```
+
+Isso fará com que o evento de close entre no ecossistema do React e tenha o mesmo comportamento de alguém clicar em fechar. Vamos testar se isso funcionará. Voltando ao Chrome, recarregamos a página. Abrimos a modal, fechamos com ask, abrimos a modal novamente, fechamos com ask. Agora sim, o bug está resolvido. Hoje vencemos.
+
+Revisando o uso do useEffect e próximos passos
+
+Aqui está o ponto importante: discutimos anteriormente sobre o useEffect, que tem muito mais capacidades do que vimos. Vamos relembrar. Ele possui essa função que podemos retornar quando geramos um efeito, e essa função é executada quando o componente é desmontado. Por que fazemos isso? Porque, se não fizermos, esse listener ficará pendurado eternamente e pode gerar problemas. Portanto, sempre que fazemos esse tipo de coisa usando o useEffect, ficamos atentos para, quando o componente for desmontado, removermos o listener do evento.
+
+Resolvemos o bug. O que falta agora? Salvar o item de fato. Vamos ver como faremos isso na sequência.
+
+### Aula 5 - Alterando a descrição - Vídeo 3
+
+Transcrição  
+Estamos na fase final do desenvolvimento do nosso aplicativo e precisamos ajustar alguns detalhes antes de finalizar a funcionalidade de adicionar ou editar. No método RenderFormsSubmit, após adicionar ou editar, é necessário fechar o formulário. Atualmente, ele está configurado para abrir, o que está incorreto. Precisamos alterar para fechar após o envio.
+
+Para começar, vamos ajustar o método handleFormSubmit para que ele feche o formulário após o envio. Inicialmente, ele estava configurado para abrir o formulário, mas vamos corrigir isso:
+
+```JSX
+const handleFormSubmit = (formData) => {
+  addTodo(formData)
+  closeFormTodoDialog()
+}
+```
+
+Implementando lógica condicional para edição e adição
+
+Além disso, queremos implementar uma estrutura condicional com if e else. Se tivermos um selectedTodo, queremos realizar uma ação; caso contrário, queremos adicionar um novo item. A ação a ser realizada é a edição, utilizando editTodo, passando os dados do formulário. Se houver um selectedTodo, editamos; caso contrário, adicionamos.
+
+Vamos começar a implementar essa lógica condicional:
+
+```JSX
+const handleFormSubmit = (formData) => {
+  if (selectedTodo) {
+    editTodo(formData)
+  } else {
+    addTodo(formData)
+  }
+  closeFormTodoDialog()
+}
+```
+
+Implementando a função editTodo no contexto
+
+Agora, precisamos buscar o editTodo no nosso contexto, mas ele ainda não está implementado. Precisamos implementá-lo no ContextoProvider. A lógica será semelhante ao que fizemos no toggleTodoCompleted. Em vez de inverter o estado de completude, queremos sobrescrever a descrição com o valor recebido do formulário.
+
+Primeiro, vamos definir a função editTodo:
+
+```JSX
+const editTodo = (formData) => {
+  setTodos(prevState => {
+    return prevState.map(t => {
+      if (t.id === selectedTodo.id) {
+        return {
+          ...t,
+          description: formData.get('description')
+        }
+      }
+      return t
+    })
+  })
+}
+```
+
+Duplicamos o trecho de código, alteramos o nome da constante para editTodo e disponibilizamos no contexto, no provedor:
+
+```JSX
+const { todos, addTodo, showDialog, openFormTodoDialog, closeFormTodoDialog, selectedTodo, editTodo } = useTodoContext()
+```
+
+Ajustando a abertura do FormToDoDialog
+
+Outro ponto importante é que, ao abrir o FormToDoDialog, podemos opcionalmente receber um ToDo. Se recebermos, salvamos e fazemos o SetSelectedToDo.
+
+No cenário atual, o que ocorre é que, da forma como está no OnClick, ele passa o evento e define um evento dentro do SetSelectedToDo, mas não apresenta o comportamento desejado. Nesse caso, não queremos passar nenhum parâmetro. Portanto, vamos alterar para, em vez de passar apenas a referência para a função, criar outra função que chamará o openFormTodoDialog sem nenhum parâmetro:
+
+```JSX
+<FabButton onClick={() => openFormTodoDialog()}>
+```
+
+Isso deve ser suficiente para ajustar tudo e permitir que possamos adicionar e remover ToDos na aplicação.
+
+Testando a funcionalidade de adição e edição
+
+Voltamos ao Chrome, recarregamos a página. No nosso caso, está vazio porque limpamos, por isso não há nenhum ToDo. Vamos começar adicionando um item: estudar.jsx. Salvamos o item, e ele foi salvo. Adicionaremos mais um: estudar useEffect. Está lá. Vamos adicionar mais um: estudar CSS. Marcamos que já estudamos CSS e decidimos que não queremos mais estudar useEffect, mas sim useState. Clicamos em editar, carregou corretamente, alteramos useEffect para useState e enviamos. Tudo certo, ele enviou e alterou.
+
+Se quisermos mudar de estudar para praticar, fazemos a alteração e enviamos novamente. Tudo funciona perfeitamente. Se quisermos mudar de estudar JSX para praticar JSX, fazemos a alteração para praticar. Tudo está funcionando corretamente.
+
+Implementando o componente Empty State
+
+Estamos quase finalizando, mas há uma última funcionalidade que precisamos implementar: o Empty State. Quando estamos no cenário em que deletamos tudo, se a lista estiver vazia, precisamos exibir uma mensagem que está no Figma para que fique de acordo com o design. Nosso último passo será cuidar desse componente chamado Empty State, que será exibido quando a lista de ToDo estiver vazia. Vamos finalizar essa parte para concluir nossa aplicação.
+
+### Aula 5 - Utilizando o Empty State - Vídeo 4
+
+Transcrição  
+Neste cenário, precisamos implementar o empty state quando não há itens para estudar, apenas na seção "Para Estudar". No cenário de "Concluído", não é necessário fazer alterações.
+
+Para isso, exportamos a imagem do Figma. A exportação pode ser feita diretamente do Figma ou baixada pelo link disponível na seção de preparação do ambiente. No nosso caso, a imagem já está na pasta de downloads, nomeada como empty.png. Vamos mover essa imagem para a pasta pública do projeto, ficando assim empty.png na pasta pública.
+
+Construindo o componente EmptyState
+
+Agora, precisamos construir o componente. Primeiro, fechamos todos os arquivos abertos e acessamos o app.jsx. Vamos maximizar o editor de código. Entre as seções "Para Estudar" e "Concluído", faremos uma renderização condicional. Utilizaremos toDos.length para verificar se o tamanho é igual a zero e, caso seja, exibiremos o componente EmptyState, que ainda não existe e precisa ser implementado.
+
+Para isso, criamos o componente em Components, clicando com o botão direito e selecionando EmptyState/index.jsx. Implementamos a função EmptyState sem props desta vez, que fará o retorno de um fragmento. Este fragmento conterá uma imagem localizada em /empty.png, pois a colocamos na pasta pública.
+
+```JSX
+export function EmptyState() {
+    return (
+        <>
+            <img src="/empty.png" alt="" />
+        </>
+    )
+}
+```
+
+Importando e utilizando o componente EmptyState
+
+Precisamos importar o EmptyState e focar no código do ternário. A expressão toDos.length === 0 && `<EmptyState />` significa que, se a condição for verdadeira, o segundo parâmetro, que é o componente EmptyState, será retornado. Este é um exemplo de renderização condicional, onde a primeira parte é a condição e a segunda é o componente a ser exibido. No JavaScript, quando ambos os valores são verdadeiros, o retorno da expressão é o segundo valor. Assim, quando toDos.length é igual a zero, o EmptyState será exibido.
+
+```JSX
+import { EmptyState } from "./components/EmptyState";
+
+{toDos.length === 0 && <EmptyState />}
+```
+
+Ajustando a apresentação do EmptyState
+
+Após implementar, verificamos no Google Chrome o checklist de estudo. A imagem aparece, mas está fora de lugar e faltam alguns ajustes. Precisamos centralizar e adicionar um espaçamento de 40 pixels abaixo.
+
+Para isso, vamos ao EmptyState e criamos um estilo em empty-state.style.css. No index.jsx, importamos o estilo com import './empty-state.style.css'. Podemos então adicionar uma section que será estilizada, atribuindo a ela um className chamado empty-state, mantendo o padrão de nomeação do componente.
+
+```JSX
+import './empty-state.style.css';
+
+export function EmptyState() {
+    return (
+        <section className="empty-state">
+            <img src="/empty.png" alt="" />
+        </section>
+    )
+}
+```
+
+Estilizando o componente EmptyState
+
+Em seguida, aplicamos as estilizações necessárias na classe .empty-state.
+
+```CSS
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+```
+
+Podemos aplicar um display: flex e flex-direction: column, pois não queremos os elementos lado a lado. Queremos um align-items: center e um justify-content: center. Vamos verificar como ficou. Já está centralizado, e notamos que há uma margem inferior de 40. Vamos ajustar a margem inferior para 40. Vamos verificar novamente. Está quase pronto. O que precisamos fazer agora? Precisamos adicionar o texto "Ainda não tem tarefas cadastradas, adicione tarefas para começar" acima da imagem no nosso componente.
+
+```JSX
+export function EmptyState() {
+    return (
+        <section className="empty-state">
+            <p>Ainda não tem tarefas cadastradas, adicione para começar!</p>
+            <img src="/empty.png" alt="" />
+        </section>
+    )
+}
+```
+
+Finalizando ajustes de estilo
+
+Após salvar, o texto aparece, mas não está branco e nem centralizado. Precisamos ajustar isso. Vamos inspecionar, pois algo está deslocando a seção para baixo. Identificamos uma margem na ul que não podemos alterar, mas há uma margem no parágrafo que podemos ajustar. No nosso empty state, vamos remover a margem do parágrafo, definindo margin: 0, e ajustar o gap conforme o Figma, que é de 24px.
+
+```CSS
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+    gap: 24px;
+}
+
+.empty-state p {
+    margin: 0;
+    color: #EAEAEA;
+    text-align: center;
+    font-size: 16px;
+    line-height: 150%;
+}
+```
+
+Após salvar, vamos ajustar os estilos da fonte. Primeiro, aplicamos a cor cinza claro ao nosso parágrafo. Em seguida, definimos text-align: center. Agora, verificamos a tipografia, que é um parágrafo médio. O tamanho é 16px, então aplicamos font-size: 16px. Ajustamos o line-height para 150%, e o restante não precisa de ajustes.
+
+Testando e finalizando a aplicação
+
+Voltando ao nosso check-list de estudo, parece que agora está correto. Se adicionarmos uma tarefa, como "Estudar JSX", ela funciona e o empty state desaparece, mostrando que a renderização condicional está funcionando bem. Queremos também estudar useState e operadores de array. Já deixamos um curso recomendado para consulta.
+
+Se recarregarmos a página, tudo permanece correto. Com isso, finalizamos a aplicação. Podemos publicá-la na Vercel e disponibilizá-la para o mundo. Todos podem usar nosso check-list de estudos. É possível personalizar, mudar o background, a paleta de cores, ou adaptar o plano de estudos conforme desejado.
+
+Agora é hora de continuar praticando tudo o que aprendemos. Missão dada, missão cumprida. Nosso aplicativo está implementado e funcionando corretamente. Até mais.
+
+### Aula 5 - Faça como eu fiz: Formulário de edição de tarefas
+
+Nesta aula, aprendemos como implementar a funcionalidade de edição de tarefas com o defaultValue no formulário, abrir e fechar modais de forma controlada, escutar eventos nativos de fechamento (como o ESC), salvar alterações feitas nas tarefas e exibir um componente de estado vazio quando a lista está vazia.
+
+Agora é sua vez de praticar, fazendo o mesmo no seu projeto! Siga o passo a passo:
+
+1. Configure o formulário para aceitar um valor inicial (defaultValue) ao editar uma tarefa.
+2. Centralize o controle da modal no contexto (Provider), com funções de abrir e fechar bem definidas.
+3. Adicione lógica para detectar se a tarefa está sendo editada ou criada.
+4. Implemente o salvamento da edição no estado global.
+5. Crie um componente de empty state que aparece quando não há tarefas pendentes.
+
+Opinião do instrutor
+
+1. Configure o formulário com defaultValue:
+
+No seu componente de formulário (TodoForm), utilize a propriedade defaultValue para pré-preencher o campo de descrição:
+
+```JSX
+<input
+  name="description"
+  defaultValue={selectedTodo?.description || ""}
+/>
+```
+
+Esse selectedTodo vem do seu contexto, e será null quando estiver criando uma nova tarefa e um objeto válido ao editar.
+
+2. Controle a abertura e fechamento da modal no contexto:
+
+No seu TodoProvider, crie as funções openFormTodoDialog(todo?) e closeFormTodoDialog(), além do estado selectedTodo.
+
+```JSX
+const [isDialogOpen, setIsDialogOpen] = useState(false)
+const [selectedTodo, setSelectedTodo] = useState(null)
+
+function openFormTodoDialog(todo?) {
+  setSelectedTodo(todo || null)
+  setIsDialogOpen(true)
+}
+
+function closeFormTodoDialog() {
+  setIsDialogOpen(false)
+  setSelectedTodo(null)
+}
+```
+
+Exporte essas funções e estados pelo provider e consuma nos componentes que precisam.
+
+3. Detecte se é edição ou criação de tarefa:
+
+No handleFormSubmit, utilize um if com base no selectedTodo para decidir se será feita uma criação ou uma edição:
+
+```JSX
+if (selectedTodo) {
+  editTodo(selectedTodo.id, formData.get("description"))
+} else {
+  addTodo(formData.get("description"))
+}
+closeFormTodoDialog()
+```
+
+4. Implemente o editTodo no contexto:
+
+Adicione uma função no contexto para editar o conteúdo de uma tarefa com base no id:
+
+```JSX
+function editTodo(id, newDescription) {
+  setTodos(todos.map(todo =>
+    todo.id === id ? { ...todo, description: newDescription } : todo
+  ))
+}
+```
+
+5. Crie o componente EmptyState:
+
+Crie um componente que será renderizado quando a lista de tarefas para estudar estiver vazia:
+
+```JSX
+export function EmptyState() {
+  return (
+    <section className="empty-state">
+      <p>Ainda não tem tarefas cadastradas, adicione uma para começar!</p>
+      <img src="/empty.png" alt="Nenhuma tarefa cadastrada" />
+    </section>
+  )
+}
+```
+
+No componente principal, faça uma renderização condicional:
+
+```JSX
+{todos.length === 0 && <EmptyState />}
+```
+
+No CSS:
+
+```CSS
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  gap: 24px;
+}
+
+.empty-state p {
+  color: #C1C1C1;
+  text-align: center;
+  font-size: 16px;
+  line-height: 150%;
+  margin: 0;
+}
+```
+
+### Aula 5 - Alternativa: limpando estado ao fechar a modal - Exercício
+
+O app de tarefas que você está desenvolvendo permite editar um item ao abrir a modal. Para isso, a tarefa selecionada é salva no estado selectedTodo. Quando a modal abre, o campo do formulário já vem preenchido com a descrição da tarefa. Isso funciona bem — até que o usuário fecha a modal pressionando a tecla ESC.
+
+Ao abrir novamente para criar uma nova tarefa, o campo continua preenchido com a descrição da tarefa anterior, como se ainda estivesse em modo de edição.
+
+Por que isso está acontecendo e qual seria uma forma eficaz de resolver o problema?
+
+Resposta:  
+Esse problema está acontecendo porque o fechamento da modal via tecla ESC dispara um evento nativo (close) do elemento `<dialog>`, mas o React não reage a esse evento automaticamente. Com isso, o estado selectedTodo não é limpo. A forma mais eficaz de resolver seria escutar o evento close com addEventListener, via useEffect, e então chamar setSelectedTodo(null) quando o modal for fechado — mesmo que externamente.
+
+> Correta. Essa abordagem explica bem a causa e propõe uma solução que integra eventos nativos ao ciclo de vida do React de forma segura.
+
+### Aula 5 - Projeto final do curso
+
+Baixe o projeto final
+
+Você pode [baixar a versão final do projeto neste link](https://github.com/alura-cursos/react-todo-list)
+
+Terminei o curso, e agora?
+
+Sério, parabéns mesmo. Chegar até o fim de um projeto completo já mostra o quanto você está comprometido com a sua evolução — e, só de olhar o projeto funcionando aí na sua máquina, já dá pra ver que valeu a pena cada linha de código.
+
+Nesse curso, você não ficou só na teoria: colocou a mão na massa pra evoluir um app, refatorou, quebrou a cabeça com bugs, e, no caminho, aprendeu conceitos super importantes do React.
+
+Continue praticando!
+Agora é hora de dar o próximo passo! Algumas sugestões:
+
+- Muda o layout do app. Troca cores, fontes, ícones. Dá sua cara pro projeto.
+- Expande as features: que tal adicionar prioridade, datas, filtros ou até integração com back-end?
+- Publica o projeto na Vercel ou Netlify e compartilha com a galera!
+- Faz um post contando como foi o desafio e me marca nas redes: LinkedIn ou Instagram. Vou curtir demais ver sua evolução!
+
+Lembra: aprender programação é uma maratona. Você já completou uma etapa importante — segue testando, explorando, refatorando e, principalmente, se divertindo no processo.
+
+Tô sempre disponível pelo Discord, LinkedIn ou Instagram se quiser trocar ideia, tirar dúvida ou pedir dica dos próximos passos.
+
+Vida longa e próspera no mundo React!
+
+Abraço do careca barbudo o/
+
+### Aula 5 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A utilizar a propriedade defaultValue para pré-preencher campos de formulários.
+- A diferenciar entre ações de abrir e fechar modais com funções específicas.
+- A gerenciar a seleção de itens com setSelectedToDo e estados associados.
+- A importância de limpar efeitos colaterais no useEffect.
+- A implementar o fechamento de modais e atualizar o estado após submissões.
+- A estrutura lógica para diferenciar entre adicionar e editar tarefas.
+- A exibir um componente EmptyState condicionalmente quando a lista de tarefas está vazia.
+- A estilizar e centralizar componentes usando CSS flexbox e debugging de estilos.
+
+### Aula 5 - Conclusão - Vídeo
+
+Transcrição  
+Estamos muito felizes por termos chegado ao final de mais um curso de React. Tivemos que aprender muitas coisas para concluir essa aplicação. Aprendemos sobre useEffect e diferentes formas de usar o useState. Realizamos renderização condicional e entendemos o conceito de DRY (Don't Repeat Yourself) para evitar repetições. Aprendemos sobre a Content API para gerenciar um estado global em vez de um estado local.
+
+Há muitos elementos envolvidos no desenvolvimento de uma aplicação desse nível. Se olharmos o código, veremos a quantidade de trabalho que realizamos. Vamos revisar e destacar os principais pontos do que codificamos.
+
+Explorando o Provider e o TodoProvider
+
+Vamos abrir o Provider. O Provider implementa nosso contexto, disponibilizando toda a lógica para evitar o prop drilling. Isso torna nosso app.jsx bem mais enxuto. Ele utiliza nosso contexto, mas a regra de negócio está toda lá. A única coisa que ele precisa saber é se deseja realizar uma edição ou adicionar algo. Essa lógica ainda está presente porque escolhemos deixá-la aqui. Fora isso, tudo está muito bem organizado.
+
+Para entender melhor, vamos ver como o TodoProvider foi implementado. Primeiro, importamos os hooks useEffect e useState, além do nosso TodoContext.
+
+```JSX
+import { useEffect, useState } from "react";
+import TodoContext from "../TodoContext";
+```
+
+Definimos uma constante TODOS para armazenar as tarefas no localStorage.
+
+```JSX
+const TODOS = 'todos'
+```
+
+Em seguida, criamos o componente TodoProvider, que utiliza o useState para gerenciar o estado das tarefas (todos), a visibilidade do diálogo (showDialog), e a tarefa selecionada (selectedTodo).
+
+```JSX
+export function TodoProvider({ children }) {
+    const savedTodos = localStorage.getItem(TODOS)
+    const [todos, setTodos] = useState(savedTodos ? JSON.parse(savedTodos) : [])
+    const [showDialog, setShowDialog] = useState(false)
+    const [selectedTodo, setSelectedTodo] = useState()
+```
+
+Implementando funções de diálogo e manipulação de tarefas
+
+Implementamos funções para abrir e fechar o diálogo de formulário de tarefas.
+
+```JSX
+    const openFormTodoDialog = (todo) => {
+        if (todo) {
+            setSelectedTodo(todo)
+        }
+        setShowDialog(true)
+    }
+
+    const closeFormTodoDialog = () => {
+        setShowDialog(false)
+        setSelectedTodo(null)
+    }
+```
+
+Utilizamos o useEffect para atualizar o localStorage sempre que as tarefas mudam.
+
+```JSX
+    useEffect(() => {
+        localStorage.setItem(TODOS, JSON.stringify(todos))
+    })
+```
+
+Criamos funções para adicionar, editar, alternar o estado de conclusão e deletar tarefas.
+
+```JSX
+    const addTodo = (formData) => {
+        const description = formData.get('description')
+        setTodos(prevState => [
+            ...prevState,
+            {
+                id: prevState.length + 1,
+                description,
+                completed: false,
+                createdAt: new Date().toISOString()
+            }
+        ])
+    }
+
+    const toggleTodoCompleted = (todo) => {
+        setTodos(prevState => {
+            return prevState.map(t => {
+                if (t.id === todo.id) {
+                    return {
+                        ...t,
+                        completed: !t.completed
+                    }
+                }
+                return t
+            })
+        })
+    }
+
+    const editTodo = (formData) => {
+        setTodos(prevState => {
+            return prevState.map(t => {
+                if (t.id === selectedTodo.id) {
+                    return {
+                        ...t,
+                        description: formData.get('description')
+                    }
+                }
+                return t
+            })
+        })
+    }
+
+    const deleteTodo = (todo) => {
+        setTodos(prevState => {
+            return prevState.filter(t => t.id !== todo.id)
+        })
+    }
+```
+
+Finalmente, retornamos o TodoContext.Provider com todos os valores e funções necessárias.
+
+```JSX
+    return <TodoContext.Provider
+        value={{
+            todos,
+            addTodo,
+            toggleTodoCompleted,
+            deleteTodo,
+            showDialog,
+            openFormTodoDialog,
+            closeFormTodoDialog,
+            selectedTodo,
+            editTodo
+        }}
+    >
+        {children}
+    </TodoContext.Provider>
+}
+```
+
+Implementando o componente Dialog
+
+Temos o responsável por organizar e evitar a repetição de código. Também implementamos a renderização condicional. Vamos agora ao nosso dialogue. Foi muito interessante implementar essa parte.
+
+A modal possui um efeito para abrir e fechar, além de outro efeito para adicionar um listener que fica ouvindo o evento de fechamento. Nós resolvemos esse problema juntos, e foi um processo que envolveu muitas novidades do ecossistema do React. O JavaScript também esteve presente, assim como o local storage. Foi realmente muita coisa, e estamos muito orgulhosos e felizes por termos chegado até o fim.
+
+Para ilustrar, veja como o componente Dialog foi implementado. Importamos useEffect e useRef para gerenciar o ciclo de vida e referências do DOM.
+
+```JSX
+import React, { useEffect, useRef } from 'react'
+import './dialog.style.css'
+import { IconClose } from '../Icons'
+```
+
+Definimos o componente Dialog que utiliza useRef para referenciar o elemento de diálogo.
+
+```JSX
+export function Dialog({ isOpen, onClose, children }) {
+  const dialogRef = useRef(null)
+```
+
+Utilizamos useEffect para abrir ou fechar o diálogo com base no estado isOpen.
+
+```JSX
+  useEffect(() => {
+    if (isOpen) {
+      openDialog()
+    } else {
+      closeDialog()
+    }
+  }, [isOpen])
+```
+
+Outro useEffect adiciona e remove um listener para o evento de fechamento do diálogo.
+
+```JSX
+  useEffect(() => {
+    const dialog = dialogRef.current
+    dialog.addEventListener('close', onClose)
+    return () => {
+      dialog.removeEventListener('close', onClose)
+    }
+  }, [onClose])
+```
+
+As funções openDialog e closeDialog controlam a abertura e fechamento do diálogo.
+
+```JSX
+  const openDialog = () => {
+    dialogRef.current.showModal();
+  }
+
+  const closeDialog = () => {
+    dialogRef.current.close();
+  }
+```
+
+Finalmente, retornamos o elemento de diálogo com um botão de fechamento.
+
+```JSX
+  return (
+    <dialog ref={dialogRef}>
+      <button className="close-button" onClick={closeDialog}>
+        <IconClose />
+      </button>
+      {children}
+    </dialog>
+  )
+}
+```
+
+Incentivando a prática e aprofundamento
+
+Agora, o que devemos fazer? Precisamos praticar esse conhecimento. Qual é a nossa dica? Pegue o checklist, edite-o, mude o contexto, escolha uma paleta de cores diferente, altere a temática. Em vez de ser uma lista de estudos, pode ser uma lista de compras ou de tarefas. Faça algumas alterações, experimente, pratique e aprofunde-se.
+
+Lembre-se de revisar o material de aprofundamento que deixamos disponível. Veja o material sobre useEffect, useState, useRef e a Context API. Há muito conteúdo do ecossistema React que aprendemos neste curso e que você pode e vai utilizar em sua carreira de desenvolvimento web usando React.
+
+Foi um prazer imenso estar com vocês mais uma vez. Nos vemos na próxima. Um grande abraço, até mais!

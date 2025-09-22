@@ -2,16 +2,33 @@ import { useEffect, useState } from 'react';
 import ToDoContext from './ToDoContext'
 
 export default function ToDoProvider({ children }) {
-    const LISTATODOS  = "ListaLocalDeToDos";
+    const LISTATODOS = "ListaLocalDeToDos";
     //----------------------------------------------------------
     const listaAtualToDos = localStorage.getItem(LISTATODOS);
     //----------------------------------------------------------
     const [toDoLista, setToDoLista] = useState(listaAtualToDos ? JSON.parse(listaAtualToDos) : []);
-    //---------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------
+    //useState é usado para criar um estado em componentes funcionais
+    const [mostraDialogST, setMostraDialogST] = useState(false);
+    //----------------------------------------------------------
+    const [selectedToDo, setSelectedToDo] = useState();
+    //---------------------------------------------------------------------------------------------
     useEffect(() => {
         localStorage.setItem(LISTATODOS, JSON.stringify(toDoLista));
     }, [toDoLista]);
     //--------------------------------------------------------------
+    const openFormToDoDialog = (toDo) => {
+        if (toDo) {
+            setSelectedToDo(toDo);
+        }
+        setMostraDialogST(true);
+    };
+    //------------------------------------------
+    const closeFormToDoDialog = () => {
+        setMostraDialogST(false);
+        setSelectedToDo(null);
+    };
+    //------------------------------------------
     const adicionaToDo = (formData) => {
         const descriptionInputName = formData.get('descriptionInputName');
         setToDoLista(prevState => {
@@ -35,6 +52,17 @@ export default function ToDoProvider({ children }) {
             });
         });
     };
+    //----------------------------------------------------------
+    const editToDo = (formData) => {
+        setToDoLista(prevState => {
+            return prevState.map(t => {
+                if (t.id === selectedToDo.id) {
+                    return { ...t, description: formData.get('descriptionInputName') };
+                }
+                return t;
+            });
+        });
+    };
     //-------------------------------------------------
     const deleteToDo = (toDo) => {
         setToDoLista(prevState => {
@@ -45,7 +73,17 @@ export default function ToDoProvider({ children }) {
     return (
         //O ToDoContext.ToDoProvider disponibiliza o valor (value) para todos os componentes filhos (children) que estiverem dentro do componente ToDoProvider
         <ToDoContext
-            value={{ toDoLista, adicionaToDo, toggleToDoCompleted, deleteToDo }}
+            value={{ 
+                toDoLista, 
+                adicionaToDo, 
+                toggleToDoCompleted, 
+                deleteToDo,
+                mostraDialogST,
+                openFormToDoDialog,
+                closeFormToDoDialog,
+                selectedToDo,
+                editToDo
+            }}
         >
             {children}
         </ToDoContext>

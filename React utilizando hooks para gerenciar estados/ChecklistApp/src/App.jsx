@@ -1,4 +1,4 @@
-import { use, useState } from "react"
+import { use } from "react"
 import { ChecklistsWrapper } from "./components/ChecklistsWrapper"
 import { Container } from "./components/Container"
 import { FabButton } from "./components/FabButton"
@@ -6,13 +6,11 @@ import { Footer } from "./components/Footer"
 import { Header } from "./components/Header"
 import { Heading } from "./components/Heading"
 import { IconPlus, IconSchool } from "./components/icons"
-import { SubHeading } from "./components/SubHeading"
-import { ToDoItem } from "./components/ToDoItem"
-import { ToDoList } from "./components/ToDoList"
 import DialogModal from "./components/DialogModal/DialogModal"
 import ToDoForm from "./components/ToDoForm/ToDoForm"
 import ToDoContext from "./components/ToDoProvider/ToDoContext"
 import ToDoGroup from "./components/ToDoGroup/ToDoGroup"
+import EmptyState from "./components/EmptyState/EmptyState"
 // const toDoLista = [
 //   {
 //     id: 1,
@@ -53,20 +51,16 @@ import ToDoGroup from "./components/ToDoGroup/ToDoGroup"
 //     createdAt: "2022-10-31"
 //   }
 // ]
-function App() {
-  //useState é usado para criar um estado em componentes funcionais
-  const [mostraDialogST, setMostraDialogST] = useState(false);
+export default function App() {
+  const { toDoLista, adicionaToDo, mostraDialogST, openFormToDoDialog, closeFormToDoDialog, selectedToDo, editToDo } = use(ToDoContext);
   //----------------------------------------------------------
-  const {toDoLista, adicionaToDo} = use(ToDoContext);
-  //----------------------------------------------------------
-  const toggleDialogModal = () => {
-    setMostraDialogST(!mostraDialogST);
-    console.log('Alterna ModalDialog: ', mostraDialogST);
-  };
-  //------------------------------------------
   const handleFormSubmit = (formData) => {
-    adicionaToDo(formData);
-    toggleDialogModal();
+    if (selectedToDo) {
+      editToDo(formData);
+    } else {
+      adicionaToDo(formData);
+    }
+    closeFormToDoDialog();
   };
   //------------------------------------------
   return (
@@ -78,41 +72,46 @@ function App() {
           </Heading>
         </Header>
         <ChecklistsWrapper>
-          <ToDoGroup heading='Para Estudar' items={toDoLista.filter(toDo => !toDo.completed)}/>
-          <ToDoGroup heading='Concluído' items={toDoLista.filter(toDo => toDo.completed)}/>
-          {/* <SubHeading>Para estudar</SubHeading>
-          <ToDoList>
-            {toDoLista.filter(toDo => !toDo.completed).map(function (t) {
-              return <ToDoItem
-                key={t.id}
-                item={t}
-                onToggleCompleted={toggleToDoCompleted}
-                onDeleteToDo={deleteToDo}
-              />
-            })}
-          </ToDoList>
-          <SubHeading>Concluído</SubHeading>
-          <ToDoList>
-            {toDoLista.filter(toDo => toDo.completed).map(function (t) {
-              return <ToDoItem
-                key={t.id}
-                item={t}
-                onToggleCompleted={toggleToDoCompleted}
-                onDeleteToDo={deleteToDo}
-              />
-            })}
-          </ToDoList> */}
+          <ToDoGroup heading='Para Estudar' items={toDoLista.filter(toDo => !toDo.completed)} />
+          {toDoLista.length === 0 && <EmptyState />}
+          <ToDoGroup heading='Concluído' items={toDoLista.filter(toDo => toDo.completed)} />
           <Footer>
-            <DialogModal estaAberta={mostraDialogST} estaFechada={toggleDialogModal}>
-              <ToDoForm onSubmit={handleFormSubmit} />
+            <DialogModal estaAberta={mostraDialogST} estaFechada={closeFormToDoDialog}>
+              <ToDoForm 
+                onSubmit={handleFormSubmit}
+                defaultValue={selectedToDo?.description}
+              />
             </DialogModal>
-            <FabButton onclick={toggleDialogModal} aria-label="Adicionar novo item">
+            <FabButton onclick={() => openFormToDoDialog()}>
               <IconPlus />
             </FabButton>
           </Footer>
         </ChecklistsWrapper>
       </Container>
     </main>
-  )
-}
-export default App
+  );
+};
+
+/* Usado antes, no lugar do ToDoGroup
+<SubHeading>Para estudar</SubHeading>
+<ToDoList>
+  {toDoLista.filter(toDo => !toDo.completed).map(function (t) {
+    return <ToDoItem
+      key={t.id}
+      item={t}
+      onToggleCompleted={toggleToDoCompleted}
+      onDeleteToDo={deleteToDo}
+    />
+  })}
+</ToDoList>
+<SubHeading>Concluído</SubHeading>
+<ToDoList>
+  {toDoLista.filter(toDo => toDo.completed).map(function (t) {
+    return <ToDoItem
+      key={t.id}
+      item={t}
+      onToggleCompleted={toggleToDoCompleted}
+      onDeleteToDo={deleteToDo}
+    />
+  })}
+</ToDoList> */

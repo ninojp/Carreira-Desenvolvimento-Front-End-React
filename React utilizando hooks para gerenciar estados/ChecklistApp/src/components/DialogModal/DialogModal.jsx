@@ -24,6 +24,15 @@ export default function DialogModal({ children, estaAberta, estaFechada }) {
         };
     }, [estaAberta]);
     //======================================================================
+    useEffect(() => {
+        const dialog = dialogRef.current;
+        dialog?.addEventListener('close', estaFechada);
+        //Removemos o event listener quando o componente for desmontado
+        return () => {
+            dialog?.removeEventListener('close', estaFechada);
+        };
+      }, [estaFechada]);
+    //======================================================================
     return (
         <dialog ref={dialogRef} className={styles.dialogModal}>
             <div className={styles.divBtnFecharModal}>
