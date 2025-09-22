@@ -1586,5 +1586,684 @@ Nesta aula, aprendemos:
 - O controle de submissão de formulários em React sem recarregar a página.
 - A implementação da lógica de fechamento automático de modais com toggle.
 
-### Aula 2 -  - Vídeo 8
-### Aula 2 -  - Vídeo 9
+## Aula 3 - Criando componentes escaláveis
+
+### Aula 3 - Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [acessar o projeto da aula anterior](https://github.com/alura-cursos/react-todo-list/tree/aula-2).
+
+Bons estudos!
+
+### Aula 3 - Implementando o useState - Vídeo 1
+
+Transcrição  
+Vamos continuar evoluindo nossa aplicação. Agora, queremos gerenciar o estado, certo? Queremos que os to-dos da nossa lista de tarefas a serem estudadas sejam dinâmicos. Para isso, utilizaremos o useState do React. Já estamos com a documentação oficial aberta no site react.dev/reference/react/useState. Se acessarmos o react.dev e usarmos a barra de busca para procurar por useState, chegaremos rapidamente à mesma página.
+
+Para começar, vamos inicializar nosso estado com o useState. Inicialmente, vamos criar um estado vazio para os to-dos.
+
+```JSX
+const [todos, setTodos] = useState([]);
+```
+
+O que queremos mostrar é o seguinte: o exemplo que o React traz é exatamente o cenário que precisamos aplicar. Imaginemos que não temos um back-end para controlar os IDs únicos, certo? Não temos uma forma muito segura, entre aspas, para gerar esse ID único. Podemos usar, por exemplo, o tamanho total do nosso array e incrementar um. Começaremos com zero e, se sempre incrementarmos um, o primeiro to-do terá um ID de um. Vamos pegar o estado anterior, length, que é o tamanho, mais um.
+
+Utilizando variantes do useState
+
+Para fazer isso, precisamos tomar alguns cuidados. Vamos usar uma variante do useState. Existe um vídeo sobre useState que deixaremos disponível, mas vamos usar uma variante em que, ao invés de passar o estado, passaremos uma função que tem acesso ao estado anterior. O estado é o "prévio", o estado anterior, e é nesse array que vamos olhar, por conta de ser assíncrono. Assim, garantimos que estará correto.
+
+Vamos abrir o VSCode. Comentaremos nossa lista atual de to-dos e de completed. Vamos comentar tudo isso com Ctrl + Command + K + C. Comentei, não temos mais nossa lista de to-dos, mas vamos chamar nosso useState, passando um array e guardando esses valores. Teremos os to-dos e um setTo-dos. Agora sim, já temos um estado para gerenciar isso. Podemos, inclusive, iniciar com alguns valores. Vamos fazer isso.
+
+```JSX
+const [todos, setTodos] = useState([
+  {
+    id: 1,
+    description: "JSX e componentes",
+    completed: false,
+    createdAt: "2022-10-31"
+  },
+  {
+    id: 5,
+    description: "Controle de inputs e formulários controlados",
+    completed: true,
+    createdAt: "2022-10-31"
+  }
+]);
+```
+
+Vou descomentar tudo isso. Não quero fazer verified docker agora. Vou descomentar e pedir para o VSCode formatar o código. Está formatado. Vamos ajustar isso, pois queremos incrementar: um, dois e assim sucessivamente.
+
+Filtrando e mapeando os to-dos
+
+Agora, queremos filtrar primeiro os to-dos na primeira lista, queremos apenas os que não estão completos. Podemos revisitar a estrutura de um to-do: ele tem um id, que é um número, description, completed, que é falso ou verdadeiro, e um createdAt, que é um timestamp com quatro dígitos representando o ano, dois dígitos para os meses e dois dígitos para o dia.
+
+Queremos filtrar. Para fazer um filtro em um array, usamos JavaScript, não React. Temos um método filter para filtrar. Podemos acessar o to-do, chamando-o de t, e queremos retornar todos que não estejam completos, t.completed.
+
+```JSX
+todos.filter(t => !t.completed).map(function (t) {
+  return <TodoItem key={t.id} item={t} />
+});
+```
+
+Filtramos tudo que não está completo. Faremos o mesmo para o completed, que está na linha 100. Copiei errado, deixe-me copiar corretamente. Agora sim, completed. Boa! Aplicaremos um filtro, só que invertido. No segundo, queremos apenas os que estão completos.
+
+```JSX
+todos.filter(t => t.completed).map(function (t) {
+  return <TodoItem key={t.id} item={t} />
+});
+```
+
+Salvei. Vamos ver no Chrome como ficará. Vou recarregar a página. Está correto, agora só está com um.
+
+Adicionando um novo to-do
+
+O que precisamos fazer agora? Adicionar esse novo to-do. Nosso addTo-do já recebe o formData. A única variável que temos, que vem do formulário, é a description. Podemos pegar aqui:
+
+```JSX
+const description = formData.get('description');
+```
+
+O formData também é do JavaScript, não do React. Para obter um valor baseado no name, usamos o método .get e passamos o name do input. Podemos usar, por exemplo, o mesmo name, formData.get('description'). Será que implementamos esse name? Vamos ao to-doForm. Vou fazer um command click no to-doForm, e o VSCode nos levará para lá. Temos aqui o text input com um placeholder e um required. Faltou o name. Vamos colocar aqui o name como description.
+
+```JSX
+<TextInput
+  placeholder="Digite o item que deseja adicionar"
+  required
+  name="description"
+/>
+```
+
+Um detalhe: lembra da técnica que usamos? Vamos fazer um control click no input. Está fazendo o spread de tudo que recebemos, ou seja, tudo que recebemos como prop está sendo passado para o input. Foi uma boa ideia, pois agora precisamos passar o name e ficou correto. Voltando ao nosso app.jsx, já temos a description. Precisamos terminar de montar a tarefa para adicionar. Vamos chamar nosso setTo-dos. Vimos que temos acesso ao prevState, que é a lista imediatamente anterior, e precisamos fazer o return do novo array que queremos criar.
+
+Implementação de um novo to-do
+Nosso objetivo é manter o estado anterior e adicionar um novo to-do. Para isso, criamos uma constante chamada to-do, que representa o to-do que estamos adicionando. Este será um objeto que deve seguir uma estrutura específica, contendo id, description, completed e createdAt.
+
+```JSX
+const todo = {
+  id: todos.length + 1,
+  description,
+  completed: false,
+  createdAt: new Date().toISOString()
+};
+```
+
+Para garantir que o id não seja fixo, incrementamos o id com base no estado anterior (prevState). Utilizamos o comprimento (length) do estado anterior e incrementamos em 1. Isso é importante porque, ao usar setToDos ou setState, o processo não é síncrono e pode haver um atraso. Se adicionarmos rapidamente vários to-dos sem considerar o estado anterior, podemos ter conflitos de id.
+
+Além disso, passamos a description. O React permite uma forma curta de criar objetos quando a propriedade e a variável têm o mesmo nome. Assim, podemos simplesmente usar description e o JavaScript entenderá que há uma constante com esse nome.
+
+O campo completed é definido como false, pois estamos apenas adicionando o to-do agora. Para o campo createdAt, utilizamos new Date() para obter a data atual e o método toISOString() para formatá-la como uma string. Isso é importante porque, ao lidar com estados, preferimos valores serializáveis, como strings, que são mais fáceis de manipular e compatíveis com APIs.
+
+Após montar o nosso to-do, passamos para o return dentro do setToDos. O que estamos passando é um novo array, pois queremos manter o estado imutável. Modificar o array atual com métodos como .push não é recomendado, pois isso muta o estado. Em vez disso, retornamos um novo objeto.
+
+```JSX
+setTodos(prevState => {
+  return [...prevState, todo];
+});
+```
+
+Testando a implementação
+
+Após salvar as alterações, podemos remover o console.log e testar a implementação no navegador. Ao adicionar um novo item, como "react-hook-useState", e clicar em salvar, verificamos que o novo estado foi adicionado corretamente. No entanto, como o useState é em memória, ao recarregar a página, os dados não persistem, pois só existem em tempo de execução.
+
+Podemos adicionar vários to-dos, como "useEffect", e verificar que eles são mantidos em memória. No entanto, ao recarregar, apenas o valor inicial do estado é mantido.
+
+Próximos passos
+
+Agora que conseguimos adicionar um novo to-do à lista, queremos implementar a funcionalidade de marcar um to-do como concluído. Quando um item for estudado, queremos atualizar o estado para que ele seja movido para a lista de concluídos. Vamos implementar isso na sequência.
+
+### Aula 3 - Para saber mais: useState
+
+Nesse momento da aula, citei um vídeo complementar sobre um [vídeo do canal da Alura que fala sobre useState](https://www.youtube.com/watch?v=KdQa4Rd6K1A). Nele, você vai aprender como usar esse hook de forma segura, especialmente quando precisar acessar o estado anterior para evitar problemas com atualizações assíncronas.
+
+Bons estudos!
+
+### Aula 3 - Completando tarefas - Vídeo 2
+
+Transcrição  
+Vamos então colocar para funcionar. Queremos que, quando alguém clicar na checkbox, o valor seja alterado e todo o nosso item, que é o nosso plano de estudos, troque de lugar. Ele deve descer para a lista de concluídos. Vamos fazer isso combinando coisas que já sabemos, como o setState, olhando para o estado anterior, o prevState. Já comentamos no vídeo anterior sobre isso. Se quiserem se aprofundar mais no useState, há um vídeo falando apenas sobre ele.
+
+Como vamos usar novamente métodos de array, deixarei também um curso focado nesses métodos. Se não estiverem familiarizados com .map, .filter, .forEach, esse curso será perfeito. Ou, se já estudaram e querem relembrar, podem dar uma olhada. Se estiverem confortáveis com os métodos de array, isso foge do escopo do React, sendo apenas JavaScript puro.
+
+Criando a função toggleTodoCompleted
+
+Vamos rodar o código. Estamos no Versicode e queremos criar uma nova função. Vamos seguir a consistência e não criar uma arrow function com const. Precisamos dar um nome para essa função. Quando queremos alternar de completo para incompleto, usamos a palavra em inglês toggle. Queremos fazer um toggle do todo, por exemplo, a propriedade complete. Então, toggleTodoComplete será o nome da função. Ela, obviamente, receberá o todo, nosso item, e terá a estrutura de uma arrow function normal.
+
+Primeiro, vamos definir a função toggleTodoCompleted como uma arrow function vazia:
+
+```JSX
+const toggleTodoCompleted = () => {}
+```
+
+Agora, vamos fazer com que essa função receba um parâmetro todo, que representa o item da lista de afazeres que queremos modificar:
+
+```JSX
+const toggleTodoCompleted = (todo) => {}
+```
+
+O que queremos fazer é chamar o nosso método setTodos. Já sabemos como fazer isso: pegamos o prevState e enviamos como uma arrow function. Vamos fazer um return e poderíamos usar o spread, mas, lembrando dos métodos de array, faremos o seguinte: prevState.map para transformar isso em um novo array, atendendo à imutabilidade do React.
+
+```JSX
+const toggleTodoCompleted = (todo) => {
+  setTodos(prevState => {
+    return prevState.map(t => {
+        if (t.id === todo.id) {
+            return {
+                ...t,
+                completed: !t.completed
+            }
+        }
+        return t
+    })
+  })
+}
+```
+
+No map, temos acesso ao item, que chamaremos de t. Queremos fazer um if para verificar se t.id é igual a todo.id, ou seja, o todo que recebemos por parâmetro. Queremos inverter o valor, então faremos um spread em tudo que tinha lá, ou seja, tudo que tinha em t continua, mas completed receberá o inverso de t.completed. Isso é puro JavaScript.
+
+Se t.id for igual a todo.id, retornamos esse novo objeto. Se não for, ou seja, se for outro todo da lista, não queremos fazer nada, apenas retornamos t, sem mudanças. Com isso, teremos nosso array modificado, percorrendo toda a lista e encontrando o todo que deve ser alterado.
+
+Implementação da função de alternância de estado
+
+A função toggleComplete inverte o valor de complete para todos os itens. Atualmente, o todoItem recebe um item e o processa com o método map do React. O objetivo agora é implementar um evento de alternância, chamado onToggleComplete, que aciona a função que criamos.
+
+Vamos aplicar essa lógica na lista, evitando percorrer os itens duas vezes. Passamos o onToggleComplete para o todoItem, mas ainda não o utilizamos. No todoItem, além de receber o item, também receberemos o onToggleComplete. No input do tipo checkbox, ao clicar, chamaremos o método toggleComplete, passando o item recebido.
+
+```JSX
+<TodoItem key={t.id} item={t} onToggleCompleted={toggleTodoCompleted} />
+```
+
+Dessa forma, recebemos uma função e passamos o item ao qual temos acesso. Vamos verificar se isso funciona corretamente.
+
+```JSX
+export function TodoItem({ item, onToggleCompleted }) {
+  return (
+    <input
+      type="checkbox"
+      className="checkbox"
+      defaultChecked={item.completed}
+      onClick={() => onToggleCompleted(item)}
+    />
+  );
+}
+```
+
+Teste no navegador
+
+No navegador, ao recarregar a página, adicionamos um novo todo chamado "React e useState". Após recarregar, adicionamos outro item, "Arrays em JavaScript". O botão de adicionar continua funcionando. Ao clicar na lista de "Arrays em JS", o item é movido para baixo. Se clicarmos novamente, ele retorna para cima. Isso demonstra que o valor de completed está sendo alterado corretamente.
+
+Revisão da função toggleComplete
+
+A função toggleComplete inverte o valor de completed de um todo. Se o valor é false, torna-se true, e vice-versa. Validamos isso com um if que verifica se o id corresponde. Se sim, invertemos o valor; caso contrário, retornamos o próprio item sem modificações. Isso garante que o array não seja alterado indevidamente, apenas o estado é atualizado.
+
+Próximos passos: exclusão de itens
+
+Agora, vamos focar na exclusão de um todo. Se digitarmos algo incorretamente, como "React e useEffect" sem o "t", queremos poder excluir ou editar o item. Vamos continuar utilizando o setState, setTodos e métodos de array do JavaScript para implementar essa funcionalidade.
+
+### Aula 3 - Removendo tarefas - Vídeo 3
+
+Transcrição  
+Agora é o momento de deletarmos um todo. Já implementamos a funcionalidade de adicionar um todo e agora queremos removê-lo. Vamos utilizar novamente o método de array para isso, combinando com o setTodo do React.
+
+O que queremos fazer é criar uma função chamada removeTodo. Essa função receberá o todo como parâmetro e definirá o estado com todos os todos, exceto aquele que queremos remover. Para isso, chamaremos o setTodo e utilizaremos o prevState, que é o estado anterior. Retornaremos o prevState com um filtro aplicado. Vamos filtrar todos os todos cujo id seja diferente do todo.id que queremos remover. Assim, filtramos todos os todos que têm um id diferente do atual.
+
+Vamos começar criando a função removeTodo:
+
+```JSX
+const removeTodo = (todo) => {
+    setTodos(prevState => {
+        return prevState.filter(t => t.id !== todo.id)
+    })
+}
+```
+
+Esse método utiliza o setTodos para atualizar o estado, aplicando um filtro que remove o todo com o id correspondente ao que queremos deletar.
+
+Testando a função removeTodo
+
+Vamos testar o removeTodo. Precisamos passar esse método para o ToDoItem. Observamos que estamos passando cada vez mais propriedades para o ToDoItem, mas vamos continuar por enquanto. O método onDeleteToDo será chamado, e precisamos implementá-lo no ToDoItem. O ToDoForm no ToDoItem receberá a propriedade onDeleteToDo.
+
+Para isso, passamos o removeTodo como uma propriedade para o TodoItem:
+
+```JSX
+<TodoItem key={t.id} item={t} onToggleCompleted={toggleTodoCompleted} onDeleteTodo={removeTodo}/>
+```
+
+Agora, vamos adicionar um evento onClick nos botões. Temos dois botões: um para editar e outro para excluir. No evento onClick, chamaremos o método onDeleteToDo, passando o item. Quando esse botão for clicado, o método será chamado.
+
+```JSX
+<button className="btn" onClick={() => onDeleteTodo(item)}>
+    <IconTrash />
+</button>
+```
+
+Verificando a funcionalidade de exclusão
+
+Precisamos fazer a mesma coisa na lista de baixo. Note que estamos duplicando algumas coisas. Se esquecermos de passar o onDeleteToDo, podemos gerar um bug que impede a exclusão de todos concluídos. Vamos confiar no potencial do nosso código.
+
+Voltando ao navegador, recarregamos a página e adicionamos um novo todo com React e useState. Ao deletar, verificamos que a funcionalidade está funcionando corretamente. Se deletarmos o de cima ou o de baixo, tudo é limpo conforme esperado.
+
+Ao recarregarmos, retornamos ao nosso estado inicial. Estamos começando nossa lista com dois itens no array. Parece que está tudo certo. No entanto, vamos refletir sobre o seguinte: se precisarmos editar um ToDo, ou seja, ao clicarmos em editar, queremos modificar o item. Pensando na lógica, temos código duplicado, e será necessário criar um novo método no ToDoItem para lidar com a edição. Precisaremos duplicar esse código, o que não parece ser muito interessante.
+
+Considerando melhorias na organização do código
+
+Vamos considerar como seria interessante organizar isso. Temos sempre um título, um subtítulo e a lista de ToDos. O que gostaríamos de fazer? Queremos agrupar essa lista de ToDos de forma mais eficiente. Imagine um componente chamado ToDoGroup (com T maiúsculo, pois é um componente). Esse componente ainda não existe, mas vamos pensar em como poderíamos utilizá-lo.
+
+Gostaríamos de ter, por exemplo, um heading para o título, um subtítulo, e passar a lista dos itens que não estão completos. No caso do grupo inferior, o heading seria "concluído". No entanto, quem está gerindo nosso estado é o app.jsx. Ele é responsável pelo edit.do, toGoCompleted e delete.do. Portanto, precisaríamos passar tudo isso para o ToDoGroup, o novo componente, e nos livrar do código duplicado, implementando apenas esse componente.
+
+Explorando o padrão Prop Drilling
+
+Nesse cenário, continuaríamos passando o onToGoCompleted para o ToDoGroup, que apenas repassaria para o ToDo. Esse é um padrão comum, conhecido como Prop Drilling, onde passamos uma prop para um componente que apenas a repassa para outro.
+
+Por enquanto, deixaremos todo o código comentado. No Chrome, a tela ficará vazia, mas está tudo bem. Antes de começarmos a implementar o ToDoGroup, vamos discutir sobre o padrão Prop Drilling que detectamos nesse tipo de cenário. Vamos conversar sobre isso na sequência.
+
+### Aula 3 - Boas práticas e prop-drilling - Vídeo 4
+
+Transcrição  
+Vamos mergulhar profundamente para entender o que está acontecendo com nossa aplicação. No nosso código, identificamos um problema de duplicação no ToDoList. Toda vez que adicionamos uma nova propriedade, como OnToGoCompleted, OnDeleteToDo, ou futuramente um edit, acabamos duplicando o código. Queremos evitar essa duplicação, seguindo o princípio DRY (Don't Repeat Yourself).
+
+Para evitar a duplicação, propomos criar um componente que receba o título e a lista de ToDos. No entanto, ao fazer isso, começamos a passar algumas props que não serão usadas nesse grupo de ToDos. Isso nos leva ao problema do Prop Drilling, onde passamos dados por vários níveis de componentes, mesmo que alguns não os utilizem diretamente.
+
+Analisando o código existente e o problema de prop drilling
+
+Vamos ver como isso se reflete no código. Inicialmente, temos o seguinte trecho comentado:
+
+```JSX
+{/* <ToDoGroup
+  heading="Para estudar"
+  items={todos.filter(t => !t.completed)}
+  onToggleCompleted={toggleTodoCompleted}
+  onDeleteTodo={deleteTodo}
+/>
+<ToDoGroup
+  heading="Concluído"
+  items={todos.filter(t => t.completed)}
+  onToggleCompleted={toggleTodoCompleted}
+  onDeleteTodo={deleteTodo}
+/> */}
+```
+
+Esse código mostra como estamos passando propriedades para o ToDoGroup, mas ele não as utiliza diretamente, apenas as repassa para o ToDoItem. Isso é um exemplo de Prop Drilling.
+
+No FormToDo, utilizamos o useState e está tudo certo no formulário, sem necessidade de alterações. No entanto, no App.jsx, se implementarmos o ToDoGroup dessa forma, passaremos informações que ele não usará, apenas repassará. Isso é o que chamamos de ThreadProxy.
+
+Reestruturando o código para evitar prop drilling
+
+Para resolver isso, podemos reestruturar o código para evitar o Prop Drilling. Vamos ver como podemos fazer isso com um exemplo mais direto:
+
+```JSX
+<SubHeading>Para estudar</SubHeading>
+<TodoList>
+  {todos.filter(t => !t.completed).map(function (t) {
+    return <TodoItem
+      key={t.id}
+      item={t}
+      onToggleComplete={() => toggleItemCompleted(t)}
+      onDelete={() => removeTodo(t)}
+    />
+  })}
+</TodoList>
+```
+
+E para os itens concluídos:
+
+```JSX
+<SubHeading>Concluído</SubHeading>
+<TodoList>
+  {todos.filter(t => t.completed).map(function (t) {
+    return <TodoItem
+      key={t.id}
+      item={t}
+      onToggleComplete={() => toggleItemCompleted(t)}
+      onDelete={() => removeTodo(t)}
+    />
+  })}
+</TodoList>
+```
+
+Esses trechos de código mostram como podemos passar diretamente as funções onToggleComplete e onDelete para o TodoItem, evitando o Prop Drilling.
+
+Encapsulando a lógica em um componente ToDoGroup
+
+Por fim, podemos encapsular essa lógica em um componente ToDoGroup que realmente utilize as propriedades que recebe:
+
+```JSX
+<ToDoGroup
+  title="Para estudar"
+  todos={todos.filter(t => !t.completed)}
+  onToggleComplete={toggleItemCompleted}
+  onDelete={removeTodo}
+/>
+```
+
+Com isso, evitamos a duplicação e o Prop Drilling. No entanto, para uma solução mais robusta, podemos utilizar a Context API do React, que nos permite gerenciar o estado globalmente sem passar propriedades por todos os níveis da árvore de componentes. Isso será abordado em nosso próximo encontro, onde implementaremos a Context API para resolver esses problemas de forma eficiente. Até breve!
+
+### Aula 3 - Para saber mais: Context API e estados globais
+
+Agora vamos aprofundar em um assunto que pode literalmente mudar a vida do seu código: Context API e Estados Globais. Se você já passou pelo temido Prop Drilling, com certeza vai amar conhecer essa solução. Bora lá?
+
+Prop Drilling, o que é isso mesmo?
+
+Antes de falar sobre Context API, precisamos lembrar rapidamente o que é Prop Drilling. Sabe aquela situação onde você passa uma prop por vários componentes intermediários que nem usam essa prop, só para chegar no componente final? Pois é, esse é o famoso prop drilling. Ele torna o código confuso e difícil de manter.
+
+> Se quiser relembrar mais sobre isso, dá uma olhada nesse [artigo da Alura: Prop Drilling no React](https://www.alura.com.br/artigos/prop-drilling-no-react-js).
+
+Context API: a solução para o prop drilling
+
+O Context API permite que a gente compartilhe estados entre diversos componentes sem precisar ficar passando props através de múltiplas camadas que não as usam diretamente.
+
+Veja como funciona:
+
+```JSX
+import { createContext, useContext, useState } from 'react'; 
+
+const MeuContexto = createContext(); 
+
+export function MeuProvedor({ children }) { 
+const [estadoGlobal, setEstadoGlobal] = useState('valor inicial'); 
+
+return ( 
+  <MeuContexto.Provider value={{ estadoGlobal, setEstadoGlobal }}> 
+    {children} 
+  </MeuContexto.Provider> 
+); 
+} 
+export const useMeuContexto = () => useContext(MeuContexto); 
+```
+
+Pronto! Agora qualquer componente que use useMeuContexto pode acessar o estadoGlobal diretamente:
+
+```JSX
+import { useMeuContexto } from './MeuProvedor'; 
+
+function ComponenteFinal() { 
+const { estadoGlobal, setEstadoGlobal } = useMeuContexto(); 
+
+return ( 
+<div> 
+<p>{estadoGlobal}</p> 
+<button onClick={() => setEstadoGlobal('novo valor')}> 
+Mudar estado global 
+</button> 
+</div> 
+); 
+} 
+```
+
+Por que usar Context API?
+
+- Para evitar prop drilling, mantendo o código mais limpo.
+- Facilitar o gerenciamento de estados globais.
+- Simplificar os testes, já que os componentes ficam mais isolados e claros.
+
+Dá uma olhadinha nesses artigos pra se aprofundar ainda mais:
+
+- [Context API e TypeScript: o superpoder da dupla](https://www.alura.com.br/artigos/context-api-typescript-utilizar-superpoder-dupla)
+- [React: Gerencie estados globalmente com Context API](https://www.alura.com.br/conteudo/react-gerencie-estados-globalmente-context-api)
+
+Context API vs Redux
+
+Uma dúvida bem comum é quando usar Context API e quando usar Redux, né? De maneira geral:
+
+- Context API: ideal para estados relativamente simples e que não exigem grande complexidade.
+- Redux: indicado para estados mais complexos, com muitas interações, histórico ou ferramentas avançadas.
+
+> Se quiser se aprofundar nessa comparação, recomendo muito o artigo: [Estados globais: diferenças entre Redux e Context API](https://www.alura.com.br/artigos/estados-globais-diferencas-redux-context-api)
+
+Bons estudos!
+
+### Aula 3 - Faça como eu fiz: Gerenciando o estado com `useState`
+
+Nesta aula, aprendemos como utilizar o hook useState do React para criar um estado dinâmico para a nossa lista de estudos. Implementamos a adição, alternância de status (completo ou não) e exclusão de itens da lista utilizando os métodos de array do JavaScript (map, filter) combinados com a imutabilidade exigida pelo React.
+
+Agora é sua vez de praticar, fazendo o mesmo no seu projeto! Siga o passo a passo:
+
+1. Inicialize o estado da sua lista de estudos com useState.
+2. Implemente a funcionalidade de adicionar um novo item à lista.
+3. Implemente a funcionalidade de alternar o status de "completo" de um item.
+4. Implemente a funcionalidade de remover um item da lista.
+
+Opinião do instrutor
+
+1. Inicialize o estado com useState:
+Crie o estado da sua aplicação para armazenar os estudos (todos). Use useState passando um array inicial com alguns itens de exemplo. Exemplo:
+
+```JSX
+const [todos, setTodos] = useState([
+  { id: 1, description: 'JSX e Componentes', completed: false, createdAt: '2025-06-12' },
+  { id: 2, description: 'Hooks em React', completed: true, createdAt: '2025-06-10' }
+]);
+```
+
+2. Adicione um novo item:
+
+Crie uma função que recebe os dados do formulário e adiciona um novo item à lista. Use a função de atualização com prevState:
+
+```JSX
+const handleAddTodo = (formData) => {
+  const description = formData.get('description');
+  const newTodo = {
+    id: prevState.length + 1,
+    description,
+    completed: false,
+    createdAt: new Date().toISOString().split('T')[0],
+  };
+
+  setTodos(prevState => [...prevState, newTodo]);
+};
+```
+
+Lembre-se de garantir que o input do formulário tenha name="description".
+
+3. Altere o status de completo/incompleto:
+
+Crie uma função que inverte o valor de completed de um item. Use .map e retorne um novo array com o valor atualizado:
+
+```JSX
+const toggleTodoCompleted = (todo) => {
+  setTodos(prevState =>
+    prevState.map(t =>
+      t.id === todo.id ? { ...t, completed: !t.completed } : t
+    )
+  );
+};
+```
+
+4. Remova um item da lista:
+
+Crie uma função que recebe um item e o remove da lista usando .filter:
+
+```JSX
+const deleteTodo = (todo) => {
+  setTodos(prevState =>
+    prevState.filter(t => t.id !== todo.id)
+  );
+};
+```
+
+Essa função deve ser chamada ao clicar no botão de excluir.
+
+### Aula 3 - Personalização de treinos para corredores - Exercício
+
+Na plataforma Runner Circle, dedicada a corredores, os usuários podem compartilhar treinos, metas e desafios. A equipe de desenvolvimento está trabalhando em um novo recurso que permite aos usuários personalizar seus treinos, removendo exercícios que não se adequam às suas necessidades. No entanto, o código atual para gerenciar a lista de exercícios está duplicado em várias partes do sistema, o que pode causar problemas de manutenção.
+
+Como a equipe pode aplicar o conceito de "prop drilling" para melhorar a gestão de treinos personalizados na plataforma Runner Circle?
+
+Alternativa correta  
+Criar um componente pai que gerencie o estado dos treinos e as funções de manipulação, como adicionar ou remover exercícios, e passar essas funções para componentes filhos que exibem e interagem com os treinos.
+
+> Correta, pois ao aplicar o conceito de "prop drilling", a equipe garante que as funções de manipulação de estado sejam passadas de forma consistente, reduzindo a duplicação de código e facilitando a manutenção do sistema.
+
+### Aula 3 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Como utilizar o useState para gerenciar estados dinâmicos no React, iniciando com arrays e atualizando-os.
+- A usar a função de atualização de estado com prevState para consistência ao adicionar elementos.
+- A filtrar arrays com filter para separar itens baseados em condições.
+- A criar identificadores únicos e incrementar novos itens baseados no tamanho do array.
+- A importância da imutabilidade dos estados no React, criando novos arrays em vez de modificá-los.
+- A integrar eventos em componentes React utilizando props para lógica específica.
+- A evitar a duplicação de código com o princípio DRY e a usar Componentes e Context API para evitar prop drilling.
+- A usar a Context API do React para gerenciar estado centralizado, evitar prop drilling e facilitar o acesso direto aos dados.
+
+## Aula 4 - Usando o Context API
+
+### Aula 4 - Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [baixar o projeto da aula anterior](https://github.com/alura-cursos/react-todo-list/tree/aula-3).
+
+Bons estudos!
+
+### Aula 4 - Criando o nosso contexto - Vídeo 1
+
+Transcrição  
+Vamos implementar a Content API para evitar a repetição de código, seguindo o princípio DRY (Don't Repeat Yourself), mas também evitando o prop drilling. Já discutimos a teoria por trás disso, e agora é hora de codificar.
+
+Primeiramente, vamos criar um novo componente. Na pasta "Components", criaremos um TodoProvider, ou seja, um provedor de todos. Dentro dessa pasta, criaremos o arquivo index.jsx. Além do provedor, precisamos do contexto em si, então criaremos outro arquivo ao lado do index.jsx, chamado todocontext.js.
+
+Criando o contexto TodoContext
+Para criar o contexto, utilizaremos a função createContext do React. Inicialmente, o VS Code pode importar essa função usando require, mas vamos converter isso para o formato de módulo, utilizando import createContext from. Podemos armazenar isso em uma constante chamada TodoContext e fazer o export default desse contexto.
+
+import { createContext } from "react";
+
+const TodoContext = createContext();
+
+export default TodoContext;
+Copiar código
+Agora, precisamos implementar o provedor em si. Vamos criar um componente React chamado TodoProvider, que é uma função que recebe props. Queremos extrair o children das props para utilizá-lo posteriormente. Dentro do nosso TodoProvider, faremos o return do TodoContext, renderizando o children. Isso é necessário para montar um provedor.
+
+import TodoContext from "./TodoContext";
+
+export function TodoProvider({ children }) {
+    return (
+        <TodoContext>
+            {children}
+        </TodoContext>
+    );
+}
+Copiar código
+Definindo valores e funções no TodoProvider
+Temos dois passos a seguir. Primeiro, precisamos definir os valores que serão disponibilizados pelo provedor. Podemos reutilizar os valores que já definimos no app.jsx, elevando-os para o TodoProvider. Vamos copiar o trecho de código do useState no app.jsx, da linha 59 até o final do deleteTodo, e colá-lo no TodoProvider, antes do return. Vamos formatar o documento para garantir a legibilidade.
+
+import { useState } from "react";
+import TodoContext from "./TodoContext";
+
+export function TodoProvider({ children }) {
+    const [todos, setTodos] = useState([
+        {
+            id: 1,
+            description: "JSX e componentes",
+            completed: false,
+            createdAt: "2022-10-31"
+        },
+        {
+            id: 2,
+            description: "Props, state e hooks",
+            completed: true,
+            createdAt: "2022-10-31"
+        },
+        {
+            id: 3,
+            description: "Ciclo de vida dos componentes",
+            completed: false,
+            createdAt: "2022-10-31"
+        },
+        {
+            id: 4,
+            description: "Testes unitários com Jest",
+            completed: false,
+            createdAt: "2022-10-31"
+        },
+        {
+            id: 5,
+            description: "Controle de inputs e formulários controlados",
+            completed: true,
+            createdAt: "2022-10-31"
+        },
+        {
+            id: 6,
+            description: "Rotas dinâmicas",
+            completed: true,
+            createdAt: "2022-10-31"
+        }
+    ]);
+
+    const addTodo = (formData) => {
+        const description = formData.get('description');
+        setTodos(prevState => {
+            const todo = {
+                id: prevState.length + 1,
+                description,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            return [...prevState, todo];
+        });
+    };
+
+    const toggleTodoCompleted = (todo) => {
+        setTodos(prevState => {
+            return prevState.map(t => {
+                if (t.id === todo.id) {
+                    return {
+                        ...t,
+                        completed: !t.completed
+                    };
+                }
+                return t;
+            });
+        });
+    };
+
+    const deleteTodo = (todo) => {
+        setTodos(prevState => {
+            return prevState.filter(t => t.id !== todo.id);
+        });
+    };
+
+    return (
+        <TodoContext value={{
+            todos,
+            addTodo,
+            toggleTodoCompleted,
+            deleteTodo
+        }}>
+            {children}
+        </TodoContext>
+    );
+}
+Copiar código
+Integrando o TodoProvider na aplicação
+O toggleDialog não será necessário por enquanto, pois o addTodo não precisa acionar o toggleDialog, já que ele é apenas um provedor de todos. O diálogo, por enquanto, não é necessário na nossa modal. Precisamos apenas dos todos em si, incluindo as funções add, toggle e delete.
+
+Como disponibilizamos o contexto para toda a aplicação? O TodoContext espera uma propriedade chamada value, que é um objeto, e dentro desse value, disponibilizamos tudo o que desejamos. Por exemplo, podemos disponibilizar a lista de todos em si. Não queremos disponibilizar o setTodos, pois é privado, mas queremos disponibilizar o addTodo, o toggleTodoCompleted e o deleteTodo.
+
+Esse é o nosso provider. Vamos verificar do que ele está reclamando. Não importamos o useState, então vamos importá-lo. Agora sim, parece que está tudo certo. O que faremos agora? No nosso app.jsx, vamos envolver toda a nossa aplicação. Como removemos o toggleDialog, precisamos adicioná-lo novamente, pois removemos mais do que deveríamos. O dialog permanecerá, assim como o toggleDialog, e apenas removeremos tudo relacionado a todos. Agora sim. Podemos comentar a linha do addTodo, pois não vamos utilizá-la agora.
+
+Testando e verificando a implementação
+O que queremos fazer é colocar o provider para funcionar. Vamos salvar para evitar erros de compilação. Vamos verificar no Chrome como está. Vou recarregar. Está sem erro, não está exibindo nada, mas ainda não implementamos. Criamos o nosso provider, o contexto, implementamos o provider, e agora queremos disponibilizá-lo. Poderíamos colocá-lo no app.jsx, logo abaixo do main, mas vamos deixá-lo ainda mais acessível, no main.jsx, logo abaixo do strictMode do React, chamando o nosso TodoProvider.
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import { TodoProvider } from './components/TodoProvider/index.jsx';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <TodoProvider>
+      <App />
+    </TodoProvider>
+  </React.StrictMode>,
+);
+Copiar código
+Vamos colocar o app dentro dele, lembrando dos children. Dessa forma, todos os componentes dentro do provider, ou seja, todos os filhos, poderão acessar as funções que disponibilizamos no value. Criamos o contexto com createContext, criamos o provider, e todo o value do nosso provider será acessível para todos os children, todos os filhos desse componente. No nosso caso, toda a aplicação.
+
+Vamos verificar se há erros de compilação. Voltamos ao Chrome e recarregamos. Maravilha, não há erros de compilação, está tudo correto, e o console não está exibindo erros. O que precisamos fazer agora é integrar o restante da aplicação a essa nova fonte de dados, que é o nosso provider. Estamos no caminho certo, metade do trabalho está feito. Agora, vamos pensar no nosso próximo passo: como vamos acessar esse value que disponibilizamos no nosso provider?
+
+### Aula 4 -  - Vídeo 2
+### Aula 4 -  - Vídeo 3
+### Aula 4 -  - Vídeo 4
+### Aula 4 -  - Vídeo 5
+### Aula 4 -  - Vídeo 6
+### Aula 4 -  - Vídeo 7
+### Aula 4 -  - Vídeo 8

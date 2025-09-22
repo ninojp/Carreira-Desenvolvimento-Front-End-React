@@ -5,7 +5,11 @@ import styles from './ToDoForm.module.css';
 export default function ToDoForm({ onSubmit }) {
     return (
         <form action={onSubmit} className={styles.formModal}>
-            <TextInput placeholder='Digite o item que deseja adicionar' required />
+            <TextInput 
+                placeholder='Digite o item que deseja adicionar'
+                name='descriptionInputName'
+                required 
+            />
             <ButtonFormModal type="submit">Salvar item</ButtonFormModal>
         </form>
     );
