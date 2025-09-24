@@ -1,0 +1,22 @@
+.container{
+    display: flex;
+    width: 100%;
+    background-color: var(--neutral-surface);
+    border-radius: 8px;
+    padding: 12px 16px;
+    gap: 16px;
+    align-items: center;
+}
+.input{
+    width: 100%;
+    line-height: 125%;
+    font-size: 20px;
+    color: var(--neutral-text);
+    border: 1px solid transparent;
+    background-color: transparent;
+    flex: 1;
+    /* outline: none; */
+}
+.input:hover{
+    border: 1px solid var(--neutral-header);
+}

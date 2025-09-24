@@ -1,0 +1,31 @@
+:root {
+  /* Neutral colors */
+  --neutral-darker: #1C1D21;
+  --neutral-background: #212229;
+  --neutral-surface: #2A2C34;
+  --neutral-header: #33353F;
+  --neutral-text: #F5F5F5;
+  /* Primary colors */
+  --primary-highlight: #7693FF;
+  /* Secondary colors */
+  --secondary-income: #D6FF62;
+  --secondary-expense: #F87828;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Work Sans", sans-serif;
+  font-optical-sizing: auto;
+}
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--neutral-background);
+  /*IMPORTANTE, aqui a cor NÃO aplicou com variável var(), mas usando DIRETAMENTE #Hex, FUNCIONA! 
+  color:  var(--primary-highlight); */
+  color: #7693FF;
+}
+a {
+  text-decoration: none;
+}

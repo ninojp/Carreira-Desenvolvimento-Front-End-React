@@ -1,0 +1,15 @@
+.aside{
+    width: 282px;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding: 80px 40px;
+    gap: 56px;
+    background-color: var(--neutral-header);
+}
+.footer{
+    font-size: 13px;
+    line-height: 120%;
+    color: var(--neutral-text);
+    text-align: center;
+}
