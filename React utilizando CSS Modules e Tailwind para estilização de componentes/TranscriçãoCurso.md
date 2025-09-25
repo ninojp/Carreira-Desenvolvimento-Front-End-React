@@ -1886,97 +1886,124 @@ Nesta aula, aprendemos:
 
 ### Aula 3 - Entendendo o Tailwind CSS - Vídeo 1
 
-Transcrição
+Transcrição  
 Vamos discutir sobre o Tailwind CSS e explorar esse universo de estilização. Retornando aos nossos slides, qual é o conceito do Tailwind CSS? Ele é um framework utilitário, e vamos entender essa ideia de utilitário em breve. A proposta ao utilizar o Tailwind CSS é escrever menos CSS manualmente, ou seja, reduzir a necessidade de definir propriedades como margin, padding, border, bottom, entre outras. Assim, nos preocupamos menos com o nome das classes, pois não teremos um seletor aplicando um estilo complexo com várias propriedades a um elemento específico. Quando falamos de JavaScript e React, a ideia é que possamos interpretar as classes no JSX e entender o que o componente faz.
 
 Por que escrever menos CSS? Temos feito isso até agora com sucesso. Qual é o contexto histórico do Tailwind CSS e sua premissa? O CSS foi criado por volta de 1996, quando a ideia de componentes, como conhecemos hoje, não existia. O suporte a JavaScript era limitado, e os frameworks e bibliotecas atuais não estavam disponíveis para ajudar. Ou seja, o CSS não foi pensado para as aplicações complexas que desenvolvemos atualmente. Esse é o ponto. Com muitas telas, estados dinâmicos e reatividade, alteramos, clicamos em botões, mudamos cores de fundo e de botões, e adicionamos elementos dinamicamente. Quando o CSS foi criado, isso não existia.
 
 Explorando os desafios e soluções do CSS tradicional
+
 Quais eram os desafios enfrentados naquela época? Já mencionamos alguns, mas vale relembrar. Havia dificuldade em escalar e manter o CSS. Diferentes pessoas escreviam estilos, criando classes como .botão e .btn, resultando em falta de padronização. Refatorar, trocar ou apagar uma classe sem querer poderia quebrar algo, e não havia segurança para refatorar CSS. No entanto, era possível consertar. A solução foi criar e seguir um padrão, organizando o estilo de forma escalável. Deixei uma atividade para entender o paradigma por trás de cada padrão. A ideia aqui não é se aprofundar nisso, mas destacar que havia uma solução para organizar o estilo.
 
 O Tailwind foi criado por volta de 2017 por Adam Wathan, e cresceu com a comunidade do Laravel, um framework PHP. A comunidade do Vue também adotou o Tailwind, e posteriormente, o pessoal do React e do Next.js também o abraçou.
 
 Experimentando o Tailwind CSS no Playground
+
 Agora, vamos ver como esse framework funciona na prática. Vamos usar o Playground do Tailwind para experimentar antes de chegar ao React. Se escanear o QR Code na tela, será direcionado para lá. Se preferir digitar no navegador, o endereço é play.tailwindcss.com. Isso já o deixará pronto para acessar o mesmo endereço que eu. Vou organizar minha tela e entrar no navegador.
 
 Queremos explorar o Playground do Tailwind, certo? Então, play.tailwindcss.com. Vou aumentar um pouco o zoom. Vamos pensar no que fazíamos antes. Qual é a ideia? Vamos criar três quadrados orientados em coluna, usando Flex, com tamanho de 200 pixels cada, e cada um com uma cor diferente. Como faríamos isso usando CSS tradicional? Criaríamos uma div para organizá-los externamente e outra div para cada quadrado.
 
 Comparando CSS tradicional e Tailwind CSS
+
 Primeiro, vamos criar a estrutura básica em HTML:
 
+```HTML
 <div>
     <div></div>
 </div>
-Copiar código
+```
+
 Em seguida, adicionamos uma classe para estilizar os quadrados:
 
+```HTML
 <div>
     <div class="quadrado"></div>
 </div>
-Copiar código
+```
+
 Agora, vamos adicionar mais quadrados:
 
+```HTML
 <div>
     <div class="quadrado"></div>
     <div class="quadrado"></div>
     <div class="quadrado"></div>
 </div>
-Copiar código
+```
+
 No CSS tradicional, definiríamos as propriedades da classe .quadrado assim:
 
+```CSS
 .quadrado {
     height: 200px;
     width: 200px;
     background: red;
     margin-bottom: 5px;
 }
-Copiar código
+```
+
 Lembramos que a premissa do Tailwind é que escrevamos menos CSS. Em vez de pensarmos dessa forma, utilizaremos classes utilitárias do Tailwind. Vamos apagar tudo isso e voltar ao nosso HTML. Se quisermos um elemento com largura de 200 pixels, faremos assim:
 
+```HTML
 <div class="w-[200px]"></div>
-Copiar código
+```
+
 Além disso, queremos definir uma altura de 200 pixels:
 
+```HTML
 <div class="w-[200px] h-[200px]"></div>
-Copiar código
+```
+
 Queremos também um background-color vermelho. No Tailwind, usamos:
 
+```HTML
 <div class="w-[200px] h-[200px] bg-red-500"></div>
-Copiar código
+```
+
 Aplicando classes utilitárias do Tailwind CSS
+
 Com isso, conseguimos, usando apenas classes utilitárias, alcançar o resultado desejado. Podemos trocar e aplicar as mesmas classes a outros elementos, alterando, por exemplo, de red para green e o de baixo para blue:
 
+```HTML
 <div>
     <div class="w-[200px] h-[200px] bg-red-500"></div>
     <div class="w-[200px] h-[200px] bg-green-500"></div>
     <div class="w-[200px] h-[200px] bg-blue-500"></div>
 </div>
-Copiar código
+```
+
 Podemos também usar o flex para organizar nosso container. Na div externa, aplicamos a classe flex:
 
+```HTML
 <div class="flex">
     <div class="w-[200px] h-[200px] bg-red-500"></div>
     <div class="w-[200px] h-[200px] bg-green-500"></div>
     <div class="w-[200px] h-[200px] bg-blue-500"></div>
 </div>
-Copiar código
+```
+
 Ao fazer isso, os quadrados são organizados automaticamente. Podemos adicionar espaçamento entre os elementos com a propriedade gap. Por exemplo, gap-2 aplica essa estilização:
 
+```HTML
 <div class="flex gap-2">
     <div class="w-[200px] h-[200px] bg-red-500"></div>
     <div class="w-[200px] h-[200px] bg-green-500"></div>
     <div class="w-[200px] h-[200px] bg-blue-500"></div>
 </div>
-Copiar código
+```
+
 Se quisermos que o layout seja em coluna, utilizamos flex-col:
 
+```HTML
 <div class="flex flex-col gap-2">
     <div class="w-[200px] h-[200px] bg-red-500"></div>
     <div class="w-[200px] h-[200px] bg-green-500"></div>
     <div class="w-[200px] h-[200px] bg-blue-500"></div>
 </div>
-Copiar código
+```
+
 Explorando a documentação do Tailwind CSS
+
 Essa é a premissa do Tailwind: em vez de escrever estilos, encontramos uma classe utilitária que aplica o estilo desejado. Na documentação do Tailwind, ao buscar por "Tailwind CSS" no Google e acessar o primeiro resultado, encontramos a seção "Core Concepts". Lá, vemos exemplos como mx-auto para margem automática no eixo X, flex, entre outros. A documentação é bem detalhada, cobrindo espaçamento, tamanho, tipografia, e mais.
 
 Por exemplo, para font-size, temos text-xs para extra pequeno, text-sm para pequeno, e assim por diante. Também encontramos text-decoration-line, text-transform, e a cor do texto. Existem várias formas de aplicar estilos usando apenas classes utilitárias.
@@ -1984,14 +2011,1730 @@ Por exemplo, para font-size, temos text-xs para extra pequeno, text-sm para pequ
 Algo comum é o padding. Na seção de Layout, vemos o padding com o prefixo p-. Podemos usar valores em pixels ou pré-definidos, como p-4 e p-8, para controlar o padding. O mesmo vale para margin, com m-, e para tamanhos máximos de largura e altura.
 
 Desenvolvendo a aplicação Poupaapp com Tailwind CSS
+
 Para aprender a base do Tailwind CSS, vamos desenvolver a aplicação Poupaapp do zero, recriando a tela que já fizemos com CSS Modules, agora usando Tailwind. Assim, entenderemos as diferenças entre eles e poderemos escolher o que preferimos. No mercado de trabalho, estaremos prontos para ambos os cenários, seja Tailwind ou CSS Modules, e aptos a desenvolver e estilizar componentes.
 
 Por enquanto, essa era a conversa que queríamos ter. Agora é hora de pôr a mão na massa, criar o projeto e desenvolver o Poupaapp novamente. Nos vemos na próxima aula.
 
-### Aula 3 -  - Vídeo 2
-### Aula 3 -  - Vídeo 3
-### Aula 3 -  - Vídeo 4
-### Aula 3 -  - Vídeo 5
-### Aula 3 -  - Vídeo 6
-### Aula 3 -  - Vídeo 7
-### Aula 3 -  - Vídeo 8
+### Aula 3 - Iniciando o projeto - Vídeo 2
+
+Transcrição  
+Vamos criar nosso projeto, instalar o Tailwind e começar a configurar e estilizar nosso projeto. O arquivo no Figma está aberto, o mesmo da aula anterior, com o projeto. Além disso, a documentação que estávamos visualizando no vídeo anterior, disponível em tailwindcss.com, possui um botão "Get Started" para começarmos. A primeira coisa que ele exibe é a instalação. Vou aumentar um pouco o zoom e, por coincidência, a primeira opção que ele mostra é utilizando o Vite. É com o Vite que vamos criar este projeto, então precisamos seguir essas instruções.
+
+A primeira coisa que ele diz é: "Primeiro, crie o seu projeto." Vamos ao terminal, entrar na área de trabalho e chamar o comando para criar o projeto:
+
+> cd Desktop/  
+> npm create vite@latest my-project  
+> cd my-project
+
+Configurando o template React
+
+No nosso caso, queremos usar o template de React, então podemos executar o mesmo comando que executamos na aula anterior:
+
+> npm create vite@latest poupaapp -- --template react  
+> cd poupaapp/
+
+O Vite vai criar o projeto. No meu caso, ele já está instalado, mas pode ser que, no seu caso, ele peça para instalar o Vite localmente. Confirme a instalação e, no final, tudo estará certo. Agora, vamos entrar na pasta criada e rodar npm i para instalar todas as dependências:
+
+> npm i
+
+Assim que terminar, podemos limpar o terminal e usar npm run dev para verificar se tudo está funcionando:
+
+> npm run dev
+
+Clique com o botão direito para abrir o link, e ele deve mostrar a página base do React com o Vite.
+
+Instalando e configurando o Tailwind
+
+Agora, podemos seguir com o que a documentação nos pede. O segundo passo é instalar o Tailwind. Ele diz para instalar o tailwindcss e @tailwindcss/vite. Vamos instalar essas duas bibliotecas. No terminal, copie o comando da documentação e cole:
+
+> npm install tailwindcss @tailwindcss/vite
+
+O tailwindcss cuidará do CSS propriamente dito, e o @tailwindcss/vite usará o Vite para preparar tudo que o Tailwind precisa. Por isso, precisamos dessas duas bibliotecas.
+
+O terceiro passo é configurar o plugin do Vite. Vamos ao arquivo vite.config.js. Primeiro, abra o projeto no VSCode. No vite.config.js, precisamos adicionar nosso plugin. Feche o Copilot, pois não vamos utilizá-lo. Voltando à documentação, vamos trazer o import:
+
+```JSX
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+  plugins: [
+    tailwindcss(),
+  ],
+})
+```
+
+Importando Tailwind no projeto
+
+Além disso, precisamos fazer um import do tailwindcss no nosso arquivo CSS. Vamos copiar esse import e ir ao src/index.css. Selecione tudo e apague, deixando apenas o import do Tailwind:
+
+> @import "tailwindcss";
+
+No arquivo main.jsx, o index.css é sempre importado. Vamos agora limpar o nosso app.css, removendo os states e tudo que está sendo importado. Já fizemos isso anteriormente. Podemos deletar o react.svg, o vite.svg e o app.css. Por enquanto, vamos deixar assim.
+
+Testando a configuração do Tailwind
+
+Nosso próximo passo é testar se o Tailwind está funcionando. No terminal, ao rodar o comando npm run dev novamente, o servidor será iniciado. No navegador Chrome, acessando a porta 5173 e recarregando a página, veremos que está tudo em branco. Isso ocorre porque não temos nada no jsx. Ao verificar o console, não há erros, o que indica que está funcionando corretamente.
+
+Aplicando estilos com Tailwind
+
+Vamos começar a estilização, entendendo como o Tailwind funciona, como navegar na documentação e aplicar esses estilos. Primeiramente, podemos pensar em uma div que ocupe 100% da altura disponível e aplicar uma cor de fundo. Em vez de usar o método tradicional, onde criaríamos uma div com um className chamado container e aplicaríamos o estilo nesse seletor, faremos isso utilizando o Tailwind.
+
+Na documentação, podemos buscar por "background". No lado esquerdo, encontramos tudo que o Tailwind oferece em relação a background. Vamos olhar a terceira opção, "background color". Para testar, podemos usar bg-black, que deixará o fundo todo escuro. Após aplicar isso, verificamos no Vite React e nada acontece. Isso ocorre porque não há tamanho definido, e o elemento está vazio.
+
+Definindo altura mínima com Tailwind
+
+Ao inspecionar o body, vemos uma div com a classe bg-black, mas sem tamanho. Podemos aplicar uma altura mínima. Na documentação, em "layout", "flexbox e grid", "espaçamento" e "tamanho", encontramos "sizing". Queremos olhar para min-height, ou seja, altura mínima. A opção desejada é min-h-screen, que define a altura mínima como 100vh (altura da visualização disponível).
+
+Aplicamos a classe min-h-screen junto com bg-black:
+
+`<div className="bg-black min-h-screen">`
+
+Ao voltar para o Vite React, o estilo e a altura mínima são aplicados corretamente. No explorador de elementos, vemos as duas classes, e nos developer tools podemos verificar que bg-black aplica a cor de fundo e min-h-screen define a altura mínima de 100vh.
+
+Conclusão e próximos passos
+
+Essa é a premissa: conseguimos o resultado desejado sem escrever CSS diretamente, apenas utilizando as classes utilitárias do Tailwind. Mas isso é apenas o começo. Queremos agora trazer as cores do projeto. O Tailwind não conhece as cores do nosso projeto, então vamos ensiná-lo quais cores utilizaremos e como deixá-las disponíveis. Esse será o assunto do nosso próximo vídeo. Nos vemos lá!
+
+### Aula 3 - Inserindo variáveis de cores, logo e limpeza do projeto - Vídeo 3
+
+Transcrição  
+Vamos pensar em como configurar as cores do nosso projeto. No Figma, temos definidas cores neutras, primárias e secundárias que utilizamos neste projeto. No GIST que compartilhamos, temos as variáveis CSS definidas. No entanto, desta vez, não vamos usá-las da mesma forma, pois agora estamos utilizando o Tailwind CSS.
+
+Quando estávamos no Playground, utilizamos algo como bg-red-500. Ao salvar, estávamos usando as cores conhecidas pelo Tailwind CSS. Vamos entender o que o Tailwind CSS conhece de cores e como utilizá-las. Na documentação, na seção de Core Concepts (Conceitos Principais), encontramos a parte de Colors (Cores). A paleta de cores é vasta e possui um intervalo de opacidade, permitindo visualizar essa gama de valores. Quando usamos red-500, utilizamos o vermelho intermediário. Se trocarmos para red-50, veremos um tom de vermelho muito mais claro, quase rosa.
+
+Exemplificando o uso de cores no Tailwind CSS
+
+Para ilustrar, podemos começar com um exemplo básico de como o Tailwind CSS aplica essas cores:
+
+```JSX
+<div className="bg-red-500 min-h-screen">
+</div>
+```
+
+Esse exemplo utiliza a classe bg-red-500 para aplicar um fundo vermelho. Se quisermos um tom mais claro, podemos alterar para:
+
+```JSX
+<div className="bg-red-50 min-h-screen">
+</div>
+```
+
+Essas são as cores que o Tailwind CSS conhece, e há muitas disponíveis, como rosa, rosê, cinza, fúcsia, entre outras. Para quem trabalha com design, essa variedade é útil, mas no caso do Poupaapp, temos cores pré-definidas. No nosso cenário, temos o Tailwind CSS e cores específicas. Podemos usar as classes e utilitários para cores? Sim, conseguimos.
+
+Personalizando cores com @theme no Tailwind CSS
+
+Na documentação, há uma opção para personalizar cores. Podemos usar uma funcionalidade do CSS chamada @theme para definir cores customizadas com um prefixo --color--. Vamos trazer o @theme para o nosso projeto. No index.css, colaremos o @theme.
+
+```CSS
+@import "tailwindcss";
+
+@theme {
+  --color-midnight: #121063;
+  --color-tahiti: #3ab7bf;
+  --color-bermuda: #78dcca;
+}
+```
+
+Um detalhe importante: se não estiver vendo o quadradinho com o hexadecimal da cor que a classe CSS aplica, é possível resolver isso. Nas extensões do VS Code, uma delas é a do Tailwind CSS, chamada Tailwind CSS IntelliSense, do Tailwind Labs. Essa extensão ajuda no autocomplete de classes e outras funcionalidades. Você pode instalá-la, se desejar, mas o projeto funcionará mesmo sem ela.
+
+Adaptando cores personalizadas para o projeto
+
+Vamos fechar o parêntese e adicionar nossas cores. Não estamos falando de Midnight, Tahiti e Bermuda, mas sim das nossas cores. Vamos voltar ao nosso gist, copiar tudo o que está lá, exceto o :root, que é um pseudo-seletor, e colar abaixo do que já trouxemos, mantendo os exemplos. Precisamos adaptar esses valores para usar o prefixo --color-. Vamos copiar color- e colar logo após o primeiro --. No final, ficará assim:
+
+```CSS
+@import "tailwindcss";
+
+@theme {
+    /* Neutral colors */
+    --color-neutral-darker: #1C1D21;
+    --color-neutral-background: #212229;
+    --color-neutral-surface: #2A2C34;
+    --color-neutral-header: #33353F;
+    --color-neutral-text: #F5F5F5;
+
+    /* Primary colors */
+    --color-primary-highlight: #7693FF;
+
+    /* Secondary colors */
+    --color-secondary-income: #06FF62;
+    --color-secondary-expense: #F8782B;
+}
+```
+
+Agora podemos remover os exemplos que trouxemos e testar.
+
+Aplicando cores personalizadas no projeto
+
+Voltando à documentação, com base no exemplo fornecido, só precisamos adicionar o prefixo --color-. O que vem depois do prefixo pode ser utilizado, como bg-midnight, que é o exemplo dado. No caso do pop-up, temos uma cor de fundo, que é 21, 22, 29. Em vez de usar o rosê, vamos usar nossa cor de fundo, neutral-background. Note que o prefixo não será incluído, então vamos copiar neutral-background e substituir red-50 por neutral-background. No Chrome, a cor já está customizada. O Tailwind CSS, por trás dos panos, transforma a classe bg-neutral-background em uma classe com background-color, chamando a variável que definimos: --color-neutral-background.
+
+```JSX
+<div className="bg-neutral-background min-h-screen">
+</div>
+```
+
+Integrando a logo do projeto
+
+Agora, vamos trazer a logo do projeto. Com o VS Code aberto, vamos à pasta de downloads, onde já temos o logo em SVG, e movê-lo para a pasta "assets". No app.jsx, vamos adicionar o nosso aside. Dentro do aside, colocaremos a logo e a importaremos corretamente:
+
+```JSX
+import logo from './assets/logo.svg'
+```
+
+No nosso src, usaremos a logo que acabamos de importar:
+
+```JSX
+<div className="bg-neutral-background min-h-screen">
+  <aside>
+    <img src={logo} alt="" />
+  </aside>
+</div>
+```
+
+No navegador, as cores já estão definidas, a logo está no lugar e o aside já está iniciado.
+
+Concluindo a configuração de cores e estilização
+
+Estamos no caminho certo, com nossas cores customizadas e aprendendo a usar as cores disponíveis no Tailwind CSS. Vamos focar na estilização do pop-up e seguir com a componentização, como fizemos no encontro sobre CSS e módulos. Desta vez, não escreveremos nenhuma linha de CSS para aplicar esses estilos, confiando no Tailwind CSS para isso. Nos vemos na próxima aula.
+
+### Aula 3 - Criando a barra lateral - Vídeo 4
+
+Transcrição  
+Vamos configurar nosso primeiro componente Aside utilizando o Tailwind e começar a perceber as diferenças entre CSS Modules e Tailwind CSS.
+
+Para criar um componente, não há mistério. Dentro da pasta src, vamos criar uma nova pasta chamada "components" e, dentro dela, um novo arquivo Aside/index.jsx.
+
+Recomendando extensões para Tailwind CSS
+
+Sobre extensões, recomendamos instalar a extensão Tailwind CSS IntelliSense, desenvolvida pela equipe do Tailwind Labs. Essa extensão oferece funcionalidades como IntelliSense e autocomplete, que são bastante úteis.
+
+No componente, faremos um export const Aside, que é uma arrow function, e retornaremos um elemento. Vamos começar definindo a estrutura básica do componente:
+
+```JSX
+export const Aside = () => {
+
+}
+```
+
+Adicionando elementos ao componente Aside
+
+Agora, vamos adicionar o retorno do componente, que inicialmente será vazio:
+
+```JSX
+export const Aside = () => {
+    return ()
+}
+```
+
+Em seguida, vamos adicionar um elemento aside e uma imagem dentro do retorno. Para isso, precisamos importar o logo corretamente:
+
+```JSX
+import logo from '../../assets/logo.svg';
+
+export const Aside = () => {
+    return (
+        <aside>
+            <img src={logo} alt="" />
+        </aside>
+    )
+}
+```
+
+Integrando o componente Aside no App
+
+No App.jsx, podemos importar o Aside. Verificamos se o código já importou o componente automaticamente. Após salvar, conferimos no Vite React e tudo deve estar igual, apenas em uma nova localização.
+
+```JSX
+import { Aside } from "./components/Aside";
+
+function App() {
+  return (
+    <div className="bg-neutral-background min-h-screen">
+      <Aside />
+    </div>
+  )
+}
+```
+
+Adicionando texto e verificando no Vite React
+
+Podemos adicionar o texto "Desenvolvido por Alura. Projeto fictício sem fins comerciais" ao lado da imagem, abaixo dela, em um parágrafo. Ao verificar no Vite React, o texto e a imagem devem estar presentes.
+
+```JSX
+<aside>
+    <img src={logo} alt="" />
+    <p>Desenvolvido por Alura. Projeto fictício sem fins comerciais.</p>
+</aside>
+```
+
+Definindo estilos e layout com Tailwind CSS
+
+Agora, vamos definir tamanhos e padding necessários para o layout. Precisamos definir a largura de 282 pixels e o fundo como "neutral header". No VS Code, adicionamos as classes CSS. Para o fundo, usamos bg-neutral-header.
+
+```JSX
+<aside className="bg-neutral-header max-w-[282px]">
+```
+
+Definimos uma altura mínima de 100vh, como feito no App.jsx. Utilizamos min-h-screen para definir a altura mínima como a altura da tela disponível.
+
+```JSX
+<aside className="bg-neutral-header max-w-[282px] min-h-screen">
+```
+
+Aplicando padding e estilizando o parágrafo
+
+Para aplicar padding, temos padding-y (vertical) e padding-x (horizontal). No Figma, o padding lateral é de 40 pixels e o vertical de 80 pixels. No Tailwind, usamos py-20 para o padding vertical e px-10 para o horizontal.
+
+```JSX
+<aside className="bg-neutral-header max-w-[282px] min-h-screen py-20 px-10">
+```
+
+Precisamos agora estilizar nosso parágrafo, aplicando as cores, tamanhos e fontes definidos no Figma. Primeiramente, aplicaremos a cor neutra do texto. No VS Code, no arquivo index.css, temos um neutral text. Para aplicar cor no Tailwind, abrimos um className no próprio parágrafo e usamos o prefixo text seguido do tamanho ou cor desejada.
+
+```JSX
+<p className="text-neutral-text text-[13px] leading-[120%] text-center">
+```
+
+Ajustando espaçamento e finalizando o componente
+
+O que falta é o espaçamento entre a imagem e o texto. O tamanho é de 56 pixels. Podemos usar o Flex para isso. No Aside, aumentaremos o número de classes e usaremos o Flex. Para isso, aplicamos a classe flex. Se quisermos em coluna, usamos flex-col. Para adicionar um gap, verificamos no Figma que é 56 pixels, então aplicamos gap-[56px].
+
+```JSX
+<aside className="bg-neutral-header max-w-[282px] min-h-screen py-20 px-10 flex flex-col gap-[56px]">
+```
+
+Ao salvar e verificar no Vite React, o resultado está bem próximo do final. O Aside está pronto, com todas as classes do Tailwind aplicadas para alcançar o resultado desejado. Um detalhe importante é que a fonte usada no projeto é a Work Sans. No Guia, vemos que a fonte é Work Sans, e precisamos trazê-la para o projeto. O Tailwind possui uma maneira própria de fazer isso, que aprenderemos na sequência.
+
+### Aula 3 - Importando a fonte - Vídeo 5
+
+Transcrição  
+Vamos agora incorporar a fonte Work Sans em nosso projeto e aprender uma das formas de aplicar isso, pensando em estilos globais. No navegador, já abrimos o link direto do Figma para a Work Sans, mas também é possível obter o link direto no Google Fonts. No lado direito, em cima, temos a opção "Get Font". Vamos pegar o "Get Embed Code" e utilizar o @import para fazer isso diretamente no CSS.
+
+No VS Code, deixaremos apenas o index.css aberto. Vamos trazer esse import da URL para dentro do nosso index.css, colocando-o no topo. Isso fará a importação da fonte.
+
+> @import url('<https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap>');
+
+Aplicando a fonte globalmente
+
+Agora que importamos a fonte, queremos aplicá-la. Podemos consultar a documentação, procurar por fonte e acessar a parte de texto, que está como "typography". Lá, conseguimos usar as fontes disponíveis, e ele fornece alguns exemplos, mencionando o uso de um valor customizado. Podemos usar o font-family para personalizar nossa fonte.
+
+No entanto, não queremos aplicar isso elemento por elemento; queremos que seja global. Todas as fontes, sem exceção, serão Work Sans. Como fazemos isso? No VS Code, a primeira coisa é definir essa nova fonte. Dentro do @font-face, faremos um font-family com o nome da fonte que desejamos, que é Work Sans. O valor disso é o que pegamos do Figma: Work Sans, sem serifa.
+
+> --font-work-sans: "Work Sans", sans-serif;
+
+Utilizando o Tailwind para estilos globais
+
+Assim, já conseguimos aplicar esse estilo sempre que necessário. Não queremos fazer isso componente a componente, mas sim globalmente. Para alcançar esse resultado, utilizaremos algumas diretivas do Tailwind. O que vamos escrever agora não é do CSS, mas do Tailwind. Vamos começar a pensar nas camadas do Tailwind, utilizando a palavra em inglês @layer.
+
+```JSX
+@layer base {
+    html {
+        @apply font-work-sans;
+    }
+}
+```
+
+Note que o layer que estamos usando é uma extensão do Tailwind, que já foi mostrada anteriormente. Temos quatro camadas: tema, base, componentes e utilitários. Ao falarmos sobre a aplicação de um CSS globalmente, estamos nos referindo à aplicação na camada mais básica, ou seja, no nível mais baixo. Vamos aplicar esse CSS. Se é CSS que vamos aplicar, abrimos e fechamos as chaves. O que queremos aplicar? Podemos usar um seletor, como o seletor do HTML, que poderia ser body ou *. Neste caso, vamos aplicar no html.
+
+Verificando a aplicação da fonte
+
+Observe que o VS Code indica que a regra @apply não é reconhecida como uma regra CSS, e de fato não é, pois pertence ao Tailwind. Vamos verificar se isso funcionou. Ao abrir no Chrome, no Vite React, a fonte já deve ter mudado. Se comentarmos essa linha ou a deletarmos, a fonte encolhe, pois a fonte padrão é um pouco menor. Quando aplicamos, a fonte muda ligeiramente, e podemos ver isso acontecendo. Ao inspecionar os elementos, conseguimos ver no html o font-family: var(--font-work-sans) aplicado. Note que isso está na layer-base, e é o próprio Tailwind que faz isso por nós.
+
+Considerações finais sobre a aplicação de fontes
+
+Com tudo no lugar, conseguimos utilizar as fontes normalmente. Recapitulando, importamos as fontes, e o import sempre fica no topo. Depois, criamos a variável para a fonte work-sans e, em seguida, aplicamos.
+
+Vini, é necessário sempre colocar no global layer-base no html? Não, depende. É comum ter fontes diferentes para os títulos e para o corpo da página. Nesse cenário, não aplicamos uma fonte global, mas apenas nos elementos necessários. No caso do pop-up, sim, é global, e para isso usamos o layer-base e o apply.
+
+Vou deixar uma atividade em texto para entender melhor como isso funciona, mas, por enquanto, era isso que precisávamos saber. Queremos aplicar um estilo global? Sim, queremos aplicar um estilo global. A dicção é clara: @layer base, dentro dele passamos o seletor e, dentro do seletor, aplicamos o estilo. Nossa fonte já está no lugar. Vamos continuar desenvolvendo os componentes do nosso pop-up no próximo vídeo.
+
+### Aula 3 - Para saber mais: CSS @import, @theme e @apply
+
+Hoje vamos abrir a caixa-preta de três palavrinhas que apareceram no nosso arquivo de estilos: @import, @theme e @apply. À primeira vista, pode parecer que tudo isso faz parte do mesmo pacote, mas não é bem assim. Temos que separar o que é puro CSS do que é mágica do Tailwind.
+
+@import
+
+Esse é 100% CSS puro. É como dizer pro navegador: "ei, traz esse outro arquivo de estilos aqui pra dentro".
+
+No nosso caso:
+
+```CSS
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap'); 
+```
+
+Estamos chamando a fonte Work Sans direto do Google Fonts. Isso não tem nada a ver com Tailwind, funcionaria do mesmo jeito em qualquer projeto CSS.
+
+Já aqui:
+
+```CSS
+@import "tailwindcss"; 
+```
+
+Estamos puxando o núcleo do Tailwind pro nosso arquivo. É como plugar uma biblioteca externa: se você não importa, não tem como usar suas classes utilitárias.
+
+@theme
+
+Aqui entramos no território Tailwind. Essa diretiva é a forma que o Tailwind nos dá pra criar um tema customizado usando CSS custom properties (as famosas variáveis --alguma-coisa).
+
+Exemplo do nosso curso:
+
+```CSS
+@theme { 
+--color-neutral-darker: #1C1D21; 
+--color-primary-highlight: #7693FF; 
+--font-work-sans: "Work Sans", sans-serif; 
+} 
+```
+
+Traduzindo: estamos criando nosso próprio vocabulário de design (cores, tipografia, etc.) que depois pode ser usado em qualquer lugar do projeto. É como montar um dicionário onde você escreve "azul-principal" e ele entende que isso significa #7693FF.
+
+Isso não é só CSS puro porque o @theme não existe no CSS tradicional. Ele é interpretado pelo compilador do Tailwind, que pega essas variáveis e integra ao sistema de utilitários.
+
+@apply
+
+Esse é outro recurso do Tailwind. O que ele faz é pegar classes utilitárias e aplicá-las dentro de uma regra CSS.
+
+Exemplo:
+
+```CSS
+@layer base { 
+html { 
+@apply font-work-sans; 
+} 
+} 
+```
+
+Aqui, em vez de escrever manualmente:
+
+```CSS
+html { 
+font-family: "Work Sans", sans-serif; 
+} 
+```
+
+A gente deixa o Tailwind traduzir a classe font-work-sans (que criamos no @theme) e aplicar direto no elemento html. Ou seja: estamos reaproveitando a linguagem utilitária do Tailwind dentro do CSS.
+
+Resumindo
+
+- @import → vem do CSS puro, serve pra puxar estilos ou bibliotecas externas.
+- @theme → exclusivo do Tailwind, cria variáveis globais (cores, fontes etc.) que viram parte do sistema.
+- @apply → exclusivo do Tailwind, traz as classes utilitárias para dentro do CSS tradicional.
+
+Se fosse uma analogia de cozinha:
+
+- @import é como ir no mercado comprar os ingredientes.
+- @theme é como organizar a despensa, rotulando os potes ("açúcar", "sal", "pimenta").
+- @apply é como pegar os rótulos e usar direto na receita, sem precisar lembrar o ingrediente exato.
+
+E é por isso que esse arquivo mistura um pouco de cada mundo. A base é CSS normal, mas com o Tailwind adicionando superpoderes que tornam o código mais consistente e fácil de manter.
+
+Vida longa e próspera!
+
+### Aula 3 - Criando o container principal - Vídeo 6
+
+Transcrição  
+Já está tudo preparado para continuarmos desenvolvendo nossa aplicação. O que faremos agora? Estamos com o Figma aberto e vamos criar nosso componente que irá sustentar a aplicação. Temos um container com largura máxima de 1200 pixels e o espaçamento interno entre os elementos, ou seja, entre o aside e o corpo principal, é de 24 pixels.
+
+Com todas essas informações, já temos o necessário para criar o container. Vamos ao VS Code e, dentro de "Components", vamos criar um novo arquivo Container com "C" maiúsculo, na pasta index.jsx. Desta vez, não haverá estado de componente, e não escreveremos CSS manualmente.
+
+Criando o componente Container
+
+Primeiro, vamos exportar a constante Container. Para isso, começamos com a declaração da constante:
+
+```JSX
+export const Container
+```
+
+Em seguida, definimos Container como uma arrow function:
+
+```JSX
+export const Container = () => {
+
+}
+```
+
+Faremos uma desestruturação para pegar children. Desta vez, receberemos props, então pegamos children e fazemos o retorno de algo:
+
+```JSX
+export const Container = ({ children }) => {
+
+}
+```
+
+Definindo o retorno do componente
+
+Agora, vamos adicionar o retorno. Podemos usar uma div, pois não há valor semântico neste caso, e dentro dessa div renderizamos children:
+
+```JSX
+export const Container = ({ children }) => {
+    return
+}
+```
+
+Com o retorno definido, podemos completar a função:
+
+```JSX
+export const Container = ({ children }) => {
+    return (
+        <div>
+            {children}
+        </div>
+    )
+}
+```
+
+Estilizando o componente com Tailwind
+
+Agora, vamos aos nossos estilos. Já sabemos como fazer alguns deles. Por exemplo, largura máxima. Como definimos a largura máxima? max-w-1200px. Poderíamos fazer uma conta baseada no número? Poderíamos, mas neste cenário preferimos deixar explícito, pois contas muito grandes podem dificultar o entendimento do que está acontecendo.
+
+Começamos adicionando a classe de largura máxima:
+
+```JSX
+<div className="max-w-[1200px]">
+```
+
+O que mais queremos? Queremos que a margem horizontal seja automática para centralizar. Se queremos margem, usamos m. Se queremos margem horizontal, usamos mx. Se queremos que ela seja automática para centralizar, usamos mx-auto:
+
+```JSX
+<div className="max-w-[1200px] mx-auto">
+```
+
+Se queremos um espaçamento, um gap de 24 pixels, podemos usar flex e colocar um gap de 6, pois 6x4 é 24. Então, gap-6:
+
+```JSX
+<div className="max-w-[1200px] mx-auto flex gap-6">
+```
+
+Repare que o próprio VS Code já faz essa conta. Ele indica que gap-6 significa 1.5 rem, que equivale a 24 pixels.
+
+Utilizando o componente Container no App
+O que mais queremos fazer agora? Usar esse componente. No app.jsx, vamos colocar o nosso Container. Ele já foi importado para nós:
+
+```JSX
+import { Container } from "./components/Container";
+```
+
+Agora, vamos utilizar o Container no nosso componente App:
+
+```JSX
+function App() {
+
+  return (
+    <div className="bg-neutral-background min-h-screen">
+      <Container>
+        <Aside />
+      </Container>
+    </div>
+  )
+}
+```
+
+Verificando o resultado e próximos passos
+
+Se olharmos agora no nosso BitMix React, já está com o Container. Se fizermos uma inspeção, devemos tomar cuidado para deixar a tela com mais de 1.200 pixels. A largura máxima já está lá, o gap já está lá. Não temos nada ali dentro, mas o gap já está presente, e ele já está centralizado na tela. O mx-auto também funcionou. Então, o Container está pronto.
+
+Lembrando que agora estamos utilizando o idioma do Tailwind. A ideia é não escrever mais CSS manualmente e usar apenas essas classes utilitárias. Então, é isso. O pullback está nascendo, os componentes estão sendo desenvolvidos, mas ainda há bastante coisa para fazermos. Estamos aguardando vocês no nosso próximo encontro.
+
+### Aula 3 - Implementando input de texto e Main - Vídeo 7
+
+Transcrição  
+Vamos continuar desenvolvendo o projeto. Agora é o momento de olharmos para o corpo da aplicação. Precisamos de um elemento que contenha todos os outros elementos. Observando o Figma, notamos um espaçamento, alinhamento e separação entre eles. Em seguida, podemos desenvolver nosso campo de busca (search input).
+
+Vamos utilizar a mesma estratégia que usamos com o CSS Modules. Sem demoras, vamos ao VS Code. Saindo do Figma e indo para o VS Code, vamos criar um novo componente. Primeiro, criaremos o componente externo em main/index.jsx. Novamente, estamos utilizando React, então não há muitas novidades. Vamos exportar uma constante Main, que será uma arrow function.
+
+```JSX
+export const Main = () => {
+}
+```
+
+Para esse componente, capturaremos children, fazendo o destructuring das props.
+
+```JSX
+export const Main = ({ children }) => {
+}
+```
+
+Faremos um retorno do componente Main, renderizando children.
+
+```JSX
+export const Main = ({ children }) => {
+    return (
+        <main>
+            {children}
+        </main>
+    )
+}
+```
+
+Aplicando estilos com Tailwind
+
+Utilizaremos as classes do Tailwind para aplicar os estilos desejados. Queremos que a largura seja 100%, e para isso usamos w-full, que ocupa 100% da largura.
+
+```JSX
+<main className="w-full">
+    {children}
+</main>
+```
+
+Além disso, precisamos de um padding de 80, conforme visto no Figma. Para isso, utilizamos py-20, pois 10 é 40 e 20 é 80.
+
+```JSX
+<main className="w-full py-20">
+    {children}
+</main>
+```
+
+Agora, podemos ir ao nosso app.jsx e trazer o componente Main para cá. O VS Code já importou automaticamente para nós.
+
+```JSX
+import { Aside } from "./components/Aside"
+import { Container } from "./components/Container"
+import { Main } from "./components/Main"
+
+function App() {
+
+  return (
+    <div className="bg-neutral-background min-h-screen">
+      <Container>
+        <Aside />
+        <Main>
+
+        </Main>
+      </Container>
+    </div>
+  )
+}
+
+export default App
+```
+
+Voltando ao nosso aplicativo, faremos uma inspeção. Se procurarmos pelo elemento main, veremos que ele já está ocupando 100% da largura e possui um padding de 80 para cima e para baixo.
+
+Preparando o componente de busca
+
+Agora, vamos para o componente de busca. Para isso, precisamos fazer o download dos ícones. Se ainda não baixamos, eles são os mesmos que usamos anteriormente e estão disponíveis na seção de preparação do ambiente, junto com a imagem e o logotipo que utilizamos. Vamos trazer os ícones para cá, arrastando a pasta de ícones para dentro da pasta de componentes no VS Code.
+
+Vamos começar a construir nosso campo de busca em search-input/index.jsx. Novamente, estamos utilizando React. Vamos exportar uma constante SearchInput, que será uma arrow function.
+
+```JSX
+export const SearchInput = () => {
+}
+```
+
+Vamos pegar as props, ou seja, tudo que recebermos, e passá-las para o nosso componente de entrada (input).
+
+```JSX
+export const SearchInput = (props) => {
+}
+```
+
+Faremos um retorno, e como queremos colocar um ícone antes, colocaremos uma div.
+
+```JSX
+export const SearchInput = (props) => {
+    return (
+        <div>
+
+        </div>
+    )
+}
+```
+
+Integrando ícones e input
+
+Em seguida, chamaremos nosso ícone de busca (search).
+
+```JSX
+import { IconSearch } from "../icons"
+
+export const SearchInput = (props) => {
+    return (
+        <div>
+            <IconSearch />
+        </div>
+    )
+}
+```
+
+Ao lado do ícone, colocaremos o input.
+
+```JSX
+<div>
+    <IconSearch />
+    <input type="text"/>
+</div>
+```
+
+Vamos remover o tipo text, mas podemos deixá-lo se quisermos. Faremos o spread das props recebidas para o input.
+
+```JSX
+<input type="text" {...props} />
+```
+
+Agora podemos utilizá-lo. No Main, chamaremos o SearchInput. Podemos, por exemplo, passar um name. Como estamos falando de busca, podemos usar q, de query de busca. O name será q.
+
+```JSX
+<Main>
+    <SearchInput name="q" />
+</Main>
+```
+
+Estilizando o campo de busca
+
+Vamos verificar se está funcionando. No Chrome, recarregaremos a página e faremos uma inspeção. Na div, veremos o svg e o input. O Tailwind já faz um reset, removendo bordas e outros estilos. Queremos organizá-lo para que fique com o fundo da cor necessária, conforme está no Figma. Precisamos centralizá-lo, mudar a cor da fonte, posicionar o ícone corretamente, adicionar padding e outros ajustes.
+
+Vamos utilizar a mesma estratégia que usamos nos CSS modules. No nosso search input, vamos começar a organizar essa estrutura. Primeiramente, vamos adicionar a classe flex para definir o display como flex.
+
+```JSX
+<div className="flex">
+```
+
+Queremos também alinhar os itens ao centro, então utilizaremos a classe do Tailwind, items-center, para alinhar verticalmente no centro.
+
+```JSX
+<div className="flex items-center">
+```
+
+Além disso, queremos o mesmo background color que temos no aside. Podemos buscar o valor bg-neutral-header, que é o background desejado.
+
+```JSX
+<div className="flex items-center bg-neutral-header">
+```
+
+Após salvar, podemos verificar o resultado. Observando no Figma, já está começando a tomar forma. Agora, precisamos aplicar o padding interno. Ao selecionar a lupa, podemos ver que o padding é de 12 para cima e para baixo, e 16 para os lados. Assim, para cima e para baixo, utilizamos padding-y com valor 3, que equivale a 12. Para os lados, padding-x com valor 4, que equivale a 16. Cada unidade representa 0,25 rem, então o valor 4 é 1 rem.
+
+```JSX
+<div className="flex items-center bg-neutral-header py-3 px-4">
+```
+
+Ajustando o layout e finalizando
+
+Ao verificar na tela, já está bem mais parecido, e o tamanho está fluido. O nosso contêiner superior está com tamanho fluido, e podemos aplicar o mesmo ao nosso input com className: w-full. Vamos ajustar isso.
+
+```JSX
+<input type="text" className="w-full" {...props} />
+```
+
+Agora, o componente externo e o interno estão fluindo corretamente.
+
+Queremos agora arredondar os cantos. Antes disso, vamos adicionar o espaçamento entre o input e o ícone. No Figma, o valor é 16, que corresponde a gap-4.
+
+```JSX
+<div className="flex items-center bg-neutral-header py-3 px-4 gap-4">
+```
+
+Verificando no Chrome, já está correto. Agora, precisamos arredondar os cantos. Na documentação do Tailwind, na seção de bordas, encontramos a opção Border Radius. No Figma, o Corner Radius é 8, que corresponde à classe rounded-lg, equivalente a meio rem.
+
+```JSX
+<div className="flex items-center bg-neutral-header py-3 px-4 gap-4 rounded-lg">
+```
+
+Após aplicar essa classe, verificamos no Chrome e está bem parecido com o desejado. Agora, vamos estilizar o nosso input. Queremos definir o tamanho e a cor da fonte. No className do input, utilizamos text-neutral-text para a cor, definida no index.css.
+
+```JSX
+<input type="text" className="w-full text-neutral-text" {...props} />
+```
+
+Queremos também definir o tamanho da fonte e o line-height. No Figma, o parágrafo large tem tamanho de fonte 20 e line-height de 125%.
+
+```JSX
+<input type="text" className="w-full text-neutral-text text-[20px] leading-[125%]" {...props} />
+```
+
+Verificando no Chrome, tudo está conforme o esperado, semelhante ao que vimos no Figma. Com isso, nossa estrutura principal está pronta. Agora, vamos continuar evoluindo e pensar em uma estratégia para reescrever os componentes de tipografia. Nos vemos na próxima aula. Até mais!
+
+### Aula 3 - Desenvolvendo componente para tipografia - Vídeo 8
+
+Transcrição  
+Vamos então pensar no nosso componente de tipografia. Sem demoras, vamos para a nossa pasta de componentes e criar um novo arquivo chamado typography/index.jsx. Vamos usar a mesma estratégia de antes, criando uma constante de tags. Vamos focar apenas no que precisamos, criando uma tag p que representa o contexto do body. Se alguém passar um h1, por exemplo, vamos pegar a tag h1. Se passar uma tag h2, vamos pegar a tag h2. Essas são as variantes que vamos receber.
+
+Para começar, definimos a constante TAGS:
+
+```JSX
+const TAGS = {
+    body: 'p',
+    h1: 'h1',
+    h2: 'h2'
+}
+```
+
+Exportando a constante Typography
+
+Agora já podemos fazer um export da constante Typography. Vamos receber várias propriedades, então vamos pensar no que fazer. Já vamos fazer o return de algo, colocando entre parênteses para seguir nosso padrão. O que queremos fazer? A primeira coisa é escolher qual será a variante que será renderizada. Vamos receber uma propriedade chamada variant e, baseado nisso, vamos pegar nosso componente. Qual é o nosso componente? Vamos nas nossas tags e pegamos na posição da variant que recebemos. Mas se alguém passar algo inválido, isso não será adequado. Então, se alguém passar algo inválido e o resultado for undefined, podemos passar por padrão tags.p. Passamos o body, tags.body, agora sim. Com isso, já sabemos que temos um componente para ser renderizado.
+
+```JSX
+export const Typography = ({ variant }) => {
+    const Component = TAGS[variant] || TAGS.body;
+    return (
+        <Component>
+        </Component>
+    );
+}
+```
+
+Adicionando children ao componente
+
+O que mais queremos pegar aqui? Queremos pegar, por exemplo, children. O que vamos receber de filho? Qual é o texto que será exibido aqui dentro? Então exibimos children lá dentro.
+
+```JSX
+export const Typography = ({ variant, children }) => {
+    const Component = TAGS[variant] || TAGS.body;
+    return (
+        <Component>
+            {children}
+        </Component>
+    );
+}
+```
+
+Definindo classes de estilo
+
+O que mais queremos? Agora queremos definir as classes. Imagine que cada estilo terá uma variante diferente. Vamos criar uma constante chamada VARIANT_CLASS. Podemos colocar tudo em maiúsculo e usar um sublinhado para separar VARIANT de CLASS. Agora vamos seguir a mesma estratégia das tags em si. Aqui não queremos definir o parágrafo, mas sim os estilos. Estamos falando de font-size, font-color, margem, entre outros. Uma coisa que já podemos definir por padrão para todos é a margem. Não importa se é para cima, para baixo, de um lado ou para o outro, será zero. Vamos ter margem zero.
+
+```JSX
+const VARIANT_CLASS = {
+    body: 'm-0',
+    h1: 'm-0',
+    h2: 'm-0'
+}
+```
+
+Aplicando classes e estilos
+
+Agora já conseguimos pegar qual será o className. Então, a constante className virá de VARIANT_CLASS, novamente passando na variant. Se isso falhar, nosso padrão será pegar de VARIANT_CLASS.body. Se alguém passar uma variante que não existe, ele renderizará o texto e não dará erro. Agora já podemos passar um className, o className que acabamos de definir. Essa é a estrutura base, mas precisamos aplicar mais estilos aqui. Já sabemos como aplicar a cor do texto, que é text-neutral-text. Então já podemos trazer isso para todos eles, sem exceção. O que vai mudar agora? O tamanho da fonte.
+
+```JSX
+const className = VARIANT_CLASS[variant] || VARIANT_CLASS.body;
+
+return (
+    <Component className={className}>
+        {children}
+    </Component>
+);
+```
+
+Definindo tamanhos de fonte
+
+Qual é o tamanho da fonte de cada texto? Vamos verificar isso no Figma. Primeiro, vamos olhar o texto do corpo. No corpo, ele está com o AGMD, que indica um tamanho de 16. O peso é regular, e o espaçamento entre linhas é de 120%. Vamos ajustar isso.
+
+No VS Code, no corpo do texto, vamos definir o tamanho. Poderíamos usar text- e passar o tamanho, mas é interessante consultar a documentação para reforçar o que é possível fazer em termos de tamanho de fonte. Na documentação, em "typography", ao lado esquerdo, encontramos "font-size" com alguns tamanhos pré-definidos: XS para 12, SM para 14, base para 16, e assim por diante. Para o corpo, que tem tamanho 16, usaremos a classe text-base. Já sabemos como definir o espaçamento entre linhas. Vamos olhar na documentação sobre espaçamento entre linhas. Queremos calcular o valor do leading, ou seja, o espaçamento entre linhas desejado. Se queremos 120%, faremos leading-120%. Vamos verificar se é isso mesmo: 120%, perfeito. Essas são as classes para o corpo do texto.
+
+```JSX
+const VARIANT_CLASS = {
+    body: 'm-0 text-neutral-text text-base leading-[120%]',
+    h1: 'm-0 text-neutral-text text-[31px] leading-[120%]',
+    h2: 'm-0 text-neutral-text'
+}
+```
+
+Ajustando o componente H1
+
+Agora, para o H1. Vamos verificar o tamanho, que é 31, e o peso, que já é negrito por padrão, então não precisamos alterar. O tamanho 31 não existe na nossa lista de tamanhos pré-definidos, temos 30, mas não 31. Precisaremos definir o tamanho específico que queremos, usando text-[31px]. Precisamos também do espaçamento entre linhas, que é 120%, igual ao do corpo. Não faremos isso para todos os elementos, mas esses dois já servirão.
+
+Organizando o arquivo app.jsx
+
+No arquivo app.jsx, podemos organizar isso dentro de uma div, pensando na organização futura. Vamos chamar o Typography. Por padrão, ele é o corpo do texto, então não precisamos especificar a variante. Para o texto, podemos deixar e alterar isso, passando a variante h1 como uma string, apenas para o título. O segundo texto, que é o corpo, é o padrão, então podemos deixá-lo vazio.
+
+```JSX
+import { Typography } from "./components/typography";
+
+<div>
+    <Typography variant="h1">Olá, Vinny!</Typography>
+    <Typography>Veja como estão suas finanças hoje,</Typography>
+</div>
+```
+
+Ajustando o layout do main
+
+Vamos verificar se ficou como desejado. O texto está lá, mas o main está com display: flex, mas não está orientado em coluna. Vamos ajustar isso. Onde está o nosso main? Na verdade, nem colocamos o main no app.jsx. Por isso, a div está fora do lugar. Ela deve ficar dentro do main, logo abaixo do search input. Vamos verificar agora. Perfeito, mas ainda precisamos estilizar o main para ter o espaçamento necessário, que é de 40 pixels. Vamos ajustar isso.
+
+```JSX
+<main className="w-full py-20 flex gap-10 flex-col">
+```
+
+Já temos a largura máxima e o padding. Agora, o display será flex com um gap de 40. Vamos verificar. Está quase lá. O que falta agora é colocar em coluna, flex-col. Agora sim, está do jeito que precisamos. Flex em coluna com o gap correto e o texto como deveria. Já temos a tipografia, podemos seguir em frente.
+
+Planejando a próxima etapa
+
+Vamos começar a pensar na parte inferior. Temos alguns cartões para criar, há bastante trabalho a fazer. Vamos a isso. Nos vemos na sequência.
+
+### Aula 3 - Estruturando o card, card.header e card.body - Vídeo 9
+
+Transcrição  
+Vamos continuar desenvolvendo nosso projeto, agora focando nos cards. Seguiremos a mesma estratégia de arquitetura, criando o Card, Card.Header e Card.Body, assim como fizemos com os CSS Modules.
+
+Dentro da pasta "componentes", criaremos um novo arquivo chamado Card. Dentro da pasta "Card", criaremos o arquivo index.jsx. A estrutura inicial será a seguinte:
+
+```JSX
+export default Card = () => {}
+```
+
+Esta função receberá children e retornará uma div que renderiza children.
+
+```JSX
+export default Card = ({ children }) => {
+    return (
+        <div>
+            {children}
+        </div>
+    )
+}
+```
+
+Corrigindo a exportação e criando variantes
+
+Após verificar o código, notamos que a exportação correta é export const Card. No final, podemos fazer export default Card para permitir a criação de Card.Header e Card.Body.
+
+```JSX
+export const Card = ({ children }) => {
+    return (
+        <div>
+            {children}
+        </div>
+    )
+}
+
+export default Card
+```
+
+Agora, vamos criar as variantes. Como aqui só temos a estrutura, copiaremos e colaremos duas vezes. O primeiro será o Card.Header e o segundo será o Card.Body.
+
+```JSX
+export const CardHeader = ({ children }) => {
+    return (
+        <div>
+            {children}
+        </div>
+    )
+}
+
+export const CardBody = ({ children }) => {
+    return (
+        <div>
+            {children}
+        </div>
+    )
+}
+```
+
+Integrando componentes e testando no projeto
+
+Podemos remover a exportação nominal do Card e deixar apenas o export default. O Card.Header receberá o CardHeader e o Card.Body receberá o CardBody.
+
+```JSX
+Card.Header = CardHeader
+Card.Body = CardBody
+```
+
+Com essa estrutura, já podemos utilizá-la. No arquivo app.jsx, logo após a div de tipografia, podemos criar uma section e chamar nosso Card. Podemos fazer um Card.Header e, abaixo, um Card.Body.
+
+```JSX
+<section>
+    <Card>
+        <Card.Header></Card.Header>
+        <Card.Body></Card.Body>
+    </Card>
+</section>
+```
+
+Precisamos agora confirmar se o VS Code importou corretamente, e sim, ele importou. Vamos pegar os textos: "Orçamento diário disponível" e o valor "200". Vamos nos concentrar primeiro no card e depois pensar no restante.
+
+```JSX
+<Card.Header>
+    Orçamento diário disponível:
+</Card.Header>
+<Card.Body>
+    R$200
+</Card.Body>
+```
+
+Criando múltiplos cards e aplicando estilos
+
+Precisamos de quatro cards, então podemos copiar e colar para ter isso quatro vezes. Os títulos serão: "Orçamento diário", "Progresso da meta financeira", "Movimentação financeira" e "Minhas contas".
+
+```JSX
+<section>
+    <Card>
+        <Card.Header>
+            Orçamento diário disponível:
+        </Card.Header>
+        <Card.Body>
+            R$200
+        </Card.Body>
+    </Card>
+    <Card>
+        <Card.Header>
+            Progresso da meta financeira
+        </Card.Header>
+        <Card.Body>
+            R$200
+        </Card.Body>
+    </Card>
+    <Card>
+        <Card.Header>
+            Movimentação financeira
+        </Card.Header>
+        <Card.Body>
+            R$200
+        </Card.Body>
+    </Card>
+    <Card>
+        <Card.Header>
+            Minhas contas
+        </Card.Header>
+        <Card.Body>
+            R$200
+        </Card.Body>
+    </Card>
+</section>
+```
+
+Podemos salvar e verificar no projeto. Está tudo correto, mas ainda sem estilo. Vamos começar a aplicar os estilos.
+
+Aplicando estilos com Tailwind CSS
+
+Voltando ao VS Code, dentro do index do card, começaremos a trazer o className, ou seja, as classes do Tailwind. Precisamos pegar isso do Figma. A cor de fundo é o "neutra fundo", cujo hexadecimal é algo como 2A2C.... No index.css, podemos começar a aplicar bg-neutral-surface. Além disso, precisamos considerar os cantos arredondados.
+
+```JSX
+<div className="bg-neutral-surface rounded-3xl">
+```
+
+Vamos pegar o corner radius. O corner radius é de 24 pixels. Vamos verificar se temos isso disponível. Vamos consultar a documentação do Tailwind. Vamos procurar por border, "Ctrl+F", border radius. Aqui está, border radius. Já esquecemos qual é o valor, quanto é mesmo? 24, vamos procurar esse valor do border radius. 6, 18, 24, aqui está, 3XL. Então é o rounded-3XL.
+
+O padding não será colocado, o header e a borda definirão o padding. Agora, se olharmos na nossa aplicação, ela já está com o canto arredondado, que era o que precisávamos. Está faltando ajustar o espaçamento interno. Vamos lá.
+
+Estilizando o Card.Header e Card.Body
+
+Vamos começar pela parte do header. Temos uma cor diferente, que é o neutral header, que é 3353F. Vamos pegar isso. 3353F é a cor neutral header. Podemos aplicar essa cor. No card-header, vamos ter um className bg-neutral-header.
+
+```JSX
+<div className="bg-neutral-header p-4 text-center rounded-t-3xl text-neutral-text text-xl leading-[120%] font-bold">
+```
+
+Agora, o que mais precisamos pegar? Precisamos pegar o espaçamento. Vamos ver o que temos de espaçamento. O padding será 16. Como vamos centralizar o texto, não precisamos nos preocupar com padding vertical e horizontal. Vamos colocar aqui o padding 16, que é p-4, de forma global. E o texto, nós já o alinhamos ao centro. Então, text-center, texto alinhado ao centro.
+
+O que mais precisamos aqui? Precisamos colocar a borda arredondada apenas no topo. Se olharmos na documentação, podemos colocar separadamente. Queremos arredondar os cantos separadamente, e há uma opção que é rounded-t, que é rounded-top. É exatamente isso que queremos. Queremos o mesmo 3XL, mas apenas no topo. Vamos colapsar a estrutura de pastas. Então é rounded-t-3XL. Vamos verificar como ficou. Maravilha, o card-header está quase pronto.
+
+Precisamos agora trazer a cor do texto. Podemos pegar, o último que fizemos isso foi o typography. Vamos abrir o typography. É só pegar aqui, text-neutral-text, e trazê-lo para cá, text-neutral-text. Maravilha.
+
+O que precisamos ver agora? Tamanho da fonte e leading. Da mesma forma que fizemos no typography, temos o leading, que é o line-height, e o tamanho do texto em si. Vamos ver. Olhando aqui, temos um lg bold. Precisamos aplicar um bold. Vamos ter que aplicar um bold, pois por padrão não tem. E o tamanho da fonte é 20. Será que temos tamanho de fonte para 20? Então, font-size. Vamos olhar aqui, 12, 16, 14, 18, 20. 20 aqui é o XL, então text-xl. Já temos, vamos apenas aplicar. Então, neutral-text, isso vai crescer bastante para o lado. Text-xl.
+
+O que mais queremos fazer agora? Queremos fazer o leading. O leading de quanto? Vamos pegar lá, 120? 120%. E também queremos um texto em bold. Bold. Text-bold, acho que é isso, text-bold. Não, não é text-bold, queremos fonte bold. Agora sim. Vamos ver se ele vai ficar direitinho agora. Maravilha, já está centralizado. Já está com o texto em bold, maravilha. E está centralizado direitinho, como pedem, está tudo do jeito que deveria.
+
+Na parte agora do body, o que precisamos fazer é aplicar o padding. O padding do body. Aqui, nós sempre olhamos para o que tem o maior, o que tem a altura maior. Vamos ver o que temos de padding. Vou pegar primeiro o de baixo. Então, na vertical, temos 24 de body, de padding, e na horizontal, 16. Horizontal 16, vertical 24. Beleza? Vamos lá. Se queremos colocar o padding, vamos lá, primeiro no card-body, obviamente, className. Vamos pensar no vertical, py. Vertical é 24. Então, fazemos a conta 4, 8, 12. 3 é 12, 6 é 24. Beleza? Py-6. Vamos ver se isso vai dar o que precisamos. Olhando agora no card-body. Vamos ver aqui. Padding 24, maravilha. Era isso que queríamos. Na vertical, 24. Agora, 16, 16. Então é px-4. O 16 é sempre 4. Olhando aqui no nosso padding, maravilha. 16 para cima e para baixo, ou 24 para cima e para baixo, e 16 para um lado e para o outro. Maravilha. Já temos o nosso card estilizado.
+
+Finalizando e próximos passos
+
+Agora, o que precisamos começar a focar é na parte interna. Calcular o valor do orçamento diário disponível, trazer o economizar com a barra de progresso e a tabela no final. Beleza? Por enquanto, está tudo tranquilo. Vamos seguir estilizando e criando nossos componentes com Tailwind. Nos vemos na próxima.
+
+### Aula 3 - Estilizando o componente de orçamento diário - Vídeo 10
+
+Transcrição  
+Vamos prosseguir com a estilização dos nossos componentes, focando agora no componente de orçamento diário. Este será o primeiro componente a receber um valor que será formatado como moeda, utilizando o formato PT-BR e a moeda real do Brasil.
+
+Criação do componente
+
+Vamos criar um novo arquivo chamado DailyBudget.jsx. Nele, faremos um export de uma constante chamada DailyBudget, que receberá uma função vital. Inicialmente, vamos definir a estrutura básica do componente:
+
+```JSX
+export const DailyBudget = () => {
+
+}
+```
+
+Receberemos o value como props, e já o estamos capturando aqui:
+
+```JSX
+export const DailyBudget = ({ value }) => {
+
+}
+```
+
+Em seguida, faremos um return, utilizando a tag `<p>` de parágrafo, pois será apenas um texto exibido:
+
+```JSX
+export const DailyBudget = ({ value }) => {
+    return (
+        <p>
+
+        </p>
+    )
+}
+```
+
+Formatando o valor
+
+Precisamos formatar esse valor, então criaremos nosso formatador. Utilizaremos o Intl.NumberFormat. Chamaremos nosso formatter, que receberá um new Intl.NumberFormat. Precisamos passar a configuração, começando pela localização, que será pt-BR. Depois, passamos um objeto para definir como o número será formatado. O estilo será currency (moeda), e a moeda será BRL, que representa o real do Brasil.
+
+```JSX
+const formatter = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+})
+```
+
+Implementando no aplicativo
+
+Agora, vamos pegar o valor recebido e chamar nosso formatter com formatter.format no valor recebido:
+
+```JSX
+export const DailyBudget = ({ value }) => {
+    const formatter = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    })
+
+    return (
+        <p>
+            {formatter.format(value)}
+        </p>
+    )
+}
+```
+
+No arquivo App.jsx, importaremos esse componente. Após a importação, verificamos se ele está funcionando corretamente. O valor 42 já aparece, mas ainda precisamos estilizar o componente.
+
+```JSX
+<DailyBudget value={42} />
+```
+
+Estilizando o componente
+
+Para estilizar, começaremos pela cor. No arquivo index.css, definiremos a cor como roxa, utilizando o código hexadecimal #769. Aplicaremos essa cor como primary-highlight. No className, como estamos lidando com um parágrafo (<p>), removeremos a margem com margin: 0. Em seguida, aplicaremos a cor primary-highlight.
+
+Queremos também que a fonte esteja em negrito, então definiremos font-weight: bold. Para o tamanho da fonte, utilizaremos xxlbold, que corresponde a 39 pixels, e o espaçamento entre linhas será de 125%. Utilizaremos colchetes para definir o tamanho da fonte: text-[39px]. Por fim, o espaçamento entre linhas será leading-[125%], e alinharemos o texto ao centro.
+
+```JSX
+<p className="m-0 text-primary-highlight font-bold text-[39px] leading-[125%] text-center">
+    {formatter.format(value)}
+</p>
+```
+
+Com essas configurações, nosso componente de orçamento diário estará devidamente estilizado e funcional.
+
+Integrando o componente de economia
+
+Vamos alinhar o texto ao centro utilizando o traço centro. Verificamos no Figma e está tudo correto. Agora, podemos trazer nosso componente, pensando no componente de economia, que é o texto com o ícone do cofrinho. Vamos começar a integrar esse componente.
+
+Na nossa pasta de componentes, criamos uma nova pasta chamada "savings", que representa o status da poupança. Inicialmente, criamos uma pasta em vez de um arquivo, mas corrigimos isso. Criamos o arquivo savings/Status/index.js. No arquivo, declaramos a constante SavingsStatus, que não precisa receber nenhuma prop e apenas retorna um conteúdo. Colocamos uma div externa e inserimos o ícone de economia, que é o ícone IconSavings. Como o ícone será colocado ao lado de um texto, inserimos tudo dentro de um parágrafo. O texto será "Economizar". Não podemos esquecer de exportar:
+
+```JSX
+export const SavingsStatus = () => {
+    return (
+        <div>
+            <p>
+                <IconSavings /> Economizar
+            </p>
+        </div>
+    )
+}
+```
+
+No App.jsx, vamos integrar o SavingsStatus, que inicialmente estará sem estilo. Precisamos ajustar a cor, tamanho de fonte e alinhamento. A cor do texto é #D6FF, que já está definida no index.css como secondary-income. No SavingsStatus, abrimos o className e aplicamos text-secondary-income.
+
+Para o estilo, aplicamos display: flex com gap: 8 e alinhamento ao centro. O parágrafo será flex, alinhando os itens ao centro com items-center. O gap é 8, então usamos gap-2. Precisamos justificar ao centro com justify-center, que é uma propriedade do flex.
+
+```JSX
+<p className="text-secondary-income flex items-center gap-2 justify-center text-xl leading-[125%]">
+    <IconSavings /> Economizar
+</p>
+```
+
+Verificamos o tamanho da fonte e o espaçamento no Figma. O texto "Economizar" tem tamanho de fonte 20 e espaçamento de linha 125%. O tamanho de fonte 20 corresponde a text-xl. O espaçamento de linha será 125%.
+
+Agora, o SavingsStatus está quase completo. O que falta é a barra de progresso. Por enquanto, tudo está fluindo bem e estamos estilizando o conteúdo conforme necessário. No próximo encontro, criaremos o componente da barra de progresso. Estamos ansiosos para continuar.
+
+### Aula 3 - Implementando barra de progresso - Vídeo 11
+
+Transcrição  
+Vamos prosseguir com a implementação da nossa barra de progresso. Sem mais delongas, vamos direto para o VS Code e criar o componente. Primeiro, criamos um novo arquivo chamado ProgressBar e, dentro dele, o index.jsx. Vamos exportar a constante ProgressBar, que será uma arrow function (função de seta). Essa função receberá um percentual como props e retornará a estrutura da barra de progresso.
+
+Começamos definindo a exportação do componente:
+
+```JSX
+export const ProgressBar = ({ percent }) => {
+    return (
+        <div className="bg-neutral-darker rounded-lg overflow-hidden w-full h-10">
+            <div
+                className="bg-primary-highlight h-full flex justify-center items-center text-neutral-darker"
+                style={{ width: `${percent}%` }}
+            >
+                {percent}%
+            </div>
+        </div>
+    );
+}
+```
+
+Lembrando que utilizaremos a estratégia de ter uma div externa e uma div interna. A div interna terá um estilo inline do React para calcular o tamanho da barra, que será uma porcentagem do valor recebido. Exibiremos o valor percentual seguido do símbolo de porcentagem para indicar que a barra interna será proporcional à barra externa.
+
+Estilizando a barra de progresso
+
+Nosso próximo passo é estilizar a barra utilizando o Tailwind CSS. Vamos trazer as cores do Figma para o nosso projeto. A cor de fundo da barra externa é #1c1d, que corresponde ao neutral-darker. No arquivo index.css, aplicamos essa cor à div externa com a classe bg-neutral-darker.
+
+Precisamos também de cantos arredondados de 8 pixels. Consultando a documentação do Tailwind, encontramos que rounded-lg corresponde a esse valor. Além disso, aplicaremos overflow-hidden para garantir que qualquer conteúdo que ultrapasse os limites da barra seja ocultado. A largura será definida como w-full para ocupar 100% do espaço disponível, e a altura será de 40 pixels, que no Tailwind é representada por h-10.
+
+Integrando a barra de progresso no aplicativo
+
+Agora, vamos integrar a barra de progresso no nosso App.jsx. Colocaremos o componente logo abaixo do saving status. Dentro do saving status, adicionamos o componente ProgressBar e passamos o percentual desejado, por exemplo, 42%.
+
+```JSX
+import { ProgressBar } from "../ProgressBar";
+
+// Dentro do componente App
+<ProgressBar percent={42} />
+```
+
+Ao verificar no Vite React, a barra já está exibindo 100% da largura e o valor 42%. Precisamos agora colorir a parte interna da barra. No ProgressBar, como teremos várias classes, vamos quebrar o className em várias linhas para facilitar a leitura.
+
+Ajustando cores e alinhamento
+
+Começamos pelo fundo da barra interna, que será primary-highlight, uma cor roxa. No index.css, aplicamos bg-primary-highlight à div interna. A altura será definida como h-full para ocupar 100% da altura disponível. Para alinhar o texto ao centro, utilizamos flex e justify-center.
+
+Ajustando o texto e a fonte
+
+O que precisamos fazer agora? Precisamos mudar a cor do texto. A cor do texto deve ser a mesma cor de fundo do elemento pai, que é o neutral-darker. Portanto, vamos aplicar text-neutral-darker. Vamos verificar como está ficando. Salvamos, vamos ao Figma, React, e está funcionando! O texto já está preenchido, centralizado e justificado ao centro. Vamos alinhar verticalmente ao centro também, utilizando items-center. Está quase pronto.
+
+O que queremos fazer agora? Precisamos ajustar o tamanho da fonte, o peso da fonte e o leading para que fique igual ao que está no Figma. No Figma, o tamanho da fonte é 40, usando typography-md-medium, o que significa que o tamanho da fonte é 16. Podemos consultar a documentação para confirmar que font-size 16 é text-base. Vamos aplicar text-base.
+
+```CSS
+.text-base {
+    font-size: 16px;
+}
+```
+
+Aplicando transições e animações
+
+O que mais precisamos? Vamos verificar. O estilo medium não tem bold, então não precisamos nos preocupar com isso. O que está faltando agora é o leading. O line-height é de 120%, então aplicamos leading-120. Agora, está mais parecido com o que precisamos. Vamos ajustar o valor. Ao invés de 42, colocamos 38. Perfeito, ele já está ajustando. Se colocarmos 100, fica completo. Voltando para 42, está ótimo.
+
+O que está faltando agora? Precisamos ajustar os CSS Modules. Adicionamos uma transição. Se quisermos nos aprofundar, podemos consultar a documentação do Tailwind sobre transições. Vamos focar no que queremos: uma transição semelhante ao que tínhamos antes. Para isso, aplicamos transition-all com uma duração de 300 milissegundos e ease-in-out.
+
+```CSS
+.transition-all {
+    transition: all 300ms ease-in-out;
+}
+```
+
+Finalizando a barra de progresso
+Vamos verificar no Chrome se conseguimos visualizar essa animação. Ajustamos o tamanho para ver as mudanças. Alteramos de 32 para 5, e agora há uma transição. Se mudarmos para 50, há uma pequena transição. Para 75, está perfeito.
+
+O que está faltando agora é o espaçamento entre o texto "economizar" e a barra de progresso. Vamos fechar tudo e olhar para o componente SaveStatus. Precisamos definir um espaço entre esses elementos. Vamos usar flexbox, com flex e flex-col, pois queremos na horizontal. Precisamos definir o gap. O tamanho do gap é de 40 pixels, então aplicamos gap-10.
+
+```CSS
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.gap-10 {
+    gap: 40px;
+}
+```
+
+Vamos verificar como ficou. Perfeito, agora está exatamente como queríamos, com a porcentagem animada, assim como fizemos nos CSS Modules. Se quiser se aprofundar em como essas animações funcionam no Tailwind, a documentação está disponível. Focando no que queríamos, aplicamos transition-all, uma duração de 300 milissegundos e ease-in-out para um efeito fluido.
+
+A barra de progresso está pronta e entregue. Vamos continuar estilizando nosso pop-up. Nos vemos na sequência. Até mais!
+
+### Aula 3 - Montando o Grid para os cards - Vídeo 12
+
+Transcrição  
+Chegou a hora de montar nosso grid para separar os cards. Vamos abrir o arquivo App.jsx. Já temos uma section que está separando todos esses elementos. O que precisamos fazer é colocar duas colunas e aplicar o align-items: stretch para garantir que os cards respeitem sempre o tamanho do maior card na coluna, em termos de altura.
+
+Começamos com a estrutura básica da section:
+
+```JSX
+<section className="">
+```
+
+Agora, vamos organizar o grid. Quando trabalhamos com grid, o nome da classe é grid. Precisamos adicionar o template de colunas. Para colocar duas colunas, utilizamos a classe grid-cols-2. Isso é o que define duas colunas. Essa informação pode ser confirmada na documentação, especificamente na seção de grid-template-columns, que explica quantas colunas podemos ter. A documentação é bastante clara nesse sentido.
+
+Definindo colunas e espaçamento
+
+Primeiro, transformamos a section em um grid:
+
+```JSX
+<section className="grid">
+```
+
+Em seguida, definimos duas colunas:
+
+```JSX
+<section className="grid grid-cols-2">
+```
+
+Além disso, queremos aplicar o align-items: stretch para manter sempre o tamanho do maior card. Se verificarmos no nosso projeto, isso já está acontecendo. Vamos adicionar essa propriedade:
+
+```JSX
+<section className="grid grid-cols-2 items-stretch">
+```
+
+Agora, vamos definir o espaçamento entre esses elementos. O valor do gap será 24, que é um múltiplo de 4, então utilizamos gap-6. Com isso, tudo já está devidamente separado.
+
+```JSX
+<section className="grid grid-cols-2 items-stretch gap-6">
+```
+
+Ajustando o comportamento dos cards
+
+O que falta agora é ajustar o comportamento dos cards. Precisamos aplicar o flex-column e o flex-grow. Vamos ao nosso card. No primeiro card, aplicamos flex e flex-col para que ele cresça e fique orientado em coluna, permitindo que o corpo do card cresça.
+
+```JSX
+<div className="bg-neutral-surface rounded-3xl flex flex-col">
+```
+
+No card-body, aplicamos o flex-grow para finalizar o ajuste.
+
+```JSX
+<div className="py-6 px-4 flex-grow">
+```
+
+Flex Grow
+
+Agora sim, o flex-grow vai proporcionar o comportamento de flex-grow: 1, permitindo que ele ocupe todo o tamanho disponível. Além desse comportamento de se expandir e ocupar toda a área disponível, precisamos configurar o display como flex, definir a direção com flex-direction: column, ou seja, flex-col.
+
+```JSX
+<div className="py-6 px-4 flex-grow flex">
+```
+
+Também devemos aplicar um justify, e como está em coluna, não é align-items, mas sim justify. Devemos centralizar com justify-content: center.
+
+```JSX
+<div className="py-6 px-4 flex-grow flex flex-col">
+```
+
+Assim, ele ocupará toda a área disponível e centralizará o texto verticalmente.
+
+```JSX
+<div className="py-6 px-4 flex-grow flex flex-col justify-center">
+```
+
+Lembrando que, quando temos flex orientado a coluna, para alinhar verticalmente, utilizamos o justify. Vamos verificar se isso funcionou. Observando no Chrome, já está correto. O número 42 está centralizado.
+
+Podemos repetir o que fizemos anteriormente. Vamos aumentar esse valor de 200 algumas vezes para observar a diferença. Vamos criar um parágrafo e colá-lo várias vezes. No outro, faremos o mesmo, mas em menor quantidade. Podemos ver que o card sempre cresce, faz o stretch e o tamanho sempre será baseado no maior card daquela linha.
+
+Sistema de Grid
+
+Com isso, montamos nosso sistema de grid para exibir esses cards. O que falta agora? Precisamos estilizar o botão e a lista de itens. Até agora, aprendemos a nos orientar no Tailwind. Conseguimos explorar a documentação para encontrar as propriedades desejadas.
+
+Para finalizar essa parte inferior de movimentação financeira em linhas fontes, é sua vez de praticar tudo que aprendemos até agora. Já vimos como trabalhar com bordas, espaçamento e outros aspectos. Agora é sua vez de finalizar o projeto com Tailwind.
+
+A base que já temos é suficiente para concluirmos. O desafio está lançado. Claro que deixarei um gabarito para você consultar, mas não se prenda a isso, pois existem várias formas e respostas corretas para esse desafio.
+
+Lembre-se de que você tem um gabarito à disposição, mas se sua versão estiver diferente, aproveite o Discord e o fórum para mostrar como chegou ao seu resultado. Missão dada, missão cumprida. Estamos contando com você. Agora é sua vez de se aventurar no mundo do Tailwind. Nos vemos na próxima aula. Até mais!
+
+### Aula 3 - Desafio
+
+Hora de colocar a mão no código e criar algo que você já viu no nosso layout: a movimentação financeira não seção "Movimentação financeira" e a lista de bancos na seção “Minhas contas”.
+
+O desafio é simples de entender, mas perfeito pra treinar sua autonomia: você vai implementar essa lista por conta própria, com base no que viu no Figma. Cada item deve mostrar o nome do banco, o ícone e o saldo formatado.
+
+E olha, não precisa reinventar a roda — comece pequeno:
+
+- Monte a estrutura: pense em como organizar cada banco (um contêiner, o ícone e as informações).
+- Alimente a lista: use o array de contas que passamos na aula.
+- Estilize: aplique as cores e espaçamentos pra deixar igualzinho ao design.
+- Se travar, respira. Olhe pro layout e tente quebrar ele em pedaços menores. Você não precisa resolver tudo de uma vez. Começa pelo HTML/JSX básico, depois estiliza, depois ajusta os detalhes.
+
+Dica de ouro: olhe para o primeiro item e tente replicar ele sozinho. Quando estiver pronto, repita o padrão pros outros usando .map().
+
+Vai lá, confio no seu código!
+
+Opinião do instrutor
+
+A ideia aqui é te acompanhar, passo a passo, pela solução do desafio e, mais importante, pelo porquê de cada mudança. Não existe uma única resposta certa; esta é uma solução que privilegia clareza, reuso e evolução futura. Se você chegou ao mesmo resultado por outro caminho, está tudo certo.
+
+Visão geral rápida
+
+- O App.jsx parou de renderizar conteúdo estático e passou a delegar para componentes especializados: Transactions e Accounts.
+- Criamos três “primitivas de UI” simples e reaproveitáveis: Button, List e ListItem.
+- Separamos responsabilidades: TransactionItem cuida de uma transação, Account cuida de uma conta. Transactions e Accounts apenas orquestram listas e ações.
+
+Passo 1 — App.jsx delegando responsabilidades
+
+O primeiro movimento foi substituir os blocos de textos fixos pelos novos componentes.
+
+```JSX
+// src/App.jsx 
+import { Accounts } from "./components/Accounts" 
+import { Aside } from "./components/Aside" 
+import Card from "./components/Card" 
+import { Container } from "./components/Container" 
+import { DailyBudget } from "./components/DailyBudget" 
+import { Main } from "./components/Main" 
+import { SavingsStatus } from "./components/SavingsStatus" 
+import { SearchInput } from "./components/SearchInput" 
+import { Transactions } from "./components/Transactions" 
+import { Typography } from "./components/Typography" 
+
+function App() { 
+return ( 
+<Container> 
+{/* ... layout omitido para foco no escopo do desafio ... */} 
+<section> 
+<Card> 
+<Card.Header>Movimentação financeira</Card.Header> 
+<Card.Body> 
+<Transactions /> 
+</Card.Body> 
+</Card> 
+<Card> 
+<Card.Header>Minhas contas</Card.Header> 
+<Card.Body> 
+<Accounts /> 
+</Card.Body> 
+</Card> 
+</section> 
+</Container> 
+) 
+} 
+```
+
+Por que fazer isso: o App fica mais legível e fácil de manter. Ele deixa de conhecer detalhes de markup e estilo das listas e passa a apenas montar a estrutura de página.
+
+Passo 2 — Primitivas de UI: Button, List e ListItem
+
+Antes de falar de transações e contas, criamos peças pequenas e reutilizáveis. Isso evita CSS duplicado e dá consistência visual ao longo do app.
+
+```JSX
+// src/components/Button/index.jsx 
+export const Button = ({ children, ...props }) => { 
+return ( 
+<button 
+{...props} 
+className="bg-transparent border border-neutral-text text-neutral-text px-6 py-3 flex items-center justify-center cursor-pointer gap-2 rounded-[24px] text-base leading-[120%] hover:opacity-80" 
+> 
+{children} 
+</button> 
+) 
+} 
+```
+
+```JSX
+// src/components/List/index.jsx 
+export const List = ({ children, className, ...props }) => { 
+return ( 
+<ul className={`p-0 m-0 list-none mb-12 ${className || ''}`} {...props}> 
+{children} 
+</ul> 
+)} 
+```
+
+```JSX
+// src/components/ListItem/index.jsx 
+export const ListItem = ({ children, className, ...props }) => { 
+return ( 
+<li 
+className={`border-b border-neutral-header pb-4 mb-4 last:border-none last:pb-0 last:mb-0 ${className || ''}`} 
+{...props} 
+> 
+{children} 
+</li> 
+)
+} 
+```
+
+Passo 3 — Transactions: dados mockados, formatação e estado visual
+
+Separamos a renderização de uma transação (TransactionItem) da orquestração da lista (Transactions). Isso deixa clara a responsabilidade de cada componente.
+
+```JSX
+// src/components/TransactionItem/index.jsx 
+const formater = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }) 
+
+export const TransactionItem = ({ item }) => { 
+const detailAddicionalClassName = item.value >= 0 ? "text-secondary-income" : "text-secondary-expense" 
+
+return ( 
+<div className="flex justify-between"> 
+<div className={`flex flex-col gap-2 text-[15px] leading-[120%] font-medium ${detailAddicionalClassName}`}> 
+<p className="m-0">{item.description}</p> 
+<p className="m-0">{formater.format(item.value)}</p> 
+</div> 
+<div className="text-neutral-text text-sm leading-5"> 
+{new Date(item.date).toLocaleDateString('pt-BR')} 
+</div> 
+</div> 
+) 
+} 
+```
+
+Pontos de atenção:
+
+- Formatação de moeda com Intl.NumberFormat para evitar lógica repetida.
+- Classe condicional para cor do valor, reforçando semântica visual de crédito ou débito.
+- Data em pt-BR via toLocaleDateString.
+
+```JSX
+// src/components/Transactions/index.jsx 
+import { Button } from "../Button" 
+import { IconCurrency } from "../icons" 
+import { TransactionItem } from "../TransactionItem" 
+import { List } from "../List" 
+import { ListItem } from "../ListItem" 
+ 
+export const Transactions = () => { 
+const items = [ 
+{ description: "iFood", value: -20, date: "2024-10-01T00:00:00-03:00" }, 
+{ description: "Papelaria Mila", value: -80, date: "2024-10-03T00:00:00-03:00" }, 
+{ description: "Freela (2ª parte)", value: 1000, date: "2024-10-03T00:00:00-03:00" }, 
+{ description: "Magazine Luiza", value: -300, date: "2024-10-05T00:00:00-03:00" } 
+]
+
+return ( 
+<> 
+<List> 
+{items.map((transactionItem, index) => ( 
+<ListItem key={index}> 
+<TransactionItem item={transactionItem} /> 
+</ListItem> 
+))} 
+</List> 
+
+<div className="flex justify-center"> 
+<Button> 
+<IconCurrency /> Adicionar transação 
+</Button> 
+</div> 
+</> 
+) 
+} 
+```
+
+Decisão: Transactions não conhece detalhes de layout de cada item; apenas mapeia dados para TransactionItem e exibe a ação de adicionar no rodapé.
+
+Passo 4 — Accounts: item e lista de contas
+
+Aplicamos a mesma filosofia de separação entre item e lista.
+
+```JSX
+// src/components/Account/index.jsx 
+import { IconBank } from '../icons' 
+
+const formatter = new Intl.NumberFormat('pt-BR', { 
+style: 'currency', 
+currency: 'BRL', 
+}) 
+
+export const Account = ({ account }) => { 
+return ( 
+<div className="flex justify-between text-neutral-text"> 
+<div> 
+<p className="flex gap-2 items-center m-0 text-[15px] leading-[120%]"> 
+<IconBank /> 
+<strong>{account.bank}</strong> 
+</p> 
+</div> 
+<div className="flex flex-col gap-2 w-[100px]"> 
+<p className="m-0 text-[15px] leading-[120%]"><strong>Saldo</strong></p> 
+<p className="m-0 text-[15px] leading-[120%]">{formatter.format(account.balance)}</p> 
+</div> 
+</div> 
+) 
+} 
+```
+
+```JSX
+// src/components/Accounts/index.jsx 
+import { Button } from "../Button" 
+import { Account } from "../Account" 
+import { IconWallet } from '../icons' 
+import { List } from "../List" 
+import { ListItem } from "../ListItem" 
+
+export const Accounts = () => { 
+const accounts = [ 
+{ bank: "Anybank", balance: 1200 }, 
+{ bank: "Bytebank", balance: 800 }, 
+{ bank: "Switch Bank", balance: 1800 } 
+] 
+
+return ( 
+<div className="flex flex-col h-full"> 
+<List> 
+{accounts.map(ac => ( 
+<ListItem key={ac.bank}> 
+<Account account={ac} /> 
+</ListItem> 
+))} 
+</List> 
+<div className="flex-grow" /> 
+<div className="flex justify-center"> 
+<Button> 
+<IconWallet /> Adicionar conta 
+</Button> 
+</div> 
+</div> 
+) 
+} 
+```
+
+Decisão: a lista preserva a hierarquia visual do Figma (itens com divisória inferior, espaçamentos consistentes) e reserva uma área inferior para ações. Account cuida da formatação de valores e do alinhamento de colunas.
+
+Checklist do que foi criado ou alterado
+
+- App.jsx: passou a importar e renderizar Transactions e Accounts.
+- Button: primitiva de botão com estilo único para o projeto.
+- List e ListItem: camada de consistência para qualquer lista do app.
+- TransactionItem: exibe uma transação com formatação e cores por tipo de valor.
+- Transactions: orquestra a lista de transações e a ação de adicionar.
+- Account: exibe uma conta individual com nome e saldo.
+- Accounts: orquestra a lista de contas e a ação de adicionar.
+
+Por que este desenho é útil no longo prazo?
+
+- Organização: cada componente tem uma responsabilidade clara.
+- Reuso: Button, List e ListItem podem ser usados em outras áreas sem copiar CSS.
+- Evolução: trocar dados mockados por API exige poucas mudanças.
+- Consistência: as mesmas decisões de tipografia, espaçamento e divisórias valem para transações e contas.
+- Legibilidade: o fluxo de leitura no App.jsx fica simples.
+
+Se bater dúvida em algum ponto, recomendo um caminho progressivo: renderize um único item, depois a lista, depois estilize, por fim adicione as ações. Quando percebemos que cada etapa ficou pequena e resolvível, o resto flui.
+
+### Aula 3 - Para saber mais: CVA (Class Variance Authority)
+
+Até aqui trabalhamos com o Tailwind puro, escrevendo classes utilitárias direto no JSX. Mas, em projetos maiores, logo aparece a dúvida: como organizar componentes de forma que eles fiquem flexíveis sem se tornarem um caos de classes repetidas? É aí que entra o CVA (Class Variance Authority).
+
+O CVA é uma pequena lib que ajuda a criar componentes com variantes usando Tailwind. Em vez de espalhar condicionais de classe pelo código, a gente centraliza a lógica de estilos em uma função, deixando o componente mais legível e fácil de manter.
+
+O problema
+
+Imagina um botão que pode ser primary ou secondary, e além disso pode ter tamanhos diferentes (sm, md, lg). Se fizermos só com Tailwind, o JSX logo fica assim:
+
+```JSX
+<button 
+className={`px-4 py-2 rounded-md font-semibold 
+${variant === "primary" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"} 
+${size === "sm" ? "text-sm" : size === "lg" ? "text-lg" : "text-base"}`} 
+> 
+Clique aqui 
+</button> 
+```
+
+Funciona, mas começa a ficar verboso e difícil de manter.
+
+A solução com CVA
+
+Com o CVA, criamos um contrato de variantes para o componente:
+
+```JSX
+import { cva } from "class-variance-authority"; 
+
+const button = cva( 
+"px-4 py-2 rounded-md font-semibold", // classes base 
+{ 
+variants: { 
+variant: { 
+primary: "bg-blue-500 text-white", 
+secondary: "bg-gray-200 text-black" 
+}, 
+size: { 
+sm: "text-sm", 
+md: "text-base", 
+lg: "text-lg" 
+} 
+}, 
+defaultVariants: { 
+variant: "primary", 
+size: "md" 
+} 
+} 
+); 
+```
+
+E no componente:
+
+```JSX
+export function Button({ variant, size, children }: any) { 
+return <button className={button({ variant, size })}>{children}</button>; 
+} 
+```
+
+Por que isso é legal?
+
+- O componente fica mais limpo.
+- As regras de estilo ficam centralizadas e padronizadas.
+- É fácil adicionar novas variantes sem refatorar o JSX.
+- Dá pra combinar com clsx se precisar de condições extras.
+
+Na prática, o CVA funciona como uma extensão da forma como já usamos o Tailwind: ele não substitui nada, só organiza melhor os cenários onde temos múltiplas opções de estilo para o mesmo componente.
+
+Vida longa e próspera!
+
+### Aula 3 - Criatividade com modelo multimodal - Exercício
+
+A Dev.Spot, uma plataforma que permite a desenvolvedores criarem portfólios digitais e link trees personalizados, está buscando maneiras de melhorar a experiência de seus usuários. A equipe de desenvolvimento está considerando a implementação de uma barra de progresso para indicar o nível de completude dos perfis dos usuários, incentivando-os a preencher mais informações. No entanto, a equipe está em dúvida sobre como estilizar essa barra de progresso para que ela se integre bem ao design atual da plataforma, que utiliza Tailwind CSS.
+
+Como a equipe de desenvolvimento da Dev.Spot pode estilizar a barra de progresso para que ela se alinhe com o design existente e ofereça uma experiência visualmente agradável aos usuários?
+
+Resposta:  
+A equipe pode estilizar a barra de progresso utilizando Tailwind CSS, definindo uma estrutura básica com uma div externa para o contorno e uma div interna para o preenchimento. A div externa pode ter bg-neutraldarker para consistência com o tema, e a div interna bg-primaryhighlight para destacar o progresso. Aplicar rounded-lg e overflow-hidden garante bordas arredondadas e conteúdo contido. Para animação, transition-all com duration-300 e ease-in-out proporciona uma transição suave. O texto pode ser centralizado com flex, justify-center e items-center, e estilizado com text-neutraldarker.
+
+> Correta, pois essa abordagem utiliza as classes do Tailwind CSS para criar uma barra de progresso que se integra bem ao design atual da plataforma, mantendo a consistência visual e proporcionando uma experiência agradável aos usuários.
+
+### Aula 3 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A utilizar o Tailwind CSS para aplicar estilos utilitários diretamente no JSX, reduzindo a necessidade de CSS manual.
+- A formatar valores monetários em React com Intl.NumberFormat para o formato brasileiro.
+- A comparar visões e práticas de estilização entre Tailwind CSS e CSS Modules, entendendo suas vantagens e desvantagens.
+- A personalizar e utilizar corretamente cores e fontes em Tailwind CSS, integrando com React.
+- A criar componentes React estilizados com Tailwind, como Aside, Container, Main e SearchInput, aplicando princípios de layout flexível.
+- A aplicar técnicas de tipografia em componentes React usando Tailwind, garantindo fallbacks e variantes para diferentes tags HTML.
+- A explorar o sistema de grids e flexbox para organizar layouts responsivos e consistentes.
+- A configurar e inicializar um projeto React com Vite e Tailwind CSS, incluindo importação de plugins e ajustes de estilos globais.
+
+### Aula 3 - Projeto final do curso
+
+Baixe o projeto final
+
+Você pode baixar a versão final dos dois projetos aqui:
+
+- Repositório [css modules](https://github.com/alura-cursos/poupapp-css-modules/tree/solucao-desafio)
+- Repositório [tailwindcss](https://github.com/alura-cursos/poupapp-tailwindcss/tree/desafio-resolvido)
+
+Terminei o curso, e agora?
+
+Parabéns demais por ter chegado até aqui! Construir um app completo, cuidando da parte visual e aprendendo diferentes formas de estilizar componentes React, é um baita marco. Olhar o PoupApp rodando na sua máquina já mostra o quanto você evoluiu.
+
+Nesse curso, você não ficou só na teoria: aprendeu sobre CSS Modules, Tailwind, viu prós e contras de cada abordagem e, principalmente, colocou tudo em prática construindo interfaces que fazem sentido. Também experimentou como pensar em componentes mais auto-suficientes, evitando dores de cabeça com estilos globais.
+
+Continue praticando!
+
+Quer continuar evoluindo? Algumas ideias:
+
+- Crie novas telas pro PoupApp — um dashboard, histórico de transações, gráficos. Dá pra soltar a criatividade.
+- Brinque com os estilos: troque a paleta de cores, fontes e espaçamentos, tanto com Tailwind quanto com CSS Modules.
+- Adicione temas claro/escuro. Esse é um ótimo exercício pra consolidar o aprendizado.
+- Publica seu projeto na Vercel ou Netlify e mostra pra galera.
+- Conta como foi a experiência e me marca nas redes: LinkedIn ou Instagram. Vou adorar ver sua versão do app!
+
+Lembra: aprender desenvolvimento front-end é um processo contínuo. Cada projeto que você termina te deixa mais confiante e preparado pra encarar o próximo. Então segue experimentando, refatorando e, principalmente, se divertindo com o que constrói.
+
+Se quiser trocar ideia, pedir dica ou compartilhar conquistas, tô sempre à disposição no Discord, LinkedIn ou Instagram.
+
+Vida longa e próspera no mundo React!
+
+Abraço do careca barbudo o/
+
+### Aula 3 - Conclusão - Vídeo
+
+Transcrição  
+Parabéns por termos concluído mais este curso na Alura. Desta vez, abordamos a estilização de projetos. Nesta jornada, tivemos duas abordagens diferentes. Primeiro, focamos nos CSS Modules com Vite e, em seguida, no Tailwind CSS.
+
+O que isso nos proporciona como base? Se colocarmos os dois projetos lado a lado, podemos observar o progress bar dos CSS Modules e também o do Tailwind CSS. Ao colocá-los lado a lado, podemos perceber a diferença no conceito aplicado. Enquanto com CSS Modules escrevemos o CSS manualmente, com o Tailwind CSS utilizamos apenas classes utilitárias.
+
+Comparando CSS Modules e Tailwind CSS
+
+No final, chegamos ao mesmo resultado, mas o mais importante é que, além de conhecermos a fundo o Tailwind CSS e o CSS Modules, entendemos o panorama de estilização de componentes em aplicações React. Foi uma jornada significativa para chegarmos ao final, com o pull-back funcionando, bem estilizado.
+
+Avaliando o curso e compartilhando experiências
+
+Agora é o momento de avaliar o curso. Deixe um depoimento sobre o que mais gostou, as dificuldades e facilidades encontradas, e sua opinião geral sobre o curso. Compartilhe sua preferência: você preferiu Tailwind CSS ou CSS Modules? Lembre-se de utilizar o Discord e o fórum para postar seus resultados e tirar dúvidas. Estamos sempre por lá, então, se desejar, pode nos marcar que vamos analisar seu projeto.
+
+Encerrando a jornada e próximos passos
+
+Missão dada, missão cumprida. Agora, estamos com um conjunto de ferramentas completo para estilizar aplicativos React. Nos vemos em breve, e esperamos que tenha se divertido tanto quanto nós nesta jornada. Até lá!
