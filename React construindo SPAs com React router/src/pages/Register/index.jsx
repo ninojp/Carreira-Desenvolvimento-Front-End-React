@@ -55,7 +55,7 @@ export const Register = () => {
                             type="password"
                             required
                         />
-                        <Checkbox label="Lembrar-me" required />
+                        <Checkbox label="Lembrar-me" />
                     </Fieldset>
                     <Button type="submit">
                         Login <IconArrowFoward />
@@ -69,7 +69,7 @@ export const Register = () => {
                     <Typography variant="body" color="--offwhite">
                         Já tem conta?
                     </Typography>
-                    <Link href='#'>
+                    <Link href='/auth/login'>
                         <Typography variant="body" color="--highlight-green">
                             Faça seu login!
                         </Typography>

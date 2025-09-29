@@ -564,31 +564,36 @@ Nesta aula, aprendemos:
 
 ### Aula 2 - Agrupando rotas - Nested routes - Vídeo 1
 
-Transcrição
+Transcrição  
 Vamos continuar desenvolvendo o nosso CodeConnect. Já temos o React Router instalado e configurado, com o roteador funcionando. Agora, precisamos manter a organização do projeto. A estrutura já está bem definida, então devemos, no mínimo, manter essa organização.
 
 A fonte de verdade e consulta para o código que vamos desenvolver é a documentação. Tudo que faremos aqui pode ser encontrado diretamente lá. Vamos aplicar um projeto específico, discutindo nossas decisões ao longo do processo.
 
 Focando nas rotas no VS Code
+
 Vamos focar nas nossas rotas no VS Code. Elas já estão funcionando. Por exemplo, se alterarmos a URL de /auth/register para a barra, que é a página inicial, o sistema já responde como deveria. No entanto, temos dois cenários distintos. Vou separar esses dois cenários para melhor visualização.
 
 O primeiro cenário é focado em autenticação, com um prefixo auth para indicar que estão relacionados de alguma forma. Eles utilizam o mesmo layout. A parte inferior é a aplicação em si, com a página inicial e a página de um post. Em situações como essa, é comum agrupar por contexto.
 
 Definindo e agrupando rotas básicas
+
 Para começar, vamos definir nossas rotas básicas:
 
+```JSX
 <Routes>
     <Route path='/auth/register' element={<Register />} />
     <Route path='/auth/login' element={<Login />} />
     <Route path='/' element={<Feed />} />
     <Route path='/blog-post' element={<BlogPost />} />
 </Routes>
-Copiar código
+```
+
 Como agrupamos? Normalmente, quando usamos um prefixo e temos mais de uma rota com o mesmo prefixo, isso pode indicar que faz sentido agrupar. Não é uma regra, mas pode ser o caso. Para agrupar rotas usando as ferramentas do React Router, criamos um elemento de rota no singular. Dentro desse elemento, colocamos as rotas que queremos. Assim, estamos criando uma rota alinhada.
 
 Agrupando rotas de autenticação
 Vamos começar a agrupar as rotas de autenticação:
 
+```JSX
 <Routes>
     <Route path='/auth'>
         <Route path='register' element={<Register />} />
@@ -599,12 +604,15 @@ Vamos começar a agrupar as rotas de autenticação:
         <Route path='blog-post' element={<BlogPost />} />
     </Route>
 </Routes>
-Copiar código
+```
+
 Criamos uma rota e a agrupamos. Agora, temos dois elementos de rota. Removemos as linhas em branco e, dentro, temos o caminho. Se salvarmos e recarregarmos a página, tudo continuará funcionando. Ao acessar /auth/login ou /auth/register, o funcionamento permanece o mesmo. Já está agrupado e nada mudou.
 
 Trabalhando com segmentos de rota
+
 O que conseguimos fazer é trabalhar com o segmento que estamos repetindo, /auth, na rota mais externa. Colocamos o path como /auth. Dentro de /auth, temos os dois elementos desejados: register, sem a barra no início, e login.
 
+```JSX
 <Routes>
     <Route path='/auth'>
         <Route path='register' element={<Register />} />
@@ -615,19 +623,437 @@ O que conseguimos fazer é trabalhar com o segmento que estamos repetindo, /auth
         <Route path='blog-post' element={<BlogPost />} />
     </Route>
 </Routes>
-Copiar código
+```
+
 No caso abaixo, o path padrão que colocamos é a raiz, a página inicial. Podemos remover essa barra de dentro e também do blog-post. No caso de /auth, não há mais duplicação desse prefixo, e no caso abaixo, estamos agrupando semanticamente as rotas de aplicação e as rotas de autenticação.
 
 Verificando o funcionamento das rotas agrupadas
+
 Ao recarregar no Chrome, tudo continua funcionando. Se acessarmos /auth/login, funciona; /auth/register, funciona; /, funciona; e /blog-post, também funciona. Agora, está agrupado de forma semântica. No código, estamos agrupando semanticamente conjuntos de rotas. Isso nos ajuda a organizar e preparar o terreno para futuras modificações.
 
 Ao criar rotas, devemos sempre pensar se elas fazem parte de algum grupo e se queremos segmentá-las dessa forma. A missão deste encontro foi organizar nosso roteamento, removendo o /auth repetido, e agora estamos no caminho para continuar evoluindo o CodeConnect. Esse era o objetivo deste encontro. Nos vemos na sequência.
 
-### Aula 2 -  - Vídeo 2
-### Aula 2 -  - Vídeo 3
-### Aula 2 -  - Vídeo 4
-### Aula 2 -  - Vídeo 5
-### Aula 2 -  - Vídeo 6
-### Aula 2 -  - Vídeo 7
-### Aula 2 -  - Vídeo 8
-### Aula 2 -  - Vídeo 9
+### Aula 2 - Implementando Linking - Vídeo 2
+
+Transcrição  
+Nosso objetivo agora é implementar a navegação sem precisar alterar manualmente a URL. Atualmente, estamos trocando as páginas manualmente, utilizando caminhos como /blog, /post, /out, /register. Precisamos oferecer uma forma para que as pessoas possam navegar entre essas páginas de maneira mais intuitiva.
+
+Vamos começar consultando a documentação. Estamos na seção de roteamento, onde configuramos as rotas. Em seguida, temos a parte de navegação, que é dividida em três blocos principais:
+
+NavLink: A ideia do NavLink é renderizar ou aplicar estilos com base na ativação da rota. Por exemplo, se a rota está ativa, podemos passar uma função para o className para tomar decisões estilísticas.
+
+Link Direto: Permite a navegação sem a necessidade de controlar o estado de ativação da rota.
+
+useNavigate: Utilizado para navegação via JavaScript, útil quando queremos navegar em resposta a eventos.
+
+Para o momento, vamos focar no Link, pois temos dois cenários no projeto que precisam ser ajustados. Vamos fechar tudo que está aberto e começar.
+
+Ajustando o AsideLink
+
+A primeira modificação é no AsideLink. Ele não pode mais ser uma tag <a>, mas sim um componente do React Router. Caso contrário, não teremos o comportamento de Single Page Application.
+
+Para começar, precisamos importar o Link do React Router:
+
+```JSX
+import { Link } from "react-router-dom";
+```
+
+Agora, vamos substituir a tag `<a>` por um componente Link. O Link não utiliza href, mas sim to, indicando o destino da navegação. Dessa forma, utilizamos o Link do React Router sem alterar o contrato do AsideLink, que continua recebendo um href.
+
+```JSX
+return (<Link to={href} className={styles.asideLink}>
+    {children}
+</Link>)
+```
+
+Além do AsideLink, temos um componente chamado link que também exporta uma tag <a>. Precisamos alterar ambos os cenários para usar o componente Link do React Router.
+
+Implementando ajustes no componente Link
+
+Nosso objetivo é substituir o que temos pelo comportamento do React Router sem quebrar a API existente. Ou seja, sem precisar fazer substituições manuais de find e replace.
+
+Importação do Link: No arquivo index.js do componente link, importamos o Link do React Router. Aqui, enfrentamos um conflito de nomes, pois nosso componente já se chama link. Para resolver isso, podemos importar o Link do React Router com um apelido, por exemplo, RouterLink.
+
+```JSX
+import { Link as RouterLink } from "react-router-dom";
+```
+
+Ajustes no Componente Link: Vamos definir o componente Link para utilizar o RouterLink:
+
+```JSX
+export const Link = ({ children, href, ...props }) => {
+    return (
+        <RouterLink to={href} {...props} className={`${styles.link} ${className}`}>
+            {children}
+        </RouterLink>
+    );
+}
+```
+
+Manutenção da Estratégia: Como as pessoas estão utilizando o componente como se fosse uma tag <a>, podemos receber o href e passá-lo para o to do RouterLink. Assim, mantemos a mesma estratégia de navegação.
+Com essas alterações, garantimos uma navegação mais fluida e integrada ao React Router, sem comprometer a estrutura existente do projeto.
+
+Realizando ajustes específicos
+
+Primeiramente, no componente sideindex.jsx, a logo do CodeConnect não levará mais para trás, mas sim para a página inicial:
+
+```JSX
+<Link to="/" alt="Logo da CodeConnect">
+    <img src={logo} alt="Logo da CodeConnect" />
+</Link>
+```
+
+O link de publicar pode ser mantido, pois está fora do nosso escopo. O feed também deve ser alterado para a barra inicial:
+
+```JSX
+<AsideLink href="/">
+    <IconFeed />
+    Feed
+</AsideLink>
+```
+
+No caso do login, temos uma página específica para isso, que é barra-auth-login, e já está configurado corretamente:
+
+```JSX
+<AsideLink href="/auth/login">
+    <IconLogin />
+    Login
+</AsideLink>
+```
+
+Precisamos fazer mais ajustes. Vamos olhar a página de login. O caminho é src-páginas-login-index.jsx. No rodapé, há um link que diz "Ainda não tem conta? Crie seu cadastro." Queremos que esse link aponte para barra-auth-register:
+
+```JSX
+<Link to="/auth/register">
+    <Typography variant="body" color="--highlight-green">
+        Crie seu cadastro!
+    </Typography>
+    <IconAssignement color="#81FE88" />
+</Link>
+```
+
+No registro, temos um cenário inverso: "Já tem uma conta? Faça login." Vamos trocar o href para login:
+
+```JSX
+<Link to="/auth/login">
+    <Typography variant="body" color="--highlight-green">
+        Faça seu login!
+    </Typography>
+    <IconLogin color="#81FE88" />
+</Link>
+```
+
+Testando a navegação implementada
+
+Resumindo, incorporamos o componente de link dentro do nosso aside-link e do link do nosso projeto. Agora, deveríamos ver essa navegação funcionando. Vamos testar. No Chrome, ao acessar o CodeConnect e recarregar a página, vemos "Já tem uma conta? Faça login." Ao clicar, somos direcionados para a página de login. "Ainda não tem conta? Crie seu cadastro." Ao clicar, somos direcionados para a página de cadastro. Está funcionando corretamente.
+
+Agora, vamos manualmente para a página inicial. Dentro do card post, há um link para ver detalhes, mas ele ainda não leva a lugar algum. Vamos ajustar para ter a navegação para a última página que falta: Blog post.
+
+Vamos fechar tudo que está aberto para não nos confundirmos com os componentes. Temos um componente chamado card post em src-componentes-card-post-index.jsx. Há um "ver detalhes" que está com a tag a, com âncora direta. Não queremos a tag âncora, mas sim o componente link do react-router. Vamos importar o link do react-router e substituir href por to, apontando para barra-blog-post.
+
+```JSX
+import { Link } from "react-router-dom";
+<p>
+    <Link to="/blog-post">Ver detalhes</Link>
+</p>
+```
+
+Isso deveria renderizar a página de detalhes. Vamos testar. Recarregamos a página, clicamos em "ver detalhes" e fomos direcionados corretamente.
+
+O ponto de atenção é que já temos o fluxo funcionando. Conseguimos entrar no login, voltar, entrar no detalhe de um post, e tudo isso sem recarregar a página inteira. Quando usamos nosso SPA, toda a troca de páginas é feita dentro do navegador, totalmente via JavaScript, sem ir ao servidor.
+
+Com a navegação implementada, podemos continuar desenvolvendo o restante, sempre utilizando o React Router. Até a próxima!
+
+### Aula 2 - Para saber mais: manter contrato da api na migração do link
+
+Contextualizando a Estratégia
+
+Em muitos projetos, sobretudo os com evolução contínua, é comum precisarmos atualizar componentes para aproveitar melhores práticas ou novas ferramentas sem causar impactos inesperados em partes já consolidadas do sistema. Um exemplo é a migração de uma tag de âncora () para o componente de navegação do React Router. Ao mesmo tempo, a API do componente – ou seja, as propriedades que ele recebe – deve se manter para não forçar mudanças em todas as áreas que já o utilizam.
+
+O Mecanismo de Wrapper
+
+A estratégia consiste em criar um componente que envolva o componente nativo do React Router, fazendo a ponte entre a API antiga e a nova. Em outras palavras, o componente wrapper aceita, por exemplo, a propriedade href e a converte internamente para to, que é a propriedade esperada pelo componente do React Router. Dessa forma, módulos que utilizam o componente não necessitam de alterações mesmo quando a implementação interna muda.
+
+Um exemplo de como isso pode ser realizado é:
+
+```JSX
+import { Link as RouterLink } from 'react-router-dom';
+
+function LinkWrapper({ href, ...props }) {
+  return <RouterLink to={href} {...props} />;
+}
+
+export default LinkWrapper;
+```
+
+Nesse exemplo, o componente LinkWrapper continua a expor a propriedade href, mantendo o contrato original, enquanto, por baixo dos panos, converte o dado para to para compatibilizar com o React Router.
+
+Racional e Benefícios da Abordagem
+
+Ao adotar essa técnica, garantimos que a evolução da aplicação ocorra de forma segura e modular. A manutenção de uma API consistente permite:
+
+- Reduzir a necessidade de grandes refatorações em pontos do código que consomem o componente;
+- Facilitar a integração entre equipes, assegurando que as mudanças internas não afetem diretamente a forma como o componente é utilizado;
+- Minimizar riscos de erros inesperados e a propagação de bugs em funcionalidades já consolidadas.
+
+Considerações Finais
+
+Embora seja uma solução que agregue robustez ao projeto, é interessante documentar bem o comportamento do wrapper. Isso evitará dúvidas futuras, principalmente em times com diversos colaboradores, e garantirá o alinhamento sobre quando e como os wrappers devem ser implementados em outros contextos. A clareza na definição da interface é essencial para uma manutenção efetiva e contínua da aplicação.
+
+### Aula 2 - Implementando rotas protegias - Vídeo 3
+
+Transcrição  
+Vamos seguir com a implementação, agora focando em proteger determinadas rotas. O que significa proteger? Por exemplo, ao acessar manualmente a raiz do nosso projeto no Chrome, queremos garantir que tanto a página inicial quanto a página de blog post sejam exibidas apenas se a pessoa estiver logada. Não queremos exibir o feed nem a página de detalhes se a pessoa não estiver autenticada na nossa aplicação.
+
+Vamos pensar em uma estratégia para definir isso. No arquivo main.jsx, podemos implementar uma das possíveis estratégias. Podemos envolver tanto o feed quanto o blog post em um componente que chamaremos de ProtectedRoute. Assim, queremos proteger esses elementos. Vamos formatar o código adequadamente.
+
+Criando o componente ProtectedRoute
+
+Inicialmente, temos a rota do feed configurada assim:
+
+```JSX
+<Route path='' element={<Feed />} />
+```
+
+Temos essa estratégia: uma rota protegida que envolve uma página. Nesse componente de rota protegida, implementaremos a lógica de redirecionamento. Vamos criar esse componente na pasta "components", em um novo arquivo ProtectedRoute/index.jsx. Utilizaremos JSX normal e exportaremos a constante ProtectedRoute, que receberá uma arrow function.
+
+Primeiro, vamos definir a estrutura básica do componente ProtectedRoute:
+
+```JSX
+export const ProtectedRoute = () => {
+
+}
+```
+
+Agora, vamos modificar a rota do feed para usar o ProtectedRoute:
+
+```JSX
+<Route path='' element={
+    <ProtectedRoute>
+    </ProtectedRoute>
+} />
+```
+
+Passando componentes como children
+
+Em seguida, vamos passar o componente Feed como children para o ProtectedRoute:
+
+```JSX
+<Route path='' element={
+    <ProtectedRoute>
+        <Feed />
+    </ProtectedRoute>
+} />
+```
+
+E faremos o mesmo para a rota do blog post:
+
+```JSX
+<Route path='blog-post' element={
+    <ProtectedRoute>
+        <BlogPost />
+    </ProtectedRoute>
+} />
+```
+
+Agora, vamos expandir o componente ProtectedRoute para aceitar children e retornar esses children por padrão:
+
+```JSX
+export const ProtectedRoute = ({children}) => {
+    return children
+}
+```
+
+Vamos importar o ProtectedRoute no nosso projeto:
+
+```JSX
+import { ProtectedRoute } from './components/ProtectedRoute/index.jsx'
+```
+
+Implementando lógica de autenticação
+
+Agora, o que falta é implementar a lógica de autenticação na rota protegida. Já temos um hook no projeto chamado useAuth, localizado em src/hooks/useAuth. Esse hook já possui toda a lógica de registro de usuário, login, logout e estado de autenticação, utilizando local storage. Como isso está fora do nosso escopo atual, focaremos no comportamento do React Router e das rotas. O hook já está pronto desde o início.
+
+Vamos utilizá-lo para obter o estado do usuário e verificar se está carregando ou não. No componente de rota protegida, utilizaremos o useAuth. O VS Code já importou para nós. Queremos guardar o isAuthenticated e o isLoading:
+
+```JSX
+const { isAuthenticated, isLoading } = useAuth()
+```
+
+Se estiver carregando, precisamos esperar. Vamos começar com nossas condições: se isLoading, podemos exibir o componente de spinner que temos no projeto, localizado em src/components. Podemos retornar esse componente spinner:
+
+```JSX
+if (isLoading) {
+    return <Spinner />
+}
+```
+
+Redirecionando usuários não autenticados
+
+Se está carregando, já eliminamos um estado. O que mais precisamos fazer? Vamos criar mais um cenário. Se não estamos autenticados, não queremos retornar nada, queremos retornar nulo e redirecionar:
+
+```JSX
+if (!isAuthenticated) {
+    return null
+}
+```
+
+O que mais precisamos fazer agora? Precisamos utilizar o useEffect, ou seja, precisamos de um efeito para isso. Vamos gerar esse efeito:
+
+```JSX
+useEffect(() => {
+
+}, [isAuthenticated, isLoading])
+```
+
+Vamos passar a lista de dependências, que será composta por isAuthenticated e isLoading. Basicamente, o que faremos é: se não está carregando e não estamos autenticados (isAuthenticated), precisamos fazer um redirecionamento para /auth/login:
+
+```JSX
+useEffect(() => {
+    if(!isLoading && !isAuthenticated) {
+        // redirect /auth/login
+    }
+}, [isAuthenticated, isLoading])
+```
+
+Utilizando useNavigate para redirecionamento
+
+Como fazemos para realizar esse redirecionamento usando o React Router? Já vimos isso em um vídeo anterior. Repare que, ao recarregar a página, ele não está renderizando nada, pois o usuário não está autenticado. Na documentação do React Router, temos a navegação via hook para fazer essa navegação de forma programática, via JavaScript. Vamos implementar isso.
+
+Vamos importar o useNavigate e obter o navigate a partir desse hook:
+
+```JSX
+import { useNavigate } from "react-router-dom";
+const navigate = useNavigate();
+```
+
+Se não está carregando e não está autenticado, navegamos para /auth/login. A lista de dependências também deve incluir o navigate:
+
+```JSX
+useEffect(() => {
+    if(!isLoading && !isAuthenticated) {
+        navigate('/auth/login')
+    }
+}, [isAuthenticated, isLoading, navigate])
+```
+
+Verificando o funcionamento do roteamento protegido
+
+Após salvar, vamos verificar se está funcionando. No Chrome, ao voltar para o CodeConnect, ele carregou o login. Se clicarmos em "crie seu cadastro", a página de cadastro é exibida corretamente. Se tentarmos acessar a raiz, ele faz o redirecionamento. Se tentarmos acessar /blog-post e pressionarmos "Enter", ele também faz o redirecionamento. Não conseguimos mais acessar aquelas rotas protegidas.
+
+Nosso roteamento protegido está funcionando, mas ainda não temos a rotina de login, logout e cadastro de usuário. O hook está lá, é do React Hook, não do hook da Marvel. Precisamos agora integrá-lo tanto na página de login quanto na página de cadastro. Essas são nossas próximas missões, pois nossa rota já está protegida e removemos uma funcionalidade. Vamos devolvê-la para que tudo funcione corretamente. Podemos acessar aquelas rotas especialmente se estivermos autenticados. Nos vemos na próxima etapa.
+
+### Aula 2 - Para saber mais: padrões de URLs
+
+Quando estamos criando uma aplicação web, a organização das URLs faz toda a diferença para manter o código limpo, previsível e fácil de entender. Assim como pastas ajudam a manter seus arquivos organizados, os prefixos de rota ajudam a organizar as páginas da sua aplicação.
+
+Vamos entender como fazer isso na prática com o React Router.
+
+O que é uma URL e uma rota?
+
+Uma URL é o endereço que aparece no navegador, como:
+
+```JSX
+https://codeconnect.com/auth/login 
+```
+
+A rota é a parte da URL que seu código React Router reconhece para decidir qual componente mostrar. Exemplo:
+
+```JSX
+<Route path="/auth/login" element={<Login />} /> 
+```
+
+Por que usar prefixos nas rotas?
+
+Imagine que você tem duas páginas:
+
+Uma para login;
+
+Outra para cadastro.
+
+Ao invés de criar rotas separadas como /login e /register, podemos organizar assim:
+
+```JSX
+/auth/login 
+/auth/register 
+```
+
+Isso deixa claro que ambas fazem parte de uma mesma "sessão" da aplicação: autenticação.
+
+Na prática: organizando com prefixos
+
+Com o React Router, podemos agrupar rotas com o mesmo prefixo:
+
+```JSX
+<Route path="/auth"> 
+  <Route path="login" element={<Login />} /> 
+  <Route path="register" element={<Register />} /> 
+</Route> 
+```
+
+Isso significa:
+
+- Quando a URL for /auth/login, renderiza o componente Login;
+- Quando for /auth/register, renderiza o Register.
+
+O que mudou no projeto?
+
+Antes:
+
+```JSX
+<Route path="/auth/login" element={<Login />} /> 
+<Route path="/auth/register" element={<Register />} /> 
+```
+
+Depois:
+
+```JSX
+<Route path="/auth"> 
+  <Route path="login" element={<Login />} /> 
+  <Route path="register" element={<Register />} /> 
+</Route> 
+```
+
+O comportamento final é o mesmo, mas a segunda forma deixa o código mais organizado, principalmente quando temos muitos grupos de rotas (ex: /blog, /admin, /user, etc).
+
+### Aula 2 - Sincronização segura de contatos na Indexa - Exercício
+
+A Indexa, uma plataforma que organiza e gerencia contatos pessoais e profissionais de forma inteligente, está enfrentando um desafio com a sincronização automática de contatos. Você precisa garantir que apenas usuários autenticados possam realizar a sincronização de seus contatos, evitando que dados pessoais sejam expostos indevidamente. Atualmente, a sincronização pode ser iniciada por qualquer pessoa, o que compromete a segurança dos dados.
+
+Qual estratégia você adotaria para garantir que apenas usuários autenticados possam iniciar a sincronização de contatos?
+
+Alternativa correta  
+Implementar uma verificação de autenticação antes de permitir a execução da funcionalidade de sincronização, utilizando um hook de autenticação como o use-auth, para garantir que apenas usuários autenticados possam iniciar o processo.
+
+> Correta, pois essa abordagem assegura que apenas usuários autorizados possam acessar e sincronizar seus contatos, protegendo os dados pessoais de acessos não autorizados.
+
+### Aula 2 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A importância de manter uma estrutura organizada em projetos utilizando prefixos.
+- Como agrupar rotas utilizando componentes de rota no React Router.
+- A estruturar rotas de forma alinhada e encapsular conjuntos de rotas relacionadas.
+- A usar o componente Link do React Router para navegação em SPA.
+- Como resolver conflitos de nome ao importar componentes com aliases.
+- A implementar o componente Link e a usar NavLink para estilos de rotas ativas.
+- A proteger rotas com um componente de rota protegida (ProtectedRoute).
+- A usar o useNavigate para redirecionamento de usuários não autenticados.
+
+## Aula 3 - Trabalhando com autentificação
+
+### Aula 3 - Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [acessar o projeto da aula anterior](https://github.com/alura-cursos/4869--react-router-code-connect/tree/aula-2).
+
+Bons estudos!
+
+### Aula 3 -  - Vídeo 1
+
+### Aula 3 -  - Vídeo 2
+### Aula 3 -  - Vídeo 3
+### Aula 3 -  - Vídeo 4
+### Aula 3 -  - Vídeo 5
+### Aula 3 -  - Vídeo 6
+### Aula 3 -  - Vídeo 7
+### Aula 3 -  - Vídeo 8
