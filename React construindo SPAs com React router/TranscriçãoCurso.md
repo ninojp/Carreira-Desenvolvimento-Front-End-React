@@ -1048,12 +1048,393 @@ Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e
 
 Bons estudos!
 
-### Aula 3 -  - Vídeo 1
+### Aula 3 - Cadastrando usuários - Vídeo 1
 
-### Aula 3 -  - Vídeo 2
-### Aula 3 -  - Vídeo 3
-### Aula 3 -  - Vídeo 4
-### Aula 3 -  - Vídeo 5
+Transcrição  
+Vamos seguir com a implementação da nossa rotina de cadastro de usuário. Continuaremos utilizando o hook useAuth como fonte de verdade para a autenticação do usuário. Nosso objetivo é utilizar o método register, que recebe name, email e password. Este método realiza toda a lógica necessária, incluindo o armazenamento no localStorage.
+
+Para começar, precisamos importar e utilizar o useAuth. Vamos fazer isso agora:
+
+```JSX
+import { useAuth } from "../../hooks/useAuth";
+```
+
+Precisamos observar o retorno desse método, que pode ser success: true ou success: false com uma mensagem de erro. Vamos implementar essa lógica.
+
+Extraindo e utilizando o método register
+
+Primeiramente, chamaremos o useAuth e armazenaremos o resultado em uma constante. Queremos extrair o register dessa constante. Note que, por convenção, primeiro colocamos o hook e depois fazemos o destructuring. Isso é útil para termos o autocomplete no VS Code, que reconhece tudo o que o useAuth retorna, como useAuthenticator, desload, login, logout, entre outros.
+
+```JSX
+const { register } = useAuth();
+```
+
+Agora que temos o register, vamos criar uma função para cadastrar o usuário: const onSubmit, que será o submit do formulário. Esta será uma arrow function. Quando utilizamos a action do formulário, temos acesso ao formData, então já vamos extrair o que precisamos.
+
+```JSX
+const onSubmit = (formData) => {
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const password = formData.get('password');
+    
+    const response = register(name, email, password);
+
+    if (response.success) {
+        // Lógica para sucesso
+    } else {
+        console.error(response.error);
+    }
+};
+```
+
+Ajustando inputs e lidando com respostas
+
+Temos os inputs definidos abaixo, e ajustaremos para que estejam todos em inglês: name, email e password. Vamos extrair esses valores do formData:
+
+```JSX
+const name = formData.get('name');
+const email = formData.get('email');
+const password = formData.get('password');
+```
+
+Com name, email e password extraídos do formData, podemos chamar o register, passando esses valores. Vamos armazenar o resultado em uma constante chamada response.
+
+Existem dois cenários possíveis: se response.success for verdadeiro, significa que o cadastro foi bem-sucedido. Caso contrário, se houver um erro, faremos um console.error para response.error. Isso é importante para capturar erros, como a tentativa de cadastrar mais de um usuário com o mesmo email, que resultará em um erro.
+
+Redirecionando após cadastro bem-sucedido
+
+Se tudo ocorrer bem, podemos redirecionar para a página de login. Para isso, utilizaremos a constante navigate:
+
+```JSX
+import { useNavigate } from "react-router-dom";
+const navigate = useNavigate();
+```
+
+Dessa forma, concluímos a implementação da lógica de cadastro de usuário. Se o cadastro for bem-sucedido, utilizaremos o navigate para redirecionar para a página de login:
+
+```JSX
+if (response.success) {
+    navigate('/auth/login');
+} else {
+    console.error(response.error);
+}
+```
+
+Lembramos do hook que chamamos para obter o navigate: é o useNavigate. Se tudo estiver correto, o que queremos fazer é utilizar o navigate para a página de login. Após o registro, queremos realizar o login. Portanto, direcionamos para a rota /auth/login.
+
+Vinculando onSubmit ao formulário e testando
+
+O que está faltando agora é o onSubmit. Precisamos vinculá-lo à action do formulário, na linha 45. A action do formulário será esse onSubmit. O que o onSubmit faz? Ele coleta os dados do formData, tenta cadastrar o usuário e, se for bem-sucedido, redireciona para a página de login. Caso contrário, exibe o erro no console.
+
+```JSX
+<Form action={onSubmit}>
+```
+
+Vamos testar o código. Deixaremos o console em evidência para visualizar qualquer erro que ocorra. No cadastro, inserimos o nome "Vinicios", o e-mail "vinicios@alura.com.br" e a senha "123". Ao tentar cadastrar, o sistema reclamou que o campo "lembrar-me" está como obrigatório. Vamos remover essa obrigatoriedade. O campo "lembrar-me" está no checkbox e não deve ser obrigatório.
+
+```JSX
+<Checkbox label="Lembrar-me" />
+```
+
+Validando o cadastro e corrigindo erros
+
+Após ajustar, inserimos novamente o nome "Vinicios", o e-mail "vinicios@alura.com.br" e a senha "123". Ao clicar em cadastrar, o sistema informou que já existe um usuário com esse e-mail. Vamos limpar o localStorage no application e testar novamente. A validação está funcionando, provavelmente devido a tentativas anteriores de cadastro.
+
+Repetimos o processo: nome "Vinicios", e-mail "vinicios@alura.com.br", senha "123". O login foi bem-sucedido. No entanto, o texto estava incorreto, ajustamos para "cadastrar". Agora, testamos novamente para validar se o sistema não permitirá um novo cadastro com o mesmo e-mail. Ao tentar cadastrar novamente, o sistema confirmou que o usuário já existe, o que é esperado.
+
+Testamos com um e-mail diferente: nome "Vinicios", e-mail "vinicios@gmail.com", senha "123". O cadastro foi bem-sucedido. A validação está funcionando corretamente, e o redirecionamento para a página de login também.
+
+Concluindo e preparando para o próximo passo
+
+Nosso próximo passo é efetuar o login com o usuário recém-cadastrado, utilizando a função register do useAuth, em conjunto com o navigating do React Router. Se tudo correr bem, o fluxo de navegação seguirá corretamente.
+
+Era isso. Nos vemos no próximo vídeo. Até lá.
+
+### Aula 3 - Efetuando login - Vídeo 2
+
+Transcrição  
+Seguindo com nossa implementação, o próximo passo é realizar o login do usuário. O useAuth, que é o hook de autenticação, já possui um método para efetuar o login, que recebe o e-mail e a senha. Ele retorna success como verdadeiro quando o login é bem-sucedido e success como falso se algo deu errado.
+
+Vamos ao nosso formulário de login no arquivo src/pages/login/index.jsx e criar a lógica necessária. Primeiro, vamos importar o useAuth e armazená-lo em uma constante. Do useAuth, queremos extrair o método login.
+
+```JSX
+import useAuth from "../../hooks/useAuth"
+```
+
+Configurando o formulário de login
+
+Agora, vamos armazenar o useAuth em uma constante.
+
+```JSX
+const auth = useAuth()
+```
+
+Do auth, extraímos o método login.
+
+```JSX
+const { login } = auth
+```
+
+Para realizar o login, criaremos uma função onSubmit, que será uma arrow function. Essa função receberá o formData e poderá ser conectada à ação do formulário através do atributo onSubmit.
+
+```JSX
+const onSubmit = (formData) => {
+
+}
+```
+
+No formulário, temos os campos name para e-mail e name para senha, que serão extraídos do formData. Assim, ao obter o formData, utilizamos:
+
+```JSX
+const email = formData.get('email')
+const password = formData.get('password')
+```
+
+Executando o login e redirecionando o usuário
+
+Agora, chamaremos o método login, que espera receber um e-mail e uma senha. Podemos armazenar a resposta em uma constante response.
+
+```JSX
+const response = login(email, password)
+```
+
+Verificamos se essa operação é assíncrona, e como não é, não precisamos de await ou qualquer tratamento adicional. Por fim, assim como fizemos no registro, verificamos a resposta com:
+
+```JSX
+if (response.success) {
+    
+}
+```
+
+Se tudo ocorrer conforme o esperado, queremos redirecionar para a página de feed, que é a nossa página raiz. Para isso, a constante navigate recebe o useNavigate do React Router.
+
+```JSX
+import { useNavigate } from "react-router-dom";
+const navigate = useNavigate()
+```
+
+Assim, se tudo der certo, utilizamos navigate para redirecionar à raiz, feed. Caso contrário, podemos usar console.error para exibir response.error.
+
+```JSX
+if (response.success) {
+    navigate('/')
+} else {
+    console.error(response.error)
+}
+```
+
+Testando e ajustando o formulário de login
+
+Agora, vamos verificar isso no Chrome. Vou recarregar a página. O e-mail email@vinicius.com.br não existe, é apenas email.com. Vamos ver se recebemos uma mensagem de erro. Senha: 1, 2, 3, login. O sistema está informando que o campo "lembrar-me" é obrigatório. Vamos remover essa obrigatoriedade. No VS Code, vamos localizar e remover a linha referente a "lembrar-me".
+
+```JSX
+<Checkbox label="Lembrar-me" />
+```
+
+Agora, vamos testar o login novamente. Ótimo, o sistema indicou que o e-mail e a senha estão incorretos. Vamos testar agora com as credenciais corretas: vinicius@com.br, senha: 1, 2, 3, login. Perfeito! O redirecionamento para a página de feed foi realizado com sucesso. Vamos verificar se o login está persistente. Recarreguei a página e continuo logado. Isso significa que, ao recarregar a aplicação, como tudo está no local storage, conseguimos manter a sessão ativa sem precisar fazer login novamente.
+
+Portanto, o registro está funcionando, o login está funcionando. Tudo está fluindo conforme planejado. Nos vemos na próxima etapa.
+
+### Aula 3 - Implementando o logout - Vídeo 3
+
+Transcrição  
+Para implementar o logout, vamos seguir os passos descritos na transcrição e adicionar os snippets de código conforme necessário.
+
+Primeiro, no nosso aside, temos um link para logout que só será exibido se a pessoa estiver logada. Vamos adicionar esse link:
+
+```JSX
+<AsideLink href="/auth/logout">
+```
+
+Criando a página de logout
+
+Agora, vamos criar uma rota /auth/logout. Para isso, vamos criar uma página de logout em logout/index.jsx. Começamos definindo a constante Logout como uma arrow function:
+
+```JSX
+const Logout = () => {
+
+}
+```
+
+Como queremos que essa página apenas realize o logout, inicialmente ela não precisa retornar nada:
+
+```JSX
+const Logout = () => {
+    return null
+}
+```
+
+Utilizando o hook useAuth
+
+Precisamos utilizar o useAuth para acessar o método de logout. Vamos importar o useAuth:
+
+```JSX
+import { useAuth } from "../../../hooks/useAuth"
+```
+
+Agora, vamos utilizar o useAuth dentro do nosso componente:
+
+```JSX
+const { logout } = useAuth()
+```
+
+Implementando o useEffect para logout
+
+Para garantir que o logout seja chamado apenas uma vez quando a página for acessada, utilizamos o useEffect:
+
+```JSX
+import { useEffect } from "react"
+import { useAuth } from "../../../hooks/useAuth"
+
+const Logout = () => {
+    const { logout } = useAuth()
+    useEffect(() => {
+        logout()
+    }, [logout])
+    return null
+}
+```
+
+Com isso, o método de logout será chamado assim que a página for acessada. Agora, precisamos exportar essa rota:
+
+```JSX
+export const Logout = () => {
+    const { logout } = useAuth()
+    useEffect(() => {
+        logout()
+    }, [logout])
+    return null
+}
+```
+
+Adicionando a rota de logout
+Em seguida, vamos adicionar a rota no nosso sistema de rotas:
+
+```JSX
+<Route path='logout' element={<Logout />} />
+```
+
+Redirecionando após logout
+
+Após realizar o logout, queremos redirecionar o usuário para a página de login. Para isso, utilizamos o useNavigate:
+
+```JSX
+import { useNavigate } from "react-router-dom"
+```
+
+Dentro do nosso componente, configuramos o navigate:
+
+```JSX
+const navigate = useNavigate()
+```
+
+E então, ajustamos o useEffect para redirecionar após o logout:
+
+```JSX
+useEffect(() => {
+    logout()
+    navigate('/auth/login')
+}, [logout, navigate])
+```
+
+Testando a implementação do logout
+
+Com isso, ao acessar a página de logout, o usuário será deslogado e redirecionado para a página de login. Testando a aplicação, tudo deve funcionar corretamente, permitindo login, acesso ao feed, e logout com redirecionamento. Assim, completamos a implementação do logout seguindo a estratégia de rotas.
+
+### Aula 3 - Para saber mais: porque criar uma rota para logout?
+
+Você deve ter se perguntado:
+
+"Mas por que o Vinny não chamou direto o método logout() quando a pessoa clica em logouy?"
+
+Essa é uma ótima pergunta! E a resposta ajuda a entender como pensar melhor em arquitetura e comportamento previsível no front-end.
+
+O jeito "mais direto"
+
+Sim, seria possível fazer algo assim:
+
+```JSX
+<button onClick={logout}>Sair</button> 
+```
+
+E pronto. Quando a pessoa clica, chamamos a função logout() e redirecionamos com navigate('/auth/login'). Super simples, super direto.
+
+Mas aí vem a pergunta: onde isso vai ficar?
+
+Será que a lógica de logout vai ficar dentro de um onClick no componente de menu?
+
+Ou espalhada por vários lugares, dependendo de onde colocamos um botão de logout?
+
+Isso pode rapidamente virar uma bagunça:
+
+- Códigos duplicados;
+- Difícil testar;
+- Difícil reaproveitar;
+- Difícil aplicar mudanças no futuro (ex: mostrar um alerta antes de sair).
+
+A vantagem de usar uma rota para logout
+
+Ao criar uma rota /auth/logout, conseguimos:
+
+- Separar a lógica do logout em um lugar só;
+- Reaproveitar essa lógica onde quisermos (menu, botão de sair, etc);
+- Garantir que a experiência será sempre igual;
+- Deixar mais fácil de testar, entender e manter;
+- Tratar como uma página especial, que faz algo assim que a pessoa chega nela.
+
+Veja o que essa rota faz:
+
+```JSX
+// src/pages/Logout/index.jsx 
+useEffect(() => { 
+  logout() 
+  navigate('/auth/login') 
+}, [logout, navigate]) 
+```
+
+A pessoa acessa /auth/logout, e:
+
+- Sai da conta;
+- É redirecionada para a tela de logi;
+- E na navegação?
+
+No lugar de fazer um botão com lógica embutida, agora fazemos:
+
+```JSX
+<AsideLink href="/auth/logout"> 
+  <IconLogin /> Logout 
+</AsideLink> 
+```
+
+Simples, direto, previsível. E funciona com ou sem JavaScript (progressive enhancement).
+
+Isso é comum?
+
+Muito! Inclusive, frameworks como Remix, Next.js e outros também tratam logout como rota em muitos exemplos e projetos reais.
+O legal é que esse padrão ajuda a deixar a aplicação mais coesa: se login, cadastro e feed são rotas... por que o logout não seria.
+
+Conclusão  
+Criar uma rota para logout pode parecer exagero num primeiro momento, mas ajuda demais a manter o projeto organizado, testável e fácil de crescer.
+
+Na prática:
+
+- Melhor separar a lógica do que espalhar ela em cliques
+- Fica mais semântico, previsível e escalável
+- E se um dia a gente quiser mostrar um alerta do tipo "tem certeza que quer sair?" — já temos um lugar central pra isso.
+
+### Aula 3 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A implementar a função de cadastro de usuário com useAuth.
+- A criar e gerenciar envio de formulários com onSubmit.
+- A utilizar useNavigate para redirecionamento pós-registro ou login.
+- A realizar testes de validação para evitar duplicidade de e-mails no cadastro.
+- A implementar a lógica de login utilizando useAuth.
+- A confirmar a persistência da autenticação com armazenamento no local storage.
+- A desenvolver a funcionalidade de logout com React e React Router.
+- A estruturar a lógica de logout como uma rota separada para melhor organização do código.
+
 ### Aula 3 -  - Vídeo 6
 ### Aula 3 -  - Vídeo 7
 ### Aula 3 -  - Vídeo 8
