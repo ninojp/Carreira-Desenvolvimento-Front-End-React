@@ -1435,6 +1435,386 @@ Nesta aula, aprendemos:
 - A desenvolver a funcionalidade de logout com React e React Router.
 - A estruturar a lógica de logout como uma rota separada para melhor organização do código.
 
-### Aula 3 -  - Vídeo 6
-### Aula 3 -  - Vídeo 7
-### Aula 3 -  - Vídeo 8
+## Aula 4 - Utilizando URLs dinâmicas
+
+### Aula 4 - Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [acessar o projeto da aula anterior](https://github.com/alura-cursos/4869--react-router-code-connect/tree/aula-3).
+
+Bons estudos!
+
+### Aula 4 - Criando segmentos dinâmicos da URL - Vídeo 1
+
+Transcrição  
+Agora vamos começar a adicionar os toques finais ao nosso projeto. Com ele ainda em execução no terminal, na localhost 5173, vamos efetuar login com a conta criada: vinicius.alura.com.br, senha senha123.
+
+Quando estamos dentro do feed e clicamos em "ver detalhes", sempre somos direcionados para o mesmo post. No entanto, isso não deveria acontecer; deveríamos ser direcionados para o post específico. Por exemplo, se clicarmos em "Introdução ao React", deveríamos ir para esse post. Se clicarmos em "CSS Grid na prática", deveríamos ir para esse post, e não para "Introdução ao React". Portanto, a parte de "ver detalhes" deveria ser dinâmica. Deveríamos ter alguma identificação na URL que identifique esse post de forma única.
+
+Verificando a implementação atual
+
+Vamos verificar como isso está implementado. Com o VS Code aberto, vamos olhar nossa página em src/pages/feed. Vamos entrar no index. O index obtém os posts de um arquivo chamado data.js e mapeia todos eles. Vamos abrir esse arquivo, data.js.
+
+Os posts possuem um id. Aqui estamos olhando para os autores: Ana, Bruno, Carla, Diego, entre outros. Temos uma função para marcar comentários e outra para gerar likes aleatórios. Aqui está o que procuramos: export const posts. Temos a imagem que será exibida, o título e o slug. O slug é o título sem espaços, sem caracteres especiais. Esse slug será usado para capturar e identificar de forma única o nosso blog post.
+
+Ajustando o link para posts específicos
+
+Como faremos isso? No nosso componente BlogPost, especificamente no CardPost, temos um link para BlogPost. Inicialmente, o link estava assim:
+
+```JSX
+<Link to="/blog-post">Ver detalhes</Link>
+```
+
+Queremos concatenar o valor do slug aqui. Vamos transformar isso em JavaScript, chamando uma função e fazendo uma interpolação de string. Primeiro, ajustamos o link para:
+
+```JSX
+<Link to={`/blog-post`}>Ver detalhes</Link>
+```
+
+E, finalmente, concatenamos o slug:
+
+```JSX
+<Link to={`/blog-post/${post.slug}`}>Ver detalhes</Link>
+```
+
+Assim, queremos pegar esse slug e colocá-lo na URL do navegador.
+
+Verificando a funcionalidade no navegador
+
+Voltando ao Chrome, vamos verificar se funciona. Ao clicar em "Dicas de acessibilidade na web" e em "detalhes", a URL se torna /blog-post/dicas-de-acessibilidade-na-web. Ele está adicionando o slug na URL.
+
+No entanto, no nosso arquivo de rotas, main.js, no BlogPost, não temos esse segmento identificado. Para indicar que queremos pegar esse valor de forma dinâmica, faremos assim:
+
+```JSX
+<Route path='blog-post/:slug' element={
+    <ProtectedRoute>
+        <BlogPost />
+    </ProtectedRoute>
+} />
+```
+
+Ou seja, esse segmento é o slug.
+
+Capturando o slug no componente
+
+Podíamos nomear o segmento como quiséssemos. Poderia ser ID, ou qualquer outra coisa. No nosso caso, é slug. Agora, estamos informando ao React Router que será blog-post, seguido de um segmento dinâmico. Nesse cenário, queremos renderizar o blog post. Vamos verificar se funciona. Recarregamos a página, e ela ainda está exibindo o mesmo post, mas já foi renderizado. Ou seja, a rota foi correspondida. Se voltarmos e acessarmos outro post, como "Otimização de performance no React", a URL muda. O que falta agora é ajustar o post, e podemos ver isso na página.
+
+Na página de blog-post, no arquivo index.jsx, o post está sendo obtido na posição zero, ou seja, sempre o primeiro:
+
+```JSX
+const post = posts[0]
+```
+
+Em vez disso, precisamos obtê-lo usando o slug. Como faremos para capturar esse slug? O React Router já identificou que é dinâmico. Para capturar esse valor dentro do nosso componente, utilizaremos um hook chamado useParams, que vem do React Router. Primeiro, precisamos importá-lo:
+
+```JSX
+import { useParams } from "react-router-dom"
+```
+
+Implementando a lógica de busca pelo slug
+
+Vamos armazenar isso em uma constante. Queremos capturar o nome que definimos como slug:
+
+```JSX
+const { slug } = useParams()
+```
+
+Agora, utilizaremos post.find para procurar um post cujo slug seja igual ao slug que recebemos:
+
+```JSX
+const post = posts.find(p => p.slug === slug)
+```
+
+Assim, não pegaremos mais o primeiro, mas encontraremos um baseado no slug. Vamos verificar se isso funciona. No Chrome, já está renderizando um post diferente, como "Otimização de performance no React". Ao clicar em outro, como "Introdução ao TypeScript", ele exibe "Introdução ao TypeScript". A lógica de capturar o post relacionado ao slug está funcionando, não pegando mais sempre o primeiro.
+
+Resumindo e organizando o projeto
+
+Resumindo, no main.js, criamos um segmento de rota dinâmico e o capturamos no componente. Isso faz com que nosso aplicativo funcione corretamente. Agora, quero trazer um ponto sobre organização. Nosso main.js está crescendo, com muitas rotas, e é o ponto de entrada da aplicação. Vamos pensar em uma forma de manter todos os comportamentos organizados. Com isso em mente, encerramos nosso encontro de agora. Estou esperando vocês no próximo vídeo.
+
+### Aula 4 - Organizando as rotas - Vídeo 2
+
+Transcrição  
+Já verificamos que o sistema está funcionando, mas agora é hora de analisarmos o código. O fato de estar funcionando não significa que está da melhor forma possível. O que vamos modificar? No arquivo main.jsx, temos várias linhas de código relacionadas ao roteamento da nossa aplicação, embora estejamos no arquivo main.jsx. O nome main.jsx não é muito descritivo; a ideia do main aqui é ser o ponto de entrada. Portanto, ele deveria ser mais sucinto e enxuto.
+
+Para organizar o roteamento da nossa aplicação, vamos colapsar tudo que está expandido e, dentro da pasta "src", criar um novo arquivo chamado router. Dentro de router, criaremos um index.jsx. Agora, faremos o export de uma constante que chamaremos de router. No entanto, ao nomearmos essa constante de router, podemos, sem querer, conflitar com o conceito de router do React Router. Assim, podemos chamá-la de AppRouter, que é o roteador do nosso aplicativo.
+
+Definindo a função AppRouter
+
+Primeiro, vamos definir a constante AppRouter como uma função. Inicialmente, ela será uma função vazia:
+
+```JSX
+export const AppRouter = () => {
+
+}
+```
+
+Agora, vamos definir uma arrow function para AppRouter, e não precisamos de children desta vez. Corrigindo um erro, não é uma interrogação, mas sim um sinal de maior. Queremos retornar um conjunto de jsx, que é justamente o nosso BrowserRouter. Vamos começar a estruturar o retorno da função:
+
+```JSX
+export const AppRouter = () => {
+    return(
+        
+    )
+}
+```
+
+Estruturando as rotas da aplicação
+Dentro do retorno, vamos adicionar o BrowserRouter e as rotas da aplicação. Isso inclui as rotas de autenticação, o feed e o blog post:
+
+```JSX
+<BrowserRouter>
+    <Routes>
+        <Route path="/auth">
+            <Route path='register' element={<Register />} />
+            <Route path='login' element={<Login />} />
+            <Route path='logout' element={<Logout />} />
+        </Route>
+        <Route path='/' element={
+            <ProtectedRoute>
+                <Feed />
+            </ProtectedRoute>
+        } />
+        <Route path='blog-post/:slug' element={
+            <ProtectedRoute>
+                <BlogPost />
+            </ProtectedRoute>
+        } />
+    </Routes>
+</BrowserRouter>
+```
+
+Importando componentes necessários
+
+Agora, precisamos fazer os imports necessários para que o código funcione corretamente. Vamos importar o BrowserRouter, Routes, e Route do React Router:
+
+```JSX
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+```
+
+Além disso, precisamos importar as páginas e componentes que utilizamos nas rotas:
+
+```JSX
+import { Register } from "../pages/Register"
+import { Login } from "../pages/Login"
+import { Logout } from "../pages/Logout"
+import { ProtectedRoute } from "../components/ProtectedRoute"
+import { Feed } from "../pages/Feed"
+import { BlogPost } from "../pages/BlogPost"
+```
+
+Integrando o AppRouter no main.jsx
+
+Agora, temos todas as nossas rotas configuradas dentro de um AppRouter, e não mais no main.jsx.
+
+No main.jsx, importamos o AppRouter que acabamos de criar. Podemos remover todos os imports que estavam lá anteriormente. O main.jsx agora está mais organizado e limpo. Vamos verificar se essa alteração causou algum problema. No Chrome, recarregamos a página e tudo parece estar funcionando. Testamos o feed, o CSS Grid na prática, e tudo está funcionando corretamente. Podemos testar o logout também.
+
+Finalizando a configuração do main.jsx
+
+Para finalizar, vamos garantir que o main.jsx está configurado corretamente para utilizar o AppRouter:
+
+```JSX
+import './index.css'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { AppRouter } from './router/index.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <AppRouter />
+  </StrictMode>,
+)
+```
+
+Se acessarmos o cadastro e tentarmos fazer login, por exemplo, com o e-mail vinicius@alura.com.br e a senha 123, tudo continua funcionando, mas agora de forma mais organizada. O main.jsx agora apenas chama a função de renderização, passando o nosso AppRouter. O AppRouter é responsável por toda a lógica e roteamento das nossas rotas.
+
+Considerações finais sobre a organização do roteador
+
+Se a aplicação for muito grande, podemos dividir o roteador em blocos menores, criando roteadores específicos para o feed, autenticação, post, entre outros. Existem várias maneiras de organizar o nosso roteador. Essa era a estratégia que queríamos compartilhar. Ainda temos mais para explorar, então continuaremos na próxima parte.
+
+### Aula 4 - Para saber mais: segmentos opcionais e splats
+
+Agora que criamos nossa primeira rota dinâmica, usando algo como :slug na URL, você já deu mais um passo importante para criar uma SPA completa com React Router.
+
+A rota ficou mais ou menos assim:
+
+```JSX
+<Route path="/blog-post/:slug" element={<BlogPost />} /> 
+```
+
+Isso significa que se a pessoa acessar /blog-post/react-router, o componente BlogPost será exibido, e você pode usar o valor react-router dentro dele.
+
+Dentro do componente, usamos:
+
+```JSX
+import { useParams } from "react-router-dom"; 
+ 
+const { slug } = useParams(); 
+```
+
+Mas e se o projeto for diferente?
+
+A verdade é que nenhum curso consegue prever 100% como será o seu projeto real.
+
+Por isso, além de mostrar o caminho mais comum (como fizemos em aula), é importante conhecer algumas possibilidades que o React Router oferece para tratar URLs mais complexas.
+
+Vamos ver duas funcionalidades muito úteis: optional segments e splats.
+
+1. Optional Segments (segmentos opcionais)
+
+Às vezes, uma parte da URL pode existir… ou não. E tudo bem!
+
+Com o React Router, podemos marcar um trecho como opcional usando ? no final do segmento.
+
+Exemplo 1: parâmetro opcional
+
+```JSX
+<Route path=":lang?/categories" element={<Categories />} /> 
+```
+
+Essa rota aceita:
+
+- /categories;
+- /en/categories;
+- /pt/categories.
+
+Ou seja, o :lang pode estar presente ou não. Útil para sites multilíngues, por exemplo.
+
+Exemplo 2: trecho fixo opcional
+
+```JSX
+<Route path="users/:userId/edit?" element={<User />} /> 
+```
+
+Aqui, a rota aceita:
+
+- /users/123
+- /users/123/edit
+
+Isso é útil quando a mesma página renderiza o modo de visualização e o modo de edição, dependendo da URL.
+
+2. Splats (catch-all / resto da URL)
+
+Às vezes, você não sabe quantos níveis a URL pode ter. Ou quer capturar tudo que vem depois de um caminho fixo.
+É aí que entra o *, também conhecido como splat:
+
+```JSX
+<Route path="files/*" element={<File />} /> 
+```
+
+Essa rota aceita:
+
+- /files/documento.pdf;
+- /files/pasta/documento.pdf;
+- /files/a/b/c/d.txt.
+
+No componente, você pega o restante assim:
+
+```JSX
+let params = useParams(); 
+let filePath = params["*"]; 
+```
+
+Ou com destructuring:
+
+```JSX
+let { "*": splat } = useParams(); 
+```
+
+Isso é muito comum em:
+
+- Gerenciadores de arquivos ;
+- URLs que apontam para caminhos flexíveis;
+- CMSs, ou builders de sites estáticos (tipo Gatsby, Astro, etc.);
+
+Quando usar cada um?
+
+| Situação                                      | Usar             |
+| --------------------------------------------- | ---------------- |
+| Parte da URL pode ou não existir              | Optional Segment |
+| Mesma página com ou sem /edit                 | Optional Segment |
+| Precisa capturar o "resto" da URL             | Splat (*)        |
+| Caminhos com profundidade variável            | Splat (*)        |
+
+Um conselho de ouro
+
+Aprender rotas dinâmicas já é um baita avanço. Mas lembre-se: cada projeto tem suas peculiaridades. Às vezes você vai precisar:
+
+- Tratar parâmetros opcionais;
+- Lidar com múltiplas línguas;
+- Capturar caminhos arbitrários;
+
+Fazer redirecionamentos baseados em regras.
+
+E isso não dá pra emular completamente num curso. Então aqui vai a dica:
+
+Use o que aprendeu como base. Mas explore a documentação oficial do React Router sempre que pintar um desafio novo.
+
+Você vai perceber que ela tem muitos recursos que só fazem sentido quando você está enfrentando um problema real. E quando isso acontecer… você vai estar pronto ;)
+
+### Aula 4 - Para saber mais: geração de slugs amigáveis
+
+Entendendo a Transformação do Título
+
+Quando criamos uma URL mais legível, normalmente convertemos o título de um conteúdo em um "slug". Essa transformação envolve retirar espaços, caracteres especiais e acentuações, padronizando tudo para minúsculas e, muitas vezes, substituindo espaços por hífens. Essa abordagem gera URLs mais claras e amigáveis para o usuário, além de melhorar a indexação em mecanismos de busca.
+
+Por que Priorizar Slugs Amigáveis?
+
+Utilizar-slugs amigáveis não só melhora a usabilidade do sistema, mas também contribui para a experiência do usuário e para a otimização de mecanismos de busca (SEO). Uma URL limpa, que represente o conteúdo da página, facilita o compartilhamento e aumenta a confiabilidade, já que o usuário pode prever qual conteúdo será exibido ao clicar no link.
+
+Como Funciona a Geração de um Slug
+
+A lógica para gerar um slug envolve algumas etapas importantes:
+
+- Converter todo o texto para letras minúsculas, garantindo uniformidade.
+- Remover ou substituir caracteres especiais e acentuações, que poderiam causar incompatibilidades em URLs.
+- Substituir espaços e outros separadores por um padrão, geralmente hífens, para manter as palavras separadas de forma legível.
+- Eliminar qualquer outro caractere que não seja alfanumérico ou o hífen, a fim de assegurar que a URL seja segura e consistente.
+
+Exemplo Prático
+
+Imagine a seguinte função em JavaScript para transformar um título em slug:
+
+```JSX
+function gerarSlug(titulo) {
+  return titulo
+    .toLowerCase()
+    .normalize('NFD').replace(/\p{Diacritic}/gu, '') // Remove acentuação
+    .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+    .trim() // Remove espaços do início e fim
+    .replace(/\s+/g, '-'); // Troca espaços por hífens
+}
+
+// Exemplo de uso:
+const titulo = 'Introdução ao React: fundamentos e práticas!';
+const slug = gerarSlug(titulo);
+console.log(slug); // saída: introducao-ao-react-fundamentos-e-praticas
+```
+
+Essa função exemplifica a importância de se padronizar os títulos para criar slugs consistentes, permitindo que a aplicação use esses valores para construir URLs dinâmicas com mais previsibilidade e segurança.
+
+Considerações Finais
+
+Optar por gerar slugs amigáveis é uma prática fundamental em desenvolvimento web, pois impacta não apenas a organização interna do projeto, mas também a forma como os usuários interagem com as URLs. Essa abordagem torna o processo de mapeamento das rotas dinâmicas mais intuitivo e robusto, possibilitando a criação de uma navegação clara e eficiente.
+
+### Aula 4 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Implementar rota dinâmica utilizando slugs no React Router para acessar posts individualmente.
+- Concatenar slugs nas URLs usando interpolação de strings no JavaScript.
+- Utilizar o hook useParams para capturar segmentos dinâmicos da URL.
+- Aplicar o método find em arrays para buscar posts pelo slug capturado.
+- Manter o arquivo main.js organizado e separar a lógica de roteamento.
+- Criar um arquivo index.jsx para centralizar o roteamento na pasta router.
+- Exportar uma constante appRouter para encapsular o roteamento com BrowserRouter.
+- Reestruturar main.js para usar appRouter apenas como ponto de entrada.
+
+## Aula 5 - 
+
+### Aula 5 -  - Vídeo 1
+### Aula 5 -  - Vídeo 2
+### Aula 5 -  - Vídeo 3
+### Aula 5 -  - Vídeo 4
+### Aula 5 -  - Vídeo 5
+### Aula 5 -  - Vídeo 6
+### Aula 5 -  - Vídeo 7
+### Aula 5 -  - Vídeo 8

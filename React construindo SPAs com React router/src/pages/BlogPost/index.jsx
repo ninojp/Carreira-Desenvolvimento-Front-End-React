@@ -8,10 +8,18 @@ import { Author } from "../../components/Author"
 import Typography from "../../components/Typography"
 import { CommentList } from "../../components/CommentList"
 import ReactMarkdown from 'react-markdown'
+import { useParams } from "react-router"
 
 export const BlogPost = () => {
-
-    const post = posts[0]
+    //o urlslug é o nome que foi usado na URL(path='blog-post/:slug')  para identificar o post
+    const { urlslug } = useParams();
+    if (!urlslug) {
+        throw new Error('urlslug não fornecido');
+    };
+    const post = posts.find((post) => post.slug === urlslug);
+    if (!post) {
+        throw new Error('Post não encontrado');
+    }
     return (
         <AppLayout>
             <main className={styles.main}>
