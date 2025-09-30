@@ -1808,13 +1808,352 @@ Nesta aula, aprendemos:
 - Exportar uma constante appRouter para encapsular o roteamento com BrowserRouter.
 - Reestruturar main.js para usar appRouter apenas como ponto de entrada.
 
-## Aula 5 - 
+## Aula 5 - Implementando layout e página 404
 
-### Aula 5 -  - Vídeo 1
-### Aula 5 -  - Vídeo 2
-### Aula 5 -  - Vídeo 3
-### Aula 5 -  - Vídeo 4
-### Aula 5 -  - Vídeo 5
-### Aula 5 -  - Vídeo 6
-### Aula 5 -  - Vídeo 7
-### Aula 5 -  - Vídeo 8
+### Aula 5 - Layouts por rotas - Vídeo 1
+
+Transcrição  
+A experiência do usuário já está satisfatória, então é hora de focarmos na experiência da pessoa desenvolvedora. Estamos fazendo algo do nosso jeito, mas podemos melhorar utilizando as funcionalidades do próprio React Router. Temos uma boa organização ao separar a parte de layout compartilhado de uma página. No caso da autenticação, temos um card centralizado, que está separado em um layout. No layout do aplicativo, temos o aside do lado e o corpo da página renderizado à direita. Isso já está implementado.
+
+Precisamos agora verificar se há uma maneira de fazer isso usando o React Router, pois essa é uma prática comum. Queremos ter um layout para várias páginas específicas, com apenas o conteúdo central mudando. A resposta é sim, há uma maneira de fazer isso com o React Router.
+
+Implementando layouts com React Router
+
+Ao invés de configurarmos diretamente no roteador, quando agrupamos uma rota baseada em um conceito, como o /auth, podemos trazer um layout comum para essas rotas. Por exemplo, no caso do /auth, temos o AuthLayout. Vamos trazê-lo como elemento da rota externa que agrupa o elemento, que será o AuthLayout. Lembrando que deve ser como JSX e não como função.
+
+Para começar, vamos definir a rota para o /auth com o AuthLayout:
+
+```JSX
+import { AuthLayout } from "../layouts/Auth"
+
+<Route path="/auth" element={<AuthLayout />} />
+```
+
+Para o outro grupo, onde temos apenas o /, não utilizamos o AuthLayout, mas sim o AppLayout. Vamos importá-lo e utilizá-lo:
+
+```JSX
+import { AppLayout } from "../layouts/App"
+
+<Route path="/" element={<AppLayout />} />
+```
+
+Removendo layouts duplicados
+
+Agora que estamos usando esse layout, podemos ir às páginas e, página por página, remover o AppLayout que estávamos usando antes. Vamos remover e formatar o código.
+
+A responsabilidade de lembrar de colocar o layout envolvendo uma página não é mais da pessoa desenvolvedora, pois o React Router cuida disso. Já removemos o AppLayout do feed e do blog post. Agora falta removê-lo do login.
+
+Onde está o login? O login está aqui. Vamos remover o AuthLayout, formatar o código e retirar o import. Agora, falta apenas o registro, pois o logout não possui layout. Onde está nosso layout? Onde está o AuthLayout? Vamos removê-lo. Removemos o AuthLayout. Formatamos o documento e retiramos o import. Pronto, removemos o import.
+
+Ajustando layouts com o componente Outlet
+
+Observe que removemos essa camada duplicada. À medida que a aplicação cresce e mais rotas são adicionadas à nossa rota principal, não precisamos mais nos preocupar em passar esse layout. Certo? Agora, precisamos testar. Vamos abrir o Chrome. Note que está funcionando em partes. O aside está aqui, mas falta o conteúdo principal. Nosso feed também está funcionando, mas falta o conteúdo principal. Por que falta o conteúdo principal? Vamos focar no nosso layout. Vou fechar tudo o que está aberto e abrir o AppLayout e o AuthLayout.
+
+Nesse cenário, estamos renderizando children. Esse era o conceito do JSX que estávamos usando. Quando utilizamos o layout do React Router, não é children que queremos renderizar. Precisamos indicar ao React Router onde queremos renderizar o corpo daquele layout. Fazemos isso não usando children, que já removemos do AuthLayout, mas utilizando um componente do próprio React Router chamado Outlet.
+
+Vamos ajustar o AuthLayout para usar o Outlet:
+
+```JSX
+import { Outlet } from 'react-router'
+
+export const AuthLayout = () => {
+    return (
+        <div className={styles.card}>
+            <Outlet />
+        </div>
+    );
+}
+```
+
+E agora, vamos fazer o mesmo ajuste no AppLayout:
+
+```JSX
+import { Outlet } from 'react-router'
+
+export const AppLayout = () => {
+    return (
+        <div className={styles.content}>
+            <Outlet />
+        </div>
+    );
+}
+```
+
+Testando a aplicação após ajustes
+
+Se olharmos agora no Chrome, tudo está funcionando perfeitamente. O feed está funcionando, o detalhe está funcionando. Se fizermos o logout, o login está funcionando. E o cadastro também está funcionando. Graças ao Outlet, não é mais children, é o Outlet que gerencia o layout para nós.
+
+Ainda falta um último detalhe, mas é isso. Estaremos esperando por você no último vídeo da sequência. Até lá.
+
+### Aula 5 - Acessando URLs inexistentes - Vídeo 2
+
+Transcrição  
+Devemos começar a prestar atenção na experiência da pessoa usuária do nosso CodeConnect. Por exemplo, se tentarmos acessar um slug que não existe. No meu caso, estou em um blog post chamado "Vue.js para iniciante". Vou mudar de Vue.js para Next.js para iniciante. Essa página não existe. O resultado é uma tela em branco e preta, considerando que nosso fundo é escuro. Não há nenhum feedback para a pessoa usuária. No console, aparece uma mensagem indicando que estamos tentando ler a propriedade cover de algo que não existe.
+
+Na nossa página de blog post, podemos tratar essa situação. Se não houver um post, podemos retornar nulo. Vamos começar implementando essa lógica básica:
+
+```JSX
+if (!post) {
+    return null;
+}
+```
+
+Implementando feedback para URLs inexistentes
+
+No entanto, ainda falta um feedback. Isso ocorre quando tentamos acessar um post inexistente. Se tentarmos uma URL totalmente inexistente, o layout não aparece, nem mesmo o aside. No console, há um aviso indicando que não há uma rota correspondente para esse endereço.
+
+Precisamos lidar com dois cenários. No primeiro, sabemos que o post não existe, então podemos fornecer um feedback. Podemos implementar algo dentro desse if. No segundo cenário, não sabemos o que pode acontecer quando uma URL inexistente é digitada. Para isso, podemos criar uma página chamada NotFound dentro de "pages". No arquivo index.jsx, podemos exportar uma função NotFound que retorna uma mensagem de erro.
+
+Criando o componente NotFound
+
+Vamos começar criando o componente NotFound:
+
+```JSX
+export const NotFound = () => {
+    return (
+        <main>
+            <h1 style={{ color: 'white' }}>Ops, estamos perdidos</h1>
+        </main>
+    );
+}
+```
+
+Podemos fazer um return com um elemento main e um h1 com a mensagem "Ops, estamos perdidos". Adicionamos um estilo em linha para que o texto apareça em branco, já que o fundo é escuro. Assim, quando cairmos nesse cenário, exibiremos a mensagem de erro.
+
+Navegando para a página NotFound
+
+No blog post, se não houver post, podemos usar o navigate do react-router-dom. Importamos o useNavigate e, em vez de retornar apenas null, navegamos para /not-found. Precisamos definir essa lógica no nosso roteador. Adicionamos uma nova rota para o elemento NotFound que criamos.
+
+```JSX
+Primeiro, vamos importar o useNavigate:
+
+import { useNavigate, useParams } from "react-router-dom";
+```
+
+E então, utilizamos o navigate dentro de um useEffect:
+
+```JSX
+import { useEffect } from "react";
+
+const navigate = useNavigate();
+
+useEffect(() => {
+    if (!post) {
+        navigate('/not-found');
+    }
+}, [navigate, post]);
+```
+
+Testando a funcionalidade de redirecionamento
+
+Nesta rota, o path será not-found. Vamos tentar acessar um post que não existe. O sistema está indicando que deveríamos chamar o navigate dentro de um useEffect quando o componente ainda não foi renderizado. Vamos implementar isso.
+
+Voltando ao navegador, ao recarregar a página, vemos a mensagem "Ops, estamos perdidos", indicando o not-found. Se acessarmos o feed e um post existente, ele será exibido corretamente. Caso alteremos de react para view, o sistema redireciona para "Ops, estamos perdidos". Isso demonstra que a funcionalidade está operando corretamente.
+
+Adicionando uma rota curinga para URLs não mapeadas
+
+No entanto, se acessarmos um link quebrado, como "algo-alguma-coisa", nenhuma rota fará match. Nesse cenário, queremos que, em último caso, se nenhuma das rotas definidas fizer match, o componente NotFound seja renderizado. Em vez de trazer o NotFound de forma fixa, utilizaremos um curinga, um asterisco. Isso significa que, para qualquer outra rota não mapeada, exibiremos o NotFound.
+
+Vamos adicionar a rota curinga:
+
+```JSX
+<Route path='*' element={<NotFound />} />
+```
+
+Concluindo a implementação e sugerindo melhorias
+
+Ao testar novamente, ao acessar "algo", o componente NotFound é renderizado. Ao carregar a página, o console.log não exibe nenhuma rota encontrada. Se acessarmos o feed, ele funciona. Se acessarmos um post existente, ele funciona. Se acessarmos um post inexistente, a mensagem "Ops, estamos perdidos" é exibida, graças à rota curinga NotFound.
+
+Essa funcionalidade é útil para fornecer feedback ao usuário quando ele acessa uma URL inexistente ou que não existe mais. A rota curinga deve sempre ser a última definida, pois, se estiver no topo, todas as requisições cairão nela.
+
+Como desafio, sugerimos criar uma página personalizada de 404. Pode ser divertida ou mais séria, mas é uma oportunidade de incrementar sua página 404. No contexto do CodeConnect, que é voltado para pessoas desenvolvedoras, o código 404 indica que a página buscada não foi encontrada.
+
+Era isso. Nos vemos na próxima aula. Até mais!
+
+### Aula 5 - Para saber mais: feedback para urls não encontradas
+
+Quando se trata de interfaces web, especialmente em Single Page Applications, oferecer um feedback visual imediato quando algo não sai como o esperado é essencial para manter a experiência da pessoa usuária fluida e intuitiva. Em situações onde uma URL não corresponde a nenhum recurso existente, deixar a tela em branco ou com mensagens de erro genéricas pode criar frustração e confusão. Portanto, exibir uma mensagem personalizada, como um "Ops, estamos perdidos", ajuda a comunicar de forma clara que o sistema reconheceu a irregularidade, mesmo que o conteúdo desejado não esteja disponível.
+
+Estratégias de comunicação visual
+
+A implementação de páginas de erro bem pensadas vai além da simples mensagem textual. É importante que o design da página de erro esteja alinhado com a identidade visual da aplicação, utilizando cores, tipografia e elementos gráficos que reforcem a marca e, ao mesmo tempo, tranquilizem a pessoa usuária. Por exemplo, em um cenário de fundo escuro, a escolha de textos em cores claras ou mesmo a inclusão de ícones ilustrativos informa de maneira sutil a origem do problema, sem causar choque visual.
+
+Além disso, pensar em alternativas de navegação na página de erro pode facilitar a recuperação da jornada, como a inclusão de botões que redirecionem para a página inicial ou para a seção de ajuda da aplicação. Essa abordagem transforma um possível ponto negativo em uma oportunidade de manter a pessoa usuária engajada.
+
+Considerações de acessibilidade
+
+Outra dimensão importante é garantir que a mensagem de erro seja acessível a todas as pessoas, independentemente das limitações que possam ter. Isso envolve utilizar contrastes adequados entre o texto e o fundo, incluir descrições claras e, quando possível, oferecer feedback via alertas para tecnologias assistivas. Dessa forma, a página de erro não só cumpre seu papel informativo, mas também reforça uma prática de desenvolvimento inclusivo.
+
+Impacto na experiência geral da aplicação
+
+Ao investir em um feedback robusto e esteticamente agradável para URLs não encontradas, o desenvolvedor demonstra atenção aos detalhes e um cuidado real com a experiência da pessoa usuária. Essa estratégia pode diminuir a taxa de abandono e incentivar a exploração de outras áreas da aplicação. Em resumo, a forma como lidamos com erros de navegação reflete o compromisso com a qualidade e a usabilidade do sistema, aspectos fundamentais para o sucesso de qualquer projeto digital.
+
+### Aula 5 - Desafio: crie sua própria página 404
+
+Parabéns por chegar até aqui! Agora que você já domina o funcionamento do React Router, entende como organizar layouts reutilizáveis e configurar rotas para diferentes contextos da aplicação, que tal colocar um toque pessoal no projeto?
+
+Imagine que alguém tenta acessar uma URL que não existe no seu CodeConnect… Em vez de cair em uma tela preta sem sentido, que tal receber um aviso simpático, criativo ou até divertido?
+
+Seu desafio é criar uma página 404 personalizada!
+
+Essa é uma ótima oportunidade para treinar:
+
+- A criação de componentes funcionais em React;
+- A aplicação de estilos com CSS Modules;
+- O cuidado com a experiência da pessoa usuária.
+
+Dicas para te ajudar a começar:
+
+Dê personalidade à sua página!
+
+Pode ser divertida (“Perdido no código?”), minimalista (“404 – Página não encontrada”) ou até temática (que tal algo inspirado em devs, bugs ou internet retrô?).
+
+Inclua um botão ou link de retorno para o feed ou a home:
+
+Isso ajuda a pessoa usuária a se localizar e continuar navegando.
+
+Capriche nos estilos:
+
+Use animações, imagens, emojis ou ilustrações. Faça algo que você se orgulharia de colocar no seu portfólio!
+
+Quer ir além?
+
+Redirecione automaticamente após alguns segundos
+Mostre uma sugestão de conteúdo
+Adicione um botão “reportar erro” (mesmo que não funcione ainda, é um bom placeholder!)
+
+Exemplo:
+
+![alt text](image.png)
+
+Opinião do instrutor
+
+Esse desafio não tem uma resposta certa.
+
+O objetivo é você colocar a mão no código, se divertir e mostrar sua criatividade como pessoa desenvolvedora. Uma boa página 404 diz muito sobre o cuidado que você tem com quem usa sua aplicação.
+
+Qualquer dúvida, nos procura no fórum.
+
+Bons estudos!
+
+### Aula 5 - Para saber mais: comunicação com o backend
+
+Quero aproveitar esse último momento pra compartilhar contigo algumas coisas que só percebemos mesmo depois de um tempo na área.
+
+A primeira é: entender o que está por trás dos frameworks é uma das melhores coisas que você pode fazer por você mesmo. Saber o que é uma SPA, o que é client-side, o que é server-side… isso tudo vai muito além do React Router. Serve pra qualquer ferramenta ou framework que você for usar depois.
+
+A segunda coisa é: organização faz diferença. Separar rotas, usar prefixos como /auth ou /blog-post, proteger certas telas com lógica centralizada — isso tudo parece pequeno, mas no dia a dia evita dor de cabeça.
+
+Outra coisa que costumo dizer é: você não vai decorar tudo agora, nem precisa. O que importa é saber que existe. Saber que existe useParams, saber que dá pra usar rotas dinâmicas, saber que o React Router permite isso. Depois, quando o problema surgir, você volta na documentação e busca o que precisa.
+
+E por fim, lembre-se: a maior parte do seu trabalho vai estar em entender a regra de negócio, conversar com o time, dar manutenção em código que já existe, e fazer escolhas que ajudam o projeto a crescer sem virar um caos. E isso você começa a treinar agora, com pequenos projetos.
+
+E sobre o useAuth que usamos?
+
+Durante esse curso, usamos um projeto base com uma lógica de useAuth() que simula o comportamento de autenticação totalmente no front-end. Foi uma escolha intencional, pra gente poder focar no que realmente importava aqui: o React Router.
+
+Mas na vida real, as coisas funcionam diferente.
+
+Geralmente, quem diz se a pessoa está logada ou não é um servidor, e não o navegador. Isso significa:
+
+- Validar token de autenticação
+- Buscar dados de usuários em APIs
+- Fazer login/senha contra um banco de dados real
+
+Próximo passo: ter um backend de verdade
+
+No próximo curso, a gente vai:
+
+- Rodar um backend localmente (com e sem Docker);
+- Entender como conectar o frontend com um backend real;
+- Aprender boas práticas de consumo de APIs;
+- Ler documentação técnica de forma produtiva;
+- E construir uma base sólida pro Code Connect ser uma app de verdade.
+
+Por enquanto…
+
+Continue explorando. Recrie o que fizemos. Tente modificar.
+
+Experimente:
+
+- Criar novas páginas;
+- Adicionar outras rotas protegidas;
+- Simular novos parâmetros dinâmicos;
+- Fazer refactors no useAuth.
+
+Você vai ver que a mágica está em botar a mão no código e experimentar.
+
+A gente se vê na próxima etapa dessa jornada.
+
+### Aula 5 - Gerenciamento de rotas - Exercício
+
+A plataforma Checklist, uma plataforma de gestão de tarefas e checklists para equipes, está expandindo suas funcionalidades e, com isso, o número de páginas e rotas está aumentando significativamente. A equipe de desenvolvimento que você faz parte está preocupada com a complexidade crescente do gerenciamento de rotas e a possibilidade de erros ao adicionar novas páginas.
+
+Como você utilizaria o React Router para simplificar o gerenciamento de rotas e garantir que novas páginas possam ser adicionadas de forma eficiente e sem erros?
+
+Resposta:  
+Estruturar as rotas de forma hierárquica e modular, criando grupos de rotas para diferentes seções da aplicação, como "Tarefas" e "Checklists", e definir layouts compartilhados para cada grupo. Utilizar o componente Outlet para renderizar o conteúdo específico de cada rota dentro do layout apropriado.
+
+> Correta, pois essa abordagem permite que novas páginas sejam adicionadas facilmente ao grupo correspondente, sem a necessidade de redefinir o layout ou a estrutura de navegação, reduzindo a possibilidade de erros e facilitando a manutenção do código.
+
+### Aula 5 - Projeto final do curso
+
+Você pode baixar a [versão final do projeto neste link](https://github.com/alura-cursos/4869--react-router-code-connect/tree/aula-5)
+
+Terminei o curso, e agora?
+
+Sério, parabéns mesmo. Chegar até o fim de um projeto completo já mostra o quanto você está comprometido com a sua evolução — e, só de olhar o projeto funcionando aí na sua máquina, já dá pra ver que valeu a pena cada linha de código.
+
+Nesse curso, você não ficou só na teoria: colocou a mão na massa pra evoluir um app, refatorou, quebrou a cabeça com bugs, e, no caminho, aprendeu conceitos super importantes do React Router.
+
+Continue praticando!
+
+Agora é hora de dar o próximo passo! Algumas sugestões:
+
+Publica o projeto na Vercel ou Netlify e compartilha com a galera!
+Faz um post contando como foi o desafio e me marca nas redes: LinkedIn ou Instagram. Vou curtir demais ver sua evolução!
+
+Lembra: aprender programação é uma maratona. Você já completou mais uma etapa importante — segue testando, explorando, refatorando e, principalmente, se divertindo no processo.
+Tô sempre disponível pelo Discord, LinkedIn ou Instagram se quiser trocar ideia, tirar dúvida ou pedir dica dos próximos passos.
+
+Vida longa e próspera no mundo React!
+
+Abraço do careca barbudo o/
+
+### Aula 5 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Como aplicar layouts automaticamente a grupos de rotas usando React Router.
+- A utilização do componente Outlet do React Router para injetar conteúdo específico em layouts.
+- A substituição de children por Outlet para integrar o roteamento e estrutura de layout.
+- Implementar redirecionamentos dinâmicos para URLs inexistentes com React Router.
+- Criar e exibir uma página 404 para rotas não encontradas.
+- Utilizar useEffect para gerenciar redirecionamentos no ciclo de vida do componente.
+- Adotar uma rota coringa para capturar URLs não mapeadas.
+- Estruturar roteamento garantindo que a rota coringa seja a última.
+
+### Aula 5 - Conclusão - Vídeo
+
+Transcrição  
+Missão dada, missão cumprida. Estamos muito felizes por termos chegado ao final de mais este curso, desta vez focado no React Router. Passamos por uma experiência dentro do CodeConnect, aplicando técnicas e boas práticas relacionadas ao roteamento de aplicações React de forma declarativa.
+
+Não apenas focamos em como o React Router funciona declarativamente, mas também entendemos o que é uma SPA (Single Page Application - Aplicação de Página Única), a renderização do lado do cliente, como as informações trafegam e os cuidados necessários com a aplicação.
+
+Trabalhando no projeto e explorando funcionalidades
+
+Neste curso, trabalhamos em um projeto já existente, mantendo a padronização dos estilos, a organização e a forma de estruturar o código. Foram muitos conceitos envolvidos para que, ao final, o roteamento estivesse funcionando exatamente como deveria.
+
+Se nós olharmos para a aplicação uma última vez, conseguimos navegar para os detalhes de um post, acessar um feed, fazer logout, login e cadastrar usuário. Ou seja, foram muitos conceitos até chegarmos à versão final do CodeConnect.
+
+Incentivando a interação e feedback dos alunos
+
+Não se esqueçam, se vocês criaram a sua versão da página 404, postem nas redes sociais e nos marquem. Ficaremos muito felizes em acompanhar o resultado e ver o progresso de vocês.
+
+Uma última coisa que gostaríamos de pedir é que deixem a sua avaliação. O que vocês gostaram neste curso? O que acham que poderia ser melhor ou diferente? Deixem um comentário, prometemos que lemos todos sem exceção.
+
+Disponibilizando suporte e encerrando o curso
+
+Se restou alguma dúvida, o fórum e o Discord estão sempre disponíveis. Postem por lá, e nós procuramos ficar ativos também. Quem sabe, se vocês postarem algo, podemos responder.
+
+Era isso que tínhamos para compartilhar desta vez. Nos vemos na próxima. Até mais!
