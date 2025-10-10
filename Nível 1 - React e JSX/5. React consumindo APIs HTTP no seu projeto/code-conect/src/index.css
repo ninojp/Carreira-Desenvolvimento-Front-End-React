@@ -24,4 +24,5 @@
 body {
   background-color: var(--graphite);
   margin: 0;
+  color: var(--offwhite);
 }

@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useAuth } from "../../hooks/useAuth"
 import { Spinner } from "../Spinner"
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 export const ProtectedRoute = ({children}) => {
 

@@ -1,4 +1,4 @@
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink } from "react-router-dom";
 import styles from './link.module.css'
 
 export const Link = ({ children, href, ...props }) => {

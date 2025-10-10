@@ -5,7 +5,7 @@ import { Author } from "../../components/Author"
 import Typography from "../../components/Typography"
 import { CommentList } from "../../components/CommentList"
 import ReactMarkdown from 'react-markdown'
-import { useNavigate, useParams } from "react-router"
+import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { ModalComment } from "../../components/ModalComment"
 

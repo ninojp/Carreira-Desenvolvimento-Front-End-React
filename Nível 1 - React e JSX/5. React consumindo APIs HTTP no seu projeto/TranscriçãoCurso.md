@@ -272,15 +272,18 @@ Vamos continuar evoluindo o CodeConnect, focando agora na parte de comunicação
 A primeira modificação é que tanto a rota de feed quanto a rota de post, para ver os detalhes de um post, eram protegidas e agora não são mais. Vamos deixá-las liberadas o tempo todo, permitindo que mesmo pessoas não logadas consigam ver essas páginas.
 
 Introduzindo o componente de modal
+
 Além disso, vamos introduzir um componente de modal. Assim, ao clicar no ícone do chat, um balão de chat de comentário, poderemos abrir a modal tanto para adicionar um comentário novo quanto para editar um comentário existente. Note que ela possui algumas props indicando se está em modo de edição ou não.
 
 Essas são as modificações principais para este curso. Vamos focar exclusivamente na camada de comunicação com a API, e já preparei isso para vocês. Agora, vamos ao VSCode para ressaltar as alterações que foram feitas. Utilizaremos as próprias folhas do Git para entender o que aconteceu.
 
 Alterações no componente Aside
+
 No Aside, especificamente no index.jsx do Aside, ou seja, nosso componente, fizemos uma alteração: agora, se a pessoa está autenticada, exibimos a opção de logout; caso contrário, exibimos a opção de login.
 
 Para implementar essa lógica, utilizamos o seguinte código:
 
+```JSX
 {isAuthenticated && (
   <li>
     <AsideLink href="/auth/logout">
@@ -300,20 +303,24 @@ Para implementar essa lógica, utilizamos o seguinte código:
 ```
 
 Atualizações no Projeto
+
 No componente CardPost, agora temos a modal de comentário. O ícone que abre a modal está incorporado nesse componente. Da mesma forma, no componente que exibe um comentário, aparece o ícone de balão para que possamos editar um comentário existente.
 
 Para abrir a modal de comentário, utilizamos o componente ModalComment:
 
+```JSX
 <ModalComment />
 ```
 
 E quando estamos no modo de edição, passamos a prop isEditing:
 
+```JSX
 <ModalComment isEditing />
 ```
 
 Além disso, alteramos um ícone para que sua cor possa ser modificada via prop. Aqui está o componente IconChat que permite essa customização:
 
+```JSX
 export const IconChat = ({ fill = '#888888' }) => {
     return (
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -324,10 +331,12 @@ export const IconChat = ({ fill = '#888888' }) => {
 ```
 
 Implementando novos componentes de modal
+
 Introduzimos novos componentes: um componente de modal genérico, um componente de modal específico para comentários, um componente que serve como cabeçalho dessa modal, e um text area para que a pessoa usuária possa digitar o comentário.
 
 Aqui está a implementação do componente Modal:
 
+```JSX
 import { forwardRef, useImperativeHandle, useRef } from "react"
 import styles from './modal.module.css'
 
@@ -363,6 +372,7 @@ export const Modal = forwardRef(({ children }, ref) => {
 
 E o componente ModalComment que utiliza o Modal:
 
+```JSX
 import { useRef, useState } from "react"
 import { IconButton } from "../IconButton"
 import { Modal } from "../Modal"
@@ -396,10 +406,12 @@ export const ModalComment = ({ isEditing = false }) => {
 ```
 
 Integração da modal e ajustes nas rotas
+
 Também integramos essa modal na página de blog post, especificamente na linha 55, onde está a modal de comentário. Um último detalhe é sobre as rotas protegidas: nas linhas 21 e 22, essas rotas estavam protegidas, mas agora não estão mais.
 
 Para ilustrar, aqui estão as rotas que agora estão desprotegidas:
 
+```JSX
 <Route path='feed' element={<Feed />} />
 <Route path='blog-post/:slug' element={<BlogPost />} />
 ```
@@ -407,16 +419,465 @@ Para ilustrar, aqui estão as rotas que agora estão desprotegidas:
 Essas foram as alterações realizadas. Se no curso anterior você nos acompanhou do início ao fim, basta fazer esses pequenos ajustes e tudo estará em ordem. Caso deseje baixar o projeto já com essas alterações, disponibilizaremos o link para que você possa baixá-lo e seguir conosco a partir de agora.
 
 Preparando para o próximo passo
+
 Com isso, o front-end está pronto e funcionando. Vamos abrir o terminal para mostrar que ele está executando o npm run dev do vídeo, o que nos permite interagir:
 
+```JSX
 npm run dev
 ```
 
 Nosso próximo passo é avançar para o back-end. Vamos entender o que será necessário em relação à nossa API.
 
-### Aula 1 -  - Vídeo 3
-### Aula 1 -  - Vídeo 4
-### Aula 1 -  - Vídeo 5
-### Aula 1 -  - Vídeo 6
-### Aula 1 -  - Vídeo 7
-### Aula 1 -  - Vídeo 8
+### Aula 1 - Executando o backend com docker - Vídeo 3
+
+Transcrição  
+Vamos configurar o back-end. Existem duas maneiras de realizar essa configuração. A primeira é utilizando o Docker. Se já tivermos o Docker instalado, configurado e funcionando em nossa máquina, e o hardware for compatível, podemos usar o Docker para subir o back-end, juntamente com o banco de dados. Caso não tenhamos o Docker ou, por algum motivo, não possamos executá-lo em nossa máquina, no vídeo seguinte será mostrado como levantar o back-end sem a necessidade do Docker.
+
+Primeiramente, vamos ver como subir o back-end com o Docker. Estamos no repositório do projeto. O que faremos agora é cloná-lo. Vamos copiar o link que o próprio GitHub fornece para o clone. No terminal, abriremos uma nova aba, sairemos da pasta em que estamos, dentro do projeto do front-end, e executaremos um git clone do projeto 4870-api-com-docker.git.
+
+> git clone https://github.com/viniciosneves/4870-api-com-docker.git
+
+Após o clone, entraremos no diretório do projeto.
+
+> cd 4870-api-com-docker/
+
+Instalando dependências e configurando variáveis de ambiente
+
+Seguiremos o passo a passo para levantar o back-end. Esse passo a passo está na documentação do próprio projeto. Na documentação, encontramos informações sobre o que o projeto é, o que faz, as tecnologias e ferramentas utilizadas, além dos pré-requisitos, que incluem o Node 18 ou superior, com NPM, Docker com Docker Compose e o próprio Git. Após clonar o repositório, instalamos as dependências com npm i.
+
+> npm i
+
+Enquanto as dependências são instaladas, verificamos que será necessário criar, na raiz do projeto, um arquivo .env com valores específicos. Vamos abrir o VSCode, aumentar o zoom e fechar o Copilot.
+
+> code .
+
+Criamos o arquivo .env na raiz e copiamos e colamos o conteúdo necessário.
+
+```JavaScript
+# Database
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/code_connect"
+
+# JWT
+JWT_SECRET="seu-jwt-secret-super-secreto"
+JWT_EXPIRES_IN="7d"
+
+# Server
+PORT=3000
+```
+
+No arquivo, temos o DATABASE_URL, que é a string de conexão com o banco, o segredo JWT e a porta. Seguimos as instruções e, posteriormente, analisamos o significado desses valores.
+
+Subindo o banco de dados e configurando o Prisma
+
+Em seguida, precisamos subir o banco de dados. Para isso, utilizamos o comando docker-compose up -d.
+
+> docker-compose up -d
+
+No nosso caso, com a versão atualizada, o comando é docker-compose up -d. O -d é para que o terminal não fique travado no processo. Ao executar o comando, ele baixa a imagem do Postgres e realiza as configurações necessárias. Quando o processo termina, o terminal não fica preso, pois o -d significa Detached, ou seja, o processo é executado em segundo plano.
+
+Após a execução do comando, podemos usar o terminal normalmente. No dashboard do Docker, verificamos que um container chamado Postgres está em execução, com o ID e todas as informações corretas. Agora, precisamos configurar o banco de dados, o que será feito executando dois comandos em sequência.
+
+A primeira etapa envolve o uso do comando npx prisma migrate dev para criar as tabelas necessárias.
+
+> npx prisma migrate dev
+
+Em seguida, utilizamos o npx prisma generate, que é responsável por gerar o que o ORM precisa.
+
+> npx prisma generate
+
+Por fim, o npx prisma db seed é utilizado para popular o banco de dados com posts, comentários e usuários, que já estarão disponíveis para visualização.
+
+> npx prisma db seed
+
+Finalizando a configuração e iniciando o projeto
+
+No terminal, após limparmos a tela, executamos o npx prisma migrate dev. O processo é concluído com sucesso, indicando que o banco de dados está agora sincronizado com o nosso schema. Em seguida, executamos o npx prisma generate, que gera tudo o que o Prisma necessita para funcionar em relação ao banco de dados.
+
+Por último, utilizamos o npx prisma db seed para popular os dados com autores, posts, comentários, entre outros. Após limparmos o terminal novamente, o processo é concluído com sucesso, e podemos ver que os autores, posts e comentários foram criados.
+
+Com o banco de dados preparado, podemos iniciar o projeto em modo de desenvolvimento utilizando o comando npm run start:dev.
+
+> npm run start:dev
+
+No terminal, são exibidas todas as rotas disponíveis, incluindo a rota /blog/posts, que contém os posts do nosso blog.
+
+Para acessar, utilizamos o endereço localhost:3000/blog/posts.
+
+> localhost:3000/blog/posts
+
+Ao fazermos uma requisição, os dados dos posts são exibidos, incluindo a capa do post, título, slug, corpo, markdown, quantidade de curtidas, entre outros. Com isso, nosso back-end está em funcionamento.
+
+Considerações finais sobre o projeto
+
+O projeto utiliza o Nest.js, que é o framework responsável por controlar toda a camada de back-end, utilizando TypeScript, Prisma como ORM, Postgres como banco de dados, JWT para autenticação, e Bcrypt para manipulação de senhas. Além disso, o Swagger é utilizado para documentação.
+
+Se houver dúvidas sobre a necessidade de conhecer todos esses detalhes para o curso, a resposta é não. Essas informações são para pesquisa adicional, caso haja interesse em entender como o back-end foi desenvolvido. O essencial é seguir as instruções para levantar o back-end e conseguir realizar o fetch dos dados. Ao acessar localhost:3000/blog/posts, a lista de posts é exibida.
+
+Não é necessário compreender o funcionamento interno, mas é importante saber ler a documentação e colocar o projeto para rodar. Se já estivermos preparados para executar o back-end no Docker, podemos pular para o próximo vídeo, onde será abordado como realizar o mesmo processo sem o Docker. Nos vemos em breve.
+
+### Aula 1 - Executando o backend sem docker - Vídeo 4
+
+Transcrição  
+Vamos analisar o que precisamos fazer para levantar o back-end sem utilizar o container Docker. Primeiramente, estamos no repositório chamado 4870-API-100-docker. O primeiro passo é clonar esse projeto. Pegamos o URL direto do Git e, no terminal, já na área de trabalho, executamos o seguinte comando para clonar o repositório:
+
+> git clone https://github.com/viniciosneves/4870-api-sem-docker.git
+
+Em seguida, entramos na pasta do projeto com o comando:
+
+> cd 4870-api-sem-docker/
+
+Instalando dependências e configurando variáveis de ambiente
+
+Vamos seguir as instruções do projeto. No arquivo README, encontramos informações sobre o que o projeto é, o que faz e como foi desenvolvido. Ele foi criado utilizando o framework Nest.js, o Prisma como ORM, o SQLite como banco de dados, autenticação com JWT, Bcrypt para realizar o hash das senhas e TypeScript como superset do JavaScript.
+
+Não precisamos nos preocupar com os detalhes de implementação. O que realmente importa é saber como levantar esse back-end para interagir com ele. Após o git clone, já estamos dentro da pasta do projeto. Agora, vamos instalar as dependências com:
+
+> npm install
+
+Precisamos configurar as variáveis de ambiente, que são duas: JWT_SECRET e DATABASE_URL. Essas variáveis devem estar na raiz do projeto. Para isso, abrimos o VSCode com as pastas do back-end:
+
+> code .
+
+Criando o arquivo de configuração e aplicando migrações
+
+No terminal, após a instalação das dependências, abrimos o VSCode na pasta e aplicamos um pouco de zoom, fechando o Copilot. Criamos o arquivo .env e inserimos as informações solicitadas na documentação:
+
+```JavaScript
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="your-secret-key-here"
+```
+
+Temos o DATABASE_URL, que aponta para um arquivo, e o JWT_SECRET. Em seguida, precisamos realizar duas ações: executar o migrate para aplicar as migrações, o que criará todas as tabelas do banco de dados. No terminal, executamos:
+
+> npx prisma migrate dev
+
+Ele já executou e rodou com sucesso. Está tudo em ordem e sincronizado. O que mais precisamos fazer? Precisamos executar o comando npx prisma db seed. Esse comando é utilizado para popular o back-end com usuários, posts, comentários e outros dados. Caso contrário, o banco de dados estaria pronto, mas não teríamos dados para interagir.
+
+Populando o banco de dados e iniciando o servidor
+
+Vamos ao terminal, limpar e colar o comando:
+
+> npx prisma db seed
+
+Observe que ele vai criando o post, o autor, e assim por diante. No final, ele informa que o seed foi concluído com sucesso. Agora, precisamos iniciar o projeto. Para isso, vamos executar:
+
+> npm run start:dev
+
+Ele está compilando e processando, e vai mapear todas as rotas. Uma delas é um GET em /blog-posts.
+
+Verificando o funcionamento do back-end
+
+Podemos verificar isso no VSCode. Se recarregarmos a página, ele realiza um fetch. Vamos fechar e abrir novamente, pois parece que não houve muita alteração. No endereço http://localhost:3000/blog-posts, ao pressionar "Enter", podemos solicitar um preprint. Nosso back-end já está funcionando. Basta seguir as orientações da documentação. Ela fornece informações detalhadas sobre o projeto, explicando seu funcionamento e outros aspectos. Já vimos um pouco disso. Se desejarmos entender como ele foi feito, podemos nos guiar por lá. Para o curso, não precisamos desse conhecimento aprofundado de back-end. A única coisa que precisamos saber é como iniciar o projeto. Se conseguimos realizar um GET em /blog-posts, estamos aptos a continuar o curso.
+
+Preparando para integrar o front-end
+
+O que faremos agora? Em vez de solicitar ao navegador que obtenha esses posts, vamos pedir ao React para buscar esses posts da API. Temos bastante trabalho pela frente. No entanto, bem começado é meio caminho andado. O front-end está atualizado, o back-end está rodando, e agora é hora de adicionar novas funcionalidades.
+
+### Aula 1 - Obtendo a lista de posts - Vídeo 5
+
+Transcrição  
+Já verificamos que nosso back-end está funcionando e o front-end está atualizado. Conseguimos visualizar no navegador a obtenção dos dados do post. Quando acessamos a URL localhost:3000/blog-posts, conseguimos ver a resposta em formato JSON. O que precisamos fazer agora é, no nosso feed, obter esses dados da API em vez de pegá-los dos dados locais.
+
+Vamos abrir nosso front-end. Aqui está o back-end, e aqui está o front-end, CodeConnect. Precisamos acessar nossa página feed/index.jsx. Atualmente, estamos importando os posts a partir de um arquivo .js, mas não queremos mais fazer isso. Vamos deletar essa importação.
+
+Configurando o estado local para os posts
+
+A primeira coisa a fazer é iniciar um estado local com esses posts. Vamos usar posts e setPosts e chamar o useState. Verifique se o Code já importou isso para nós. Se fizermos isso agora, o console indicará um erro, pois estamos tentando fazer um .map em um valor undefined. Vamos iniciar como um array vazio. Agora, não há nada para exibir e nenhum erro no console.
+
+Para começar, vamos definir o estado local para armazenar os posts:
+
+```JSX
+import { useState } from "react"
+import { CardPost } from "../../components/CardPost"
+
+export const Feed = () => {
+  const [posts, setPosts] = useState([])
+  return (
+    <main className={styles.grid}>
+      {posts.map(post => <CardPost key={post.slug} post={post} />)}
+    </main>
+  )
+}
+```
+
+Utilizando o useEffect para buscar dados da API
+
+No React, quando queremos executar algo ao montar o componente, usamos um hook chamado useEffect. Para garantir que o código só será executado quando o componente for montado, passamos um array vazio de dependências. Queremos pegar os dados e fazer um get para obter a lista de blog posts. Vamos copiar a URL para evitar digitar novamente e fazer um fetch.
+
+Primeiro, vamos importar o useEffect e configurá-lo para executar uma função ao montar o componente:
+
+```JSX
+import { useEffect, useState } from "react"
+
+useEffect(() => {
+
+}, [])
+```
+
+Agora, vamos adicionar a chamada fetch dentro do useEffect para buscar os dados da API:
+
+```JSX
+useEffect(() => {
+  fetch('http://localhost:3000/blog-posts')
+}, [])
+```
+
+Lidando com o StrictMode e transformando a resposta em JSON
+
+Agora, precisamos ler essa resposta no código. Antes disso, uma dica: mencionamos que o código só é executado quando o componente é montado. No VS Code, ao colocar um array vazio, deveríamos chamar uma vez só. No entanto, ao verificar o código, ele está chamando duas vezes. Isso ocorre porque, na raiz do projeto, no main.js, temos o app-router e, envolvendo o app-router, há um componente chamado StrictMode.
+
+O componente StrictMode existe apenas em tempo de desenvolvimento e foi criado para detectar problemas nesse período. Ou seja, ele nos ajuda a identificar erros que podemos cometer, intencionalmente ou não, fornecendo mensagens mais detalhadas no console para entendermos o que está acontecendo. Quando enviamos o código para produção, o StrictMode não está mais presente, então podemos comentá-lo. Em produção, não há StrictMode.
+
+Atualizando o estado com os dados da API
+
+O StrictMode é extremamente útil durante o desenvolvimento, pois nos auxilia de várias maneiras. No entanto, ele não é gratuito. Para funcionar, o StrictMode realiza uma renderização adicional para garantir e testar o que é necessário. Se desativarmos o StrictMode e verificarmos no console do Chrome, notaremos que ele faz uma chamada apenas uma vez. O componente realiza a operação uma única vez, mas o StrictMode duplica essa operação para garantir que o componente está funcionando corretamente. Isso ocorre apenas durante o desenvolvimento. Quando enviamos para produção, não enfrentamos esse problema.
+
+Agora, precisamos pegar a resposta e transformá-la em um JSON que possamos ler. Isso é uma promessa. Sendo uma promessa, podemos usar o método .then. Quando utilizamos fetch, podemos pegar a resposta, chamada de response, e transformá-la em JSON com response.json. Aqui, estamos utilizando uma linha só, que é uma abreviação da arrow function, equivalente a return response.json. Podemos simplificar em uma linha sem chaves e sem return, mas o resultado será o mesmo.
+
+Vamos adicionar o tratamento da resposta do fetch para transformá-la em JSON e atualizar o estado dos posts:
+
+```JSX
+useEffect(() => {
+  fetch('http://localhost:3000/blog-posts')
+    .then(response => response.json())
+    .then(data => setPosts(data))
+}, [])
+```
+
+Verificando a atualização dos dados no front-end
+
+Depois que a resposta é recebida e o fetch a transforma em JSON, podemos usar mais um .then para obter os dados, que chamaremos de data, e então fazer um setPosts com os dados recebidos do back-end. O que fizemos foi um fetch. O fetch é uma promessa e não garante se dará certo ou quando terminará. Portanto, é uma promessa. Dizemos: "Beleza, quando tudo estiver certo, pegue essa resposta e transforme em JSON." No final, pegamos esse JSON transformado e fazemos um setPosts no estado local do React.
+
+No bloco de código das linhas 8 até 14, o useEffect é React, o fetch é Node, é JavaScript puro. O .then também é JavaScript, estamos lidando com promessas. No final, quando todas as promessas são concluídas, temos acesso aos dados e podemos fazer um setPosts. Isso é o que o código promete fazer, e vamos verificar se ele cumpre.
+
+Vamos agora ao Google Chrome, recarregar a página, e lá está, ele obteve os dados e a lista de posts. A ordem pode variar, mas são essencialmente os mesmos posts que temos no data.js. O que muda é a quantidade de curtidas e comentários, que são gerados aleatoriamente. Se o back-end está rodando e fizemos todas as alterações no front-end, agora conseguimos ver os dados vindo da API. Devemos ficar atentos à aba de Network para monitorar essas chamadas e requisições.
+
+Estamos conectados ao back-end. Vamos agora relembrar o protocolo HTTP e o que podemos fazer com ele. Em seguida, continuaremos evoluindo o CodeConnect. Vamos lá!
+
+### Aula 1 - Entendendo as requisições HTTP - Vídeo 6
+
+Transcrição  
+Vamos discutir sobre requisições HTTP antes de continuarmos escrevendo código. O que é o HTTP, afinal? Trata-se de um protocolo universal da web, no qual o cliente faz um pedido e o servidor responde. No contexto do front-end, ele é a base das requisições AJAX, que o navegador realiza para o servidor e recebe de volta. Essencialmente, estamos lidando com um modelo de requisição e resposta.
+
+Por exemplo, ao executarmos um GET em localhost:3000/blog-posts, o servidor processa e responde com um JSON contendo todos os posts disponíveis. Esse é o fundamento do que estamos fazendo: solicitar algo, fazer uma requisição e receber uma resposta. Essa resposta pode ser de sucesso, erro, timeout, ou até mesmo uma mensagem de erro diferente se a API não estiver funcionando. Tudo isso é baseado no modelo de requisição e resposta.
+
+Explorando a estrutura das requisições HTTP
+
+Qual é a estrutura de uma requisição? Temos uma URL para onde a requisição será enviada, um método que define o que queremos fazer (buscar, enviar, deletar ou atualizar dados), e informações adicionais no cabeçalho da requisição. Mesmo quando não especificamos, o navegador adiciona informações como identificação do navegador e origem. Além disso, podemos enviar informações no corpo da requisição, que é o body.
+
+Quando falamos de métodos, referimo-nos aos verbos HTTP. Os principais que utilizamos no dia a dia como pessoas desenvolvedoras são: GET para buscar dados, POST para enviar dados, PUT para atualizar, e DELETE para apagar. Esses são os verbos que encontramos frequentemente em nosso trabalho.
+
+Analisando a comunicação com APIs e status codes
+
+Durante o desenvolvimento de uma comunicação ou integração com uma API HTTP, a escolha do verbo a ser utilizado em um endpoint pode variar de acordo com a API, e a documentação geralmente nos orienta sobre qual verbo usar. Ao analisar a resposta de uma API, devemos observar o status code. A família de códigos 200 indica que tudo ocorreu corretamente, a família 400 aponta para algum erro conhecido, e a família 500 sugere que algo deu errado e nem o back-end sabe o que aconteceu.
+
+Na resposta, também devemos considerar o cabeçalho e o corpo da requisição. Por exemplo, quando pegamos nosso array com a lista de posts, ele estava no corpo da resposta. Ao observar a estrutura do fetch, encontramos elementos semelhantes. Realizamos um fetch em uma URL, especificamos o método (como POST), e definimos os cabeçalhos. Se estamos enviando um JSON, o tipo de conteúdo é application/json, indicando que estamos enviando um JSON.
+
+Realizando uma requisição POST com fetch
+
+Agora, vamos ver um exemplo prático de como realizar uma requisição POST utilizando fetch. Suponha que queremos fazer login em um sistema. Para isso, precisamos enviar um e-mail e uma senha para a API. Veja como podemos estruturar essa requisição:
+
+```JSX
+fetch("https://api.exemplo.com/login", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        email: "usuario@email.com",
+        password: "123456"
+    })
+})
+```
+
+No corpo da requisição, utilizamos JSON.stringify, pois o corpo da requisição não entende objetos JavaScript, apenas strings. Assim, transformamos o objeto em uma string JSON e o enviamos.
+
+Processando a resposta e lidando com erros
+
+Em seguida, utilizamos .then para obter a resposta e transformá-la em JSON, e outro .then para processar os dados já como JSON:
+
+```JSX
+.then(response => response.json()) // transforma em JSON
+.then(data => {
+    console.log("Login realizado!", data)
+})
+```
+
+Caso ocorra um erro, utilizamos .catch para capturá-lo e informar que algo deu errado:
+
+```JSX
+.catch(error => {
+    console.error("Erro no login:", error)
+})
+```
+
+Essa é a estrutura essencial do fetch.
+
+Continuando o desenvolvimento com foco no back-end
+
+Agora, vamos continuar codificando, pois há muitas integrações a serem feitas com o back-end, como curtir um post, comentar, editar ou deletar um comentário. Precisamos entender todos os mecanismos envolvidos nesse ecossistema, conhecido como CRUD, que significa criar, ler, atualizar e deletar dados.
+
+Temos bastante trabalho pela frente, mas a base está sólida. Como sempre dizemos, "bem começado é metade feito". Vamos evoluir as funcionalidades do CodeConnect, focando sempre no nosso back-end, que será a fonte de verdade sobre os dados do CodeConnect.
+
+### Aula 1 - Para saber mais: react strict mode no desenvolvimento
+
+O React StrictMode é uma ferramenta auxiliar destinada apenas ao ambiente de desenvolvimento. Ele não afeta a versão de produção, mas é essencial para identificar problemas potenciais na aplicação. Essa ferramenta cria cenários onde certos comportamentos problemáticos, como efeitos colaterais inesperados, possam ser replicados e analisados com mais cuidado.
+
+Funcionamento em ambiente de desenvolvimento
+
+Durante o desenvolvimento, o StrictMode pode renderizar componentes mais de uma vez. Essa renderização duplicada serve para detectar dependências ou efeitos indesejados, obrigando a equipe a cuidar para que os side effects sejam corretamente tratados. Por exemplo, um componente que usa o hook useEffect pode ser executado duas vezes para testar a idempotência do efeito colateral, garantindo que nenhuma operação indesejada ocorra na montagem.
+
+A ideia principal é que o código deve ser preparado para lidar com essas renderizações adicionais sem causar problemas, como chamadas duplicadas a APIs ou alterações inesperadas no estado da aplicação.
+
+Benefícios e Considerações
+
+A utilização do StrictMode contribui para a criação de aplicações mais robustas e resilientes. Entre os principais benefícios, podemos destacar:
+
+- Detecção precoce de problemas, o que permite a correção antes da aplicação chegar à produção.
+- Melhoria na organização dos efeitos colaterais, pois obriga a equipe a pensar em como e quando os hooks serão executados.
+- Incentivo à pureza dos componentes, evitando condições onde múltiplas execuções causem efeitos adversos.
+- No entanto, é importante ter atenção para não confundir esse comportamento com um erro no código, uma vez que a duplicação de renderizações acontece intencionalmente apenas em ambiente de desenvolvimento.
+
+Exemplo Prático
+
+Imagine um componente simples que busca dados a partir de uma API ao montar:
+
+```JSX
+import React, { useState, useEffect } from 'react';
+
+function ExampleComponent() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch('http://api.exemplo.com/dados')
+      .then(response => response.json())
+      .then(json => setData(json));
+  }, []);
+
+  return (
+    <div>
+      {data ? <pre>{JSON.stringify(data, null, 2)}</pre> : 'Carregando...'}
+    </div>
+  );
+}
+export default ExampleComponent;
+```
+
+Nesse exemplo, o StrictMode pode executar o efeito duas vezes para garantir que o método que busca os dados não desencadeie alterações indesejadas. Em produção, essa verificação extra não ocorrerá, garantindo uma execução mais suave e performática.
+
+O uso consciente do React StrictMode é uma prática recomendada para melhorar a qualidade do código e antecipar problemas antes mesmo que eles impactem a experiência final dos usuários.
+
+### Aula 1 - Para saber mais: o que precisamos saber sobre o backend?
+
+À medida que vamos evoluindo na área de desenvolvimento, é comum começarmos focados em uma parte específica da stack — geralmente o frontend. Afinal, é ali que vemos o resultado mais direto do nosso trabalho: a interface, os botões funcionando, os dados aparecendo na tela.
+
+Mas com o tempo, e principalmente ao participar de projetos reais, a gente começa a perceber que entender pelo menos um pouco do que acontece "do outro lado" — no backend — faz toda a diferença. Isso ajuda a:
+
+- Debugar problemas mais rápido;
+- Conversar melhor com o time;
+- Fazer integrações com mais segurança;
+- Ter mais autonomia e confiança.
+
+Neste texto, vamos te apresentar alguns conceitos fundamentais para entender o funcionamento do backend da aplicação que estamos usando. Nada muito técnico nem aprofundado — a ideia aqui é desmistificar os termos e deixar um material pra você consultar sempre que precisar.
+
+O que é uma API REST?
+
+API vem de Application Programming Interface, que nada mais é do que uma forma padronizada de um sistema expor funcionalidades e dados para outros sistemas consumirem. No nosso caso, o frontend consome dados da API.
+
+REST é um estilo de arquitetura que define convenções para criar APIs baseadas em HTTP. Por exemplo:
+
+- GET /posts: buscar posts
+- POST /posts: criar um novo post
+- PUT /posts/123: atualizar o post com ID 123
+- DELETE /posts/123: deletar o post com ID 123
+
+Essas operações se baseiam nos verbos HTTP e facilitam bastante a vida de quem está consumindo a API.
+
+Docker
+
+Docker é uma tecnologia que nos permite empacotar uma aplicação e todas as suas dependências dentro de um contêiner. Isso garante que o app vai funcionar da mesma forma na sua máquina, na do colega, no servidor, etc.
+
+No nosso curso, oferecemos duas opções de backend:
+
+- Com Docker (ideal pra quem quer praticar esse tipo de ambiente)
+- Sem Docker (pra quem quer algo mais direto e simples)
+
+Se você nunca usou Docker, não se preocupe. Vamos mostrar o passo a passo nos vídeos. E aqui vai um resumo: ao usar Docker, você geralmente roda comandos como docker compose up para levantar tudo de forma automática.
+
+Node.js
+
+O backend que usamos no projeto é feito com Node.js, que é um ambiente que permite rodar JavaScript fora do navegador. Ele é muito usado para criar servidores, APIs e até ferramentas de linha de comando.
+
+É como se fosse o "motor" por trás da nossa API: recebe as requisições do frontend, processa e responde com os dados certos.
+
+Swagger
+
+Swagger é uma ferramenta que gera uma documentação interativa para a API. Com ele, conseguimos ver todos os endpoints disponíveis, os parâmetros aceitos, os formatos de resposta e até testar as requisições diretamente pelo navegador.
+
+É ótimo pra explorar a API sem precisar montar tudo no frontend primeiro.
+
+ORM
+
+ORM significa Object-Relational Mapping. É uma forma de interagir com o banco de dados usando objetos JavaScript (ou da linguagem que você estiver usando), em vez de escrever SQL diretamente.
+
+No nosso caso, usamos um ORM para:
+
+- Criar tabelas;
+- Buscar registros;
+- Atualizar e deletar dados.
+
+Tudo isso com métodos que parecem código comum, como db.posts.findMany().
+
+Migrations
+
+Migrations são scripts que nos ajudam a controlar as mudanças no banco de dados ao longo do tempo. Toda vez que uma tabela é criada, modificada ou excluída, uma nova migration é gerada.
+
+Isso garante que todo mundo do time tenha o mesmo banco de dados, com a mesma estrutura, sem precisar fazer tudo manualmente.
+
+Seed
+
+Seeds são scripts que populam o banco de dados com dados iniciais. É útil para testes, desenvolvimento ou quando você quer que o sistema já venha com algumas informações pré-cadastradas.  
+Por exemplo, podemos usar um seed para criar usuários falsos, posts iniciais e categorias, sem precisar cadastrar tudo na mão.
+
+Com esse conteúdo, você já tem uma boa base pra entender o que está acontecendo por trás das requisições que o frontend faz. Se algum termo te parecer confuso durante o curso, volta aqui — essa explicação vai estar sempre disponível pra consulta.
+
+Bora continuar?
+
+### Aula 1 - Atualização dinâmica de playlists na Playcatch
+
+A Playcatch, uma plataforma de streaming de música, similar ao Spotify, está implementando uma nova funcionalidade que permite às pessoas usuárias verem playlists atualizadas em tempo real. A equipe de desenvolvimento está utilizando React para gerenciar o estado das playlists e precisa garantir que as atualizações sejam refletidas imediatamente na interface do usuário. No entanto, durante os testes, foi observado que as atualizações não estão sendo exibidas corretamente, e o console está mostrando erros relacionados a estados indefinidos.
+
+Como a equipe pode resolver o problema de estados indefinidos e garantir que as playlists sejam atualizadas corretamente na interface do usuário?
+
+Resposta:  
+Inicializar o estado das playlists como um array vazio ao usar o hook useState e garantir que o array de dependências do hook useEffect esteja configurado corretamente.
+
+> Correta, pois inicializar o estado como um array vazio evita erros ao acessar propriedades de um estado indefinido, e configurar corretamente o array de dependências do useEffect assegura que as atualizações ocorram apenas quando necessário.
+
+### Aula 1 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A modificar a camada de comunicação com a API para acesso sem autenticação.
+- A implementar e atualizar componentes React para interação e customização visual.
+- A configurar o ambiente de back-end com Docker e o uso do docker-compose.
+- A executar migrações e seeds de dados com Prisma.
+- A iniciar e interagir com o servidor de back-end utilizando Nest.js.
+- O uso de useEffect e useState no React para requisições HTTP e manipulação de estado.
+- A estrutura e manipulação de requisições e respostas HTTP.
+- O conceito de CRUD para manipulação de dados em aplicações web.
+
+## Aula 2 - Enviando dados com POST
+
+### Aula 2 - Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [acessar o projeto da aula anterior](https://github.com/alura-cursos/4870--code-connect/tree/aula-1)..
+
+### Aula 2 -  - Vídeo 1
+### Aula 2 -  - Vídeo 2
+### Aula 2 -  - Vídeo 3
+### Aula 2 -  - Vídeo 4
+### Aula 2 -  - Vídeo 5
+### Aula 2 -  - Vídeo 6
+### Aula 2 -  - Vídeo 7
+### Aula 2 -  - Vídeo 8

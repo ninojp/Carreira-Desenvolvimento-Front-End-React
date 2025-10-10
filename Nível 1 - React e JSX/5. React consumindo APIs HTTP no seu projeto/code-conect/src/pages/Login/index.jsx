@@ -14,7 +14,7 @@ import { Providers } from "../../components/Providers"
 import { Link } from "../../components/Link"
 import styles from './login.module.css'
 import { useAuth } from "../../hooks/useAuth"
-import { useNavigate } from "react-router"
+import { useNavigate } from "react-router-dom"
 
 export const Login = () => {
 

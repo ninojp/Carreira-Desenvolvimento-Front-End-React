@@ -1,4 +1,4 @@
-import { Outlet } from "react-router"
+import { Outlet } from "react-router-dom"
 import { Aside } from "../../components/Aside"
 import styles from './app.module.css'
 
