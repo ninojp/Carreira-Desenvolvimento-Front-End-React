@@ -24,9 +24,9 @@ export const Feed = () => {
     // }, []);
     return (
         <main className={styles.grid}>
-            {/* {posts.length > 0 ? <pre>{JSON.stringify(posts, null, 2)}</pre> : 'Carregando...'} */}
             {/* {posts.map(post => <CardPost key={post.slug} post={post} />)} */}
-            {posts.length > 0 ? posts.map(post => <CardPost key={post.slug} post={post} />) : 'Carregando...'}
+            {/* {posts.length > 0 ? posts.map(post => <CardPost key={post.slug} post={post} />) : 'Carregando...'} */}
+            {posts && posts.map(post => <CardPost key={post.slug} post={post} />)}
         </main>
     )
 }

@@ -873,11 +873,409 @@ Nesta aula, aprendemos:
 
 Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [acessar o projeto da aula anterior](https://github.com/alura-cursos/4870--code-connect/tree/aula-1)..
 
-### Aula 2 -  - Vídeo 1
-### Aula 2 -  - Vídeo 2
-### Aula 2 -  - Vídeo 3
-### Aula 2 -  - Vídeo 4
-### Aula 2 -  - Vídeo 5
-### Aula 2 -  - Vídeo 6
-### Aula 2 -  - Vídeo 7
-### Aula 2 -  - Vídeo 8
+### Aula 2 - Entendendo o Swagger e Postman - Vídeo 1
+
+Transcrição  
+Vamos discutir um pouco sobre ferramentas que utilizamos no dia a dia ao nos comunicarmos com um back-end. Uma das ferramentas que queremos apresentar é o Swagger. O que é o Swagger? Vamos acessar o Chrome e, para acessar o Swagger do nosso back-end, vamos utilizar o endereço localhost:3000/api. Ao fazer isso, ele exibirá o Swagger.
+
+```JSX
+localhost:3000/api
+```
+
+Quando o Swagger carregar, ele mostrará todos os endpoints possíveis e disponíveis deste back-end específico. Observe que ele possui a camada de autenticação, onde podemos registrar um novo usuário, fazer login, obter os dados do usuário logado e fazer logout. Ele também possui a parte dos posts, como criar um novo post no blog, obter todos os posts, obter um post por ID e por slug, que é o que faremos em breve.
+
+Explorando funcionalidades do Swagger
+
+Além disso, há a parte de comentários, onde podemos criar, obter, atualizar e deletar comentários. Tudo está bem descrito. Além de descrever quais são os endpoints disponíveis, ele também mostra qual é o esquema, ou seja, o que precisamos enviar. Por exemplo, ao expandir a seção de registro, ele traz um exemplo do que devemos enviar e o que pode acontecer.
+
+```JSX
+RegisterDto {
+  email*: string,
+  password*: string,
+  name*: string
+}
+```
+
+Quando o usuário é cadastrado com sucesso, o código de resposta é 201. Pode ocorrer um erro 400 se alguém tentar cadastrar um e-mail já em uso, ou seja, cadastrar o mesmo e-mail duas vezes, ou se houver algum dado inválido ou em formato diferente do esperado, ou uma senha que não cumpre todos os requisitos, entre outros.
+
+Apresentando o Postman como ferramenta de teste
+
+Outra ferramenta que queremos apresentar é o Postman. Por que queremos mostrar o Postman? Quando terminamos de configurar o back-end, acessamos o navegador e utilizamos o endereço localhost:3000/blog-posts. No entanto, o navegador só consegue fazer requisições do tipo GET. Vamos copiar essa URL e colá-la no Postman.
+
+```html
+http://localhost:3000/blog-posts
+```
+
+Ao fazer isso, podemos clicar em enviar e ele trará, na parte inferior, todo o corpo da resposta com todos os posts.
+
+Utilizando o Postman para requisições avançadas
+
+Além disso, o Postman nos ajuda a trabalhar com a parte de autorização, adicionar cabeçalhos e incluir informações no corpo da requisição. Por exemplo, se quisermos testar o cadastro de um usuário, podemos fazer isso facilmente.
+
+Podemos realizar algumas ações aqui, como, por exemplo, mudar o método para POST e alterar a URL para localhost:3000/auth/register.
+
+```html
+http://localhost:3000/auth/register
+```
+
+No Swagger, podemos acessar auth/register e pegar um exemplo de código. Para adicionar um JSON no corpo da requisição, vamos em body raw (dado cru) e mudamos de texto para JSON. Em seguida, colamos o conteúdo.
+
+```JSX
+{
+  "email": "user@example.com",
+  "password": "123456",
+  "name": "João Silva"
+}
+```
+
+Testando a criação de usuários com o Postman
+
+Podemos tentar criar um usuário, como João Silva, clicando em enviar. Observamos que recebemos um status 201, indicando que o usuário foi criado. O retorno inclui o token de acesso e os dados do usuário, como id, email, nome, data de criação e atualização. Não há username nem avatar.
+
+```JSX
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJzdWIiOiJjbmV6MWFrMDAwMDB2eXZyeWs4aG0vajNuIiwiaWF0IjoxNzI1MDk2MjAzLCJleHAiOjE3MjUxODI2MDN9.SfsnxdVL_ggFn5n9xWnBmbnuparUPdYt45hEjUA-",
+    "user": {
+        "id": "cnez1ak00000vyvrykyk8hj3n",
+        "email": "user@example.com",
+        "name": "João Silva",
+        "username": null,
+        "avatar": null,
+        "createdAt": "2025-08-31T11:24:23.200Z",
+        "updatedAt": "2025-08-31T11:24:23.200Z"
+    }
+}
+```
+
+Comparando Swagger e Postman
+
+O Postman é uma ferramenta útil para testar, debugar e entender como a API funciona sem depender do front-end. Às vezes, queremos testar algo específico, e o Postman é uma das melhores ferramentas para isso.
+
+Para saber o que a API faz, utilizamos o Swagger. Podemos acessá-lo em localhost:3000/api, onde ele apresenta todos os métodos disponíveis. Cada método mostra o verbo HTTP, a URL e o que precisamos enviar. Por exemplo, para fazer login, enviamos apenas o email e a senha.
+
+```JSX
+{
+  "email": "user@example.com",
+  "password": "123456"
+}
+```
+
+Considerações finais sobre ferramentas e integração
+
+O Swagger é a fonte de documentação, enquanto o Postman é uma ferramenta para fazer requisições. Deixamos um material para saber mais sobre o Postman e outras ferramentas. Algumas empresas não permitem o uso do Postman por motivos específicos, mas existem alternativas.
+
+As ferramentas estão prontas: o Postman e o Swagger estão disponíveis em localhost:3000/api. Um detalhe importante é que, se estivermos usando o Chrome e aumentarmos o zoom em localhost:3000, isso também afetará localhost:5173, podendo parecer um bug, mas não é.
+
+Integrando front-end e back-end no CodeConnect
+
+Com as ferramentas em dia, vamos avançar no CodeConnect. A primeira tarefa no VS Code, na página de blog post, é parar de pegar o post do array de dados fixo e buscar do back-end. Faremos isso na sequência.
+
+Para buscar os posts do back-end, podemos usar o seguinte código no React:
+
+```JSX
+useEffect(() => {
+    fetch('http://localhost:3000/blog-posts')
+        .then(response => {
+            return response.json()
+        })
+        .then(data => setPosts(data))
+}, [])
+```
+
+Esse código utiliza o fetch para buscar os dados dos posts e atualiza o estado com os dados recebidos. Em seguida, podemos encontrar um post específico pelo slug:
+
+```JSX
+const post = posts.find(p => p.slug === slug)
+```
+
+Com isso, conseguimos integrar o front-end com o back-end, utilizando as ferramentas e métodos discutidos.
+
+### Aula 2 - Para saber mais: postman, insomnia e bruno
+
+Quando a gente começa a se aventurar no mundo do desenvolvimento web, principalmente mexendo com frontend, é comum só pensar no navegador como nosso meio de ver o resultado. Mas, quando entra a tal da API no caminho... aí o jogo muda um pouquinho.
+
+Como é que a gente testa uma requisição? Como saber se o backend está funcionando antes de integrar tudo? É aí que entram ferramentas como o Postman.
+
+Pra que servem essas ferramentas?
+
+Postman, Insomnia, Bruno e outras do tipo são como "clientes de API": elas simulam o que o navegador ou o app fariam, mas com muito mais controle.
+
+Você consegue:
+
+- Fazer requisições HTTP como GET, POST, PUT, DELETE
+- Adicionar cabeçalhos (headers), tokens de autenticação, corpo da requisição (body)
+- Ver a resposta completa: status, tempo, corpo de resposta e headers
+- Organizar suas requisições em coleções
+- Compartilhar essas coleções com outras pessoas do time
+
+Ou seja, são ferramentas que ajudam muito a testar, entender e documentar APIs.
+
+E o Postman?
+
+![alt text](image.png)
+
+O Postman é provavelmente a ferramenta mais conhecida e usada nesse universo. Ele tem uma interface gráfica bem amigável e muitos recursos úteis pra quem está aprendendo:
+
+- Você digita a URL da requisição, escolhe o método (GET, POST, etc) e clica em enviar.
+- Pode salvar seus testes, repetir, editar...
+- Ajuda a ver se a API está mesmo respondendo como deveria, antes de você escrever uma linha de código no frontend.
+
+Durante o curso, a gente vai usar o Postman pra explorar a API que criamos. Mas o mais importante aqui é entender o conceito por trás dele.
+
+Outras opções: Insomnia e Bruno
+
+Existem outras ferramentas que fazem a mesma coisa, e cada pessoa acaba escolhendo a que mais curte:
+
+Insomnia
+
+![alt text](image-1.png)
+
+- Interface simples, rápida e bonita;
+- Foco em desempenho e produtividade;
+- Também permite organizar e sincronizar coleções.
+
+Bruno
+
+![alt text](image-2.png)
+
+- 100% open source;
+- Armazena as requisições como arquivos no projeto (ótimo pra versionar junto com o código);
+- Leve e funcional, mesmo sem conexão com a internet.
+
+Mas qual usar?
+
+Sinceramente? Use a que for mais confortável pra você.
+
+Aqui a gente usa o Postman porque ele é popular, tem bastante material de apoio e é fácil de usar — especialmente pra quem tá no primeiro contato com o backend.
+
+Depois que você pegar o jeito, vale testar o Insomnia e o Bruno também. O importante é entender que essas ferramentas são suas aliadas no dia a dia do desenvolvimento.
+
+Se amanhã você precisar testar uma API que nunca viu na vida, não precisa montar todo um app React só pra isso. Abre uma dessas ferramentas, faz os testes, entende a resposta... e aí sim parte pro código.
+
+Mais uma habilidade na sua mochila de dev. Bora continuar?
+
+### Aula 2 - Obtendo um post pelo slug - Vídeo 2
+
+Transcrição  
+Vamos adicionar a funcionalidade necessária: o feed. Ao recarregar a página, já estamos obtendo os dados do blog post. Quando acessamos os detalhes, ainda funciona, mas apenas porque nossa API retorna os mesmos posts que temos no data.js. Isso ainda funciona, mas não da maneira que precisamos. Se deletarmos o data.js e recarregarmos a página, ocorrerá um erro.
+
+No console, ele indica que está tentando acessar o data.js, que não existe mais, resultando em erro. Vamos então ajustar nosso blog post. Vamos deletar o import do post que estava na linha 3. Em vez disso, queremos buscar os dados diretamente na API.
+
+Configurando o componente BlogPost
+
+Para começar, vamos configurar nosso componente BlogPost e importar os módulos necessários:
+
+```JSX
+import styles from './blogpost.module.css'
+import { ThumbsUpButton } from "../../components/CardPost/ThumbsUpButton"
+import { Author } from "../../components/Author"
+import { Typography } from "../../components/Typography"
+import { CommentList } from "../../components/CommentList"
+import ReactMarkdown from "react-markdown"
+import { useNavigate, useParams } from "react-router"
+import { useEffect, useState } from "react"
+import { ModalComment } from "../../components/ModalComment"
+
+export const BlogPost = () => {
+```
+
+Antes de acessar a API, vamos utilizar o Postman para demonstrar como interagir com um back-end novo ou desconhecido. Já temos um GET que obtém toda a lista de posts. Agora, queremos buscar um post por slug. Observando o primeiro slug com o id24, "Construindo SPA com Vue.js", vamos ver como fazer isso no Postman antes de implementar no código.
+
+Testando a API com Postman e Swagger
+
+No Swagger, na seção de blog post, encontramos o item para buscar post por slug. A URL é /blog-post/slug/{slug}, onde o segmento entre chaves é dinâmico, enquanto o restante é fixo. Vamos garantir que isso funcione, pois, caso contrário, enfrentaremos um erro na API. Primeiro, testamos a API isoladamente do React, em localhost:3000/blog-post/slug/. No histórico, já fizemos essa requisição antes. Ao fazer o GET no "Construindo SPA com Vue.js", funciona e retorna o post. Se tentarmos com um slug inválido, como adicionando "JS" no final, recebemos um erro 404, indicando que o post não foi encontrado.
+
+Precisamos considerar esses dois cenários: sucesso ao encontrar o post ou erro 404, que requer um redirecionamento. Agora, vamos ao nosso código. Essencialmente, faremos o mesmo que no feed. Vamos copiar o fetch e colocá-lo no useEffect. Antes, o useEffect estava no post, mas agora faremos um fetch e precisaremos de um setPost. Será um único post, então removeremos a rede de dependência desnecessária e criaremos nosso estado local com o post, utilizando post e setPost com useState.
+
+Implementando o estado e funções de navegação
+
+Primeiro, vamos definir o estado e as funções de navegação:
+
+```JSX
+export const BlogPost = () => {
+    const { slug } = useParams()
+    const navigate = useNavigate()
+
+    const [post, setPost] = useState(null)
+```
+
+Começamos com um estado vazio e, em seguida, realizamos o fetch. O que precisamos fazer agora? Precisamos realizar um fetch na URL /slug/. Para isso, devemos concatenar a URL. Para concatenar, substituímos as aspas simples por crases, permitindo a interpolação com o uso do sinal de dólar entre chaves e a variável slug. Assim, ele nos solicitará que coloquemos o slug de volta no array de dependências.
+
+Implementando o useEffect para buscar o post
+
+Vamos implementar o useEffect para buscar o post:
+
+```JSX
+    useEffect(() => {
+        fetch(`http://localhost:3000/blog-posts/slug/${slug}`)
+            .then(response => {
+                if (response.status === 404) {
+                    navigate('/not-found')
+                }
+                return response.json()
+            })
+            .then(data => setPost(data))
+    }, [slug, navigate])
+```
+
+Se esse código funcionar corretamente, no caso de sucesso, ele renderizará o post para nós. Vamos verificar? Voltamos ao Chrome e ao CodeConnect, recarregamos a página e o fetch foi realizado. Vamos conferir? No network, fechamos o console e lá está, ele fez um GET no array de posts. Está funcionando como deveria.
+
+Lidando com erros e redirecionamento
+
+Se tentarmos acessar um post que não existe, por exemplo, ao inserir "VueJS" com várias letras "s" no final, ele retornará um erro 404. No entanto, estamos recebendo um erro no console, um erro não tratado, pois ele está tentando ler a propriedade length de undefined. Por que isso está acontecendo?
+
+Voltando ao código, ele está tentando acessar o tamanho do array de comentários, mas o nosso data não possui nada, não há um post no corpo da requisição. O que precisamos fazer? Precisamos verificar se a nossa requisição falhou com um erro 404 e, nesse caso, redirecionar para a página "not found" que já utilizávamos antes.
+
+Corrigindo o tratamento de erros
+
+Como sabemos se a requisição falhou com 404? No Postman, podemos ver que o status é 404. Dentro da resposta do primeiro fetch, no método .then, conseguimos acessar a resposta. Vamos corrigir o erro de digitação de "response" e verificar o status. Se o response.status for 404, realizamos um navigate para "not-found". Precisamos também adicionar o navigate ao nosso array de dependências.
+
+Portanto, se o status da resposta for 404, redirecionamos para "not-found", pois esse post não existe. Salvamos e verificamos novamente no Chrome. Recarregamos a página e ele já está em "not-found". Vamos testar novamente: no feed, clicamos no primeiro post, que é o SPA com Vue, adicionamos várias letras "s" no final e pressionamos "Enter". Agora, o console exibe o log, e quando o fetch dá erro, ele já registra esse erro no console, independentemente do que estamos fazendo. Na aba de network, o erro 404 está lá, mas agora está tratado, e realizamos o redirecionamento dentro do React.
+
+Concluindo a implementação do fetch
+
+Conseguimos, assim, realizar um fetch passando um segmento dinâmico, que é o slug. Ainda estamos lidando com a URL, sem passar o slug no corpo da requisição, e já começamos a verificar o status da resposta. Se for 404, realizamos o redirecionamento. Está funcionando corretamente.
+
+Agora, vamos implementar a funcionalidade de curtidas, enviando likes para os posts que acharmos interessantes. Isso será feito no próximo vídeo. Até lá!
+
+### Aula 2 - Curtindo um post - Vídeo 3
+
+Transcrição  
+Vamos implementar a funcionalidade de curtida de post. Primeiro, vamos limpar o console e recarregar a página para remover os erros 404 que encontramos no último vídeo. Nosso objetivo é clicar no botão de curtir e aumentar o número de curtidas.
+
+Vamos ao código e encontrar onde precisamos fazer as alterações, começando pelo cardPost. No cardPost, temos um ThumbsUpButton e queremos que, ao clicar nele, a curtida seja enviada. Para isso, vamos pegar as props restantes e passá-las para capturar o evento de clique no botão.
+
+Definindo o componente ThumbsUpButton
+
+Primeiro, vamos definir o componente ThumbsUpButton que receberá as propriedades necessárias:
+
+```JSX
+export const ThumbsUpButton = ({ loading, ...props }) => {
+  return (
+    <IconButton disabled={loading} {...props}>
+      {loading ? <Spinner /> : <IconThumbsUp />}
+    </IconButton>
+  );
+};
+```
+
+Agora, vamos criar uma constante chamada handleLikeButton, que será uma arrow function. Faremos um console.log para verificar se o onClick está funcionando.
+
+```JSX
+const handleLikeButton = () => {
+  console.log('incrementar like');
+};
+```
+
+No ThumbsUpButton, vamos adicionar o onClick chamando o handleLikeButton.
+
+```JSX
+<ThumbsUpButton loading={false} onClick={handleLikeButton} />
+```
+
+Após recarregar a página e alterar para a aba do console, ao clicar, veremos que o incremento da curtida está funcionando.
+
+Criando estado local para curtidas
+Estamos recebendo um post como prop, mas a propriedade post.likes é imutável. Portanto, não podemos simplesmente incrementar o valor diretamente. Vamos criar um estado local chamado likes e setLikes usando useState, com o valor inicial sendo post.likes.
+
+```JSX
+import { useState } from 'react';
+
+const [likes, setLikes] = useState(post.likes);
+```
+
+Assim, exibiremos likes diretamente do nosso estado, permitindo a atualização.
+
+```JSX
+<p>{likes}</p>
+```
+
+Quando alguém clicar no botão de curtida, faremos um setLikes, olhando para o estado anterior e retornando o estado anterior mais um. Isso garantirá que o número de curtidas seja incrementado dinamicamente.
+
+```JSX
+setLikes(oldState => oldState + 1);
+```
+
+Vamos testar: ao clicar, o número de curtidas aumenta, mas ao recarregar a página, ele volta ao valor original, pois a atualização está apenas localmente.
+
+Enviando curtida para o back-end
+
+Precisamos enviar essa curtida para o back-end. Para isso, faremos um fetch enviando a curtida. Podemos usar a estrutura de fetch que já conhecemos. No Swagger, verificamos que a estrutura da URL para o like é um POST para /blog-posts/{id}/like, onde o id é dinâmico.
+
+No código, substituímos slug por post.id e removemos o if desnecessário. Não precisamos da resposta em JSON, mas precisamos saber se a requisição foi bem-sucedida. No caso do fetch, verificamos isso com response.ok. Se tudo estiver certo, incrementamos os likes.
+
+Portanto, no handleLikeButton, faremos um fetch e, ao resolver a promessa, verificaremos se a resposta está ok. Se estiver, incrementaremos o estado local para atualizar a quantidade de curtidas.
+
+```JSX
+const handleLikeButton = () => {
+  fetch(`http://localhost:3000/blog-posts/${post.id}/like`, {
+    method: 'POST'
+  })
+    .then(response => {
+      if (response.ok) {
+        setLikes(oldState => oldState + 1);
+      }
+    });
+};
+```
+
+Testando e corrigindo erros de requisição
+
+Vamos testar o funcionamento do nosso sistema. Primeiro, vamos ao navegador e ao nosso CodeConnect. Vamos recarregar a página e observar a parte de network para ver a requisição sendo feita. Após limparmos, clicamos em "curtir" e recebemos um erro 404 not found, indicando que não conseguimos acessar a URL solicitada. Isso ocorre porque a URL não é um GET. Conforme vimos no Swagger, ela é um POST. Portanto, precisamos configurar nossa requisição como um POST.
+
+Para fazer isso usando o Swagger, passamos um segundo parâmetro, que é um objeto vazio. Nesse segundo parâmetro, podemos definir várias opções, como body, cache, credentials, headers, entre outras. O que queremos mudar é o método. O método desejado é POST. O segundo argumento para o fetch especifica que o método da requisição não é GET (o padrão quando não passamos nada), mas sim POST.
+
+Vamos novamente ao navegador, recarregamos a página e clicamos em "like". Agora, recebemos um erro 401. Ao verificar a resposta, vemos que não estamos autorizados, pois o token não foi fornecido. Realmente, não passamos nenhum token até agora. Queremos testar no Postman para verificar se, ao enviar essa URL, conseguimos sucesso. Copiamos a URL, trocamos de GET para POST e enviamos. Recebemos a mensagem "token não fornecido, não autorizado", indicando que não estamos autorizados a curtir esse post. Para curtir um post, precisamos ser usuários do CodeConnect e estar logados.
+
+Verificando autenticação e registrando usuário
+
+Nosso próximo passo é verificar a parte de autenticação no Swagger, que inclui registrar o usuário e fazer login. Em vez de usar o mecanismo de autenticação atual, que está mocado e apenas armazena o usuário no local storage, queremos cadastrar os usuários na API e fazer login por meio dela.
+
+No Postman, registramos um usuário, por exemplo, João da Silva, e agora queremos fazer login com ele. Copiamos o corpo da requisição, aumentamos o zoom, abrimos outra requisição e configuramos um POST com o body em JSON. Removemos o nome, pois para login precisamos apenas do e-mail e senha. A URL será http://localhost:3000/auth/login, conforme visto no Swagger. O access token que a API solicita é o que precisamos passar.
+
+Atualizando autenticação para comunicação com a API
+
+Precisamos atualizar nossa autenticação e todos os mecanismos de login, logout e registro de usuário para se comunicarem com a API, em vez de serem locais. Vamos ao VS Code e ajustamos o useAuth, que já está extraído para um hook. Se não quebrarmos a API ou o contrato de parâmetros e respostas, não precisaremos alterar muito a página de login.
+
+No próximo vídeo, vamos entender como trocar o mecanismo de gestão de usuário, migrando do localhost para a API. Vamos lá!
+
+### Aula 2 - Melhorando a experiência de navegação na Meteora - Exercício
+
+A loja online Meteora, especializada em roupas e acessórios, está focada em melhorar a experiência de navegação de seus clientes. A equipe de desenvolvimento, da qual você faz parte, está trabalhando em uma funcionalidade que permite às pessoas usuárias visualizar detalhes de um produto ao clicar em seu nome. No entanto, foi identificado que, quando um produto não está mais disponível, o sistema exibe uma página de erro em vez de redirecionar para uma página de 'Produto indisponível'.
+
+Qual das alternativas abaixo descreve a melhor abordagem para implementar uma solução eficaz para lidar com produtos indisponíveis?
+
+Resposta:  
+Implementar um mecanismo de redirecionamento que verifica o status da resposta da API após a requisição e, caso seja 404, utiliza uma função de redirecionamento para levar a pessoa usuária a uma página de 'Produto indisponível', que informa claramente a indisponibilidade e sugere produtos similares.
+
+> Correta, pois essa abordagem melhora a experiência da pessoa usuária ao evitar páginas de erro genéricas e fornecer informações úteis, além de manter a navegação fluida.
+
+### Aula 2 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Como utilizar o Swagger para documentar e visualizar APIs.
+- A utilizar o Postman para testar e debugar APIs de forma independente.
+- A executar requisições assíncronas com fetch e lidar com erros de HTTP.
+- A gerenciar estado no React com useState e disparar efeitos colaterais com useEffect.
+- A implementar interatividade em componentes React para operações como incrementos de curtidas.
+- A fazer requisições HTTP POST e lidar com respostas baseadas no status code.
+- A importância da autenticação com tokens para executar operações seguras na API.
+- A migrar lógica de autenticação para uma abordagem baseada em tokens de API.
+
+## Aula 3 - Autorizando requisições
+
+### Aula 3 - Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [acessar o projeto da aula anterior](https://github.com/alura-cursos/4870--code-connect/tree/aula-2).
+
+### Aula 3 -  - Vídeo 1
+### Aula 3 -  - Vídeo 2
+### Aula 3 -  - Vídeo 3
+### Aula 3 -  - Vídeo 4
+### Aula 3 -  - Vídeo 5
+### Aula 3 -  - Vídeo 6
+### Aula 3 -  - Vídeo 7
+### Aula 3 -  - Vídeo 8
+### Aula 3 -  - Vídeo 9
+### Aula 3 -  - Vídeo 10
