@@ -1269,13 +1269,452 @@ Nesta aula, aprendemos:
 
 Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [acessar o projeto da aula anterior](https://github.com/alura-cursos/4870--code-connect/tree/aula-2).
 
-### Aula 3 -  - Vídeo 1
-### Aula 3 -  - Vídeo 2
-### Aula 3 -  - Vídeo 3
-### Aula 3 -  - Vídeo 4
-### Aula 3 -  - Vídeo 5
-### Aula 3 -  - Vídeo 6
-### Aula 3 -  - Vídeo 7
-### Aula 3 -  - Vídeo 8
-### Aula 3 -  - Vídeo 9
-### Aula 3 -  - Vídeo 10
+### Aula 3 - Registrando usuários - Vídeo 1
+
+Transcrição  
+Vamos registrar novos usuários na API. No nosso useAuth, dentro do método register, já temos um bloco try-catch. Vamos manter o return como está, pois isso evita que quebremos qualquer outro lugar que esteja utilizando esse hook. Vamos deletar apenas o miolo do código.
+
+```JSX
+const register = (name, email, password) => {
+  try {
+    
+  }
+  return { success: true }
+  catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+```
+
+No caso de sucesso, podemos deixar sem os dados do usuário. Atualmente, não chegamos ao bloco catch, pois não há exceções sendo lançadas. No entanto, agora isso será possível, e o erro desaparecerá. Vamos realizar um fetch dentro do método, que pode gerar um erro. A primeira coisa que precisamos fazer é transformar esse método em um método assíncrono, pois não sabemos quanto tempo a requisição levará.
+
+```JSX
+const register = async (name, email, password) => {
+```
+
+Implementando a requisição assíncrona
+
+Vamos utilizar async/await em vez de promessas. Ao declarar o método como assíncrono, podemos escrever o código de forma mais legível. Vamos criar uma constante chamada response que aguardará o resultado do fetch. Isso melhora a legibilidade do código.
+
+```JSX
+const response = await fetch()
+```
+
+Antes de pensar na requisição em si, precisamos verificar se a resposta foi bem-sucedida. Se a resposta não for bem-sucedida, lançaremos um erro com a mensagem "HTTP Error" e o response.status. Isso é importante, pois, se a requisição falhar, lançaremos uma exceção que será capturada no bloco catch, retornando success: false. O componente poderá reagir a isso.
+
+```JSX
+if (!response.ok) {
+    throw new Error('HTTP Error: ', response.status)
+}
+```
+
+Configurando a URL e o método da requisição
+
+Para montar o fetch, precisamos da URL. Já temos essa informação no Postman: localhost:3000/auth/register. No Swagger, temos apenas o caminho relativo. O endereço da API é sempre localhost:3000, e o restante está no Postman.
+
+```JSX
+const response = await fetch('http://localhost:3000/auth/register')
+```
+
+No VS Code, precisamos passar um objeto de configuração. O método não é um GET, mas sim um POST. Também precisamos passar um corpo na requisição, que inclui email, password e name. Vamos usar JSON.stringify para transformar o objeto em uma string.
+
+```JSX
+const response = await fetch('http://localhost:3000/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({
+        name,
+        email,
+        password
+    })
+})
+```
+
+Ajustando a função de registro e a página de registro
+
+O código está reclamando que não estamos mais usando a função createUser, então vamos deletá-la. O nosso register agora faz uma requisição com await, simplificando a escrita e a leitura do código.
+
+```JSX
+// const createUser function is deleted
+```
+
+Agora, precisamos ir à nossa página de registro, pois alteramos a assinatura do método para assíncrona. No arquivo pages/register/index, o register é uma promessa. Precisamos usar await, mas o VS Code indica que não podemos fazer isso se a função não for assíncrona. Vamos declarar a função como assíncrona para que o código aguarde a requisição terminar antes de continuar.
+
+```JSX
+const onSubmit = async (formData) => {
+```
+
+Testando o cadastro de usuários
+
+Com isso, estamos prontos para testar o cadastro de usuários na aplicação. Vamos abrir o Chrome e expandir a aba de rede para acompanhar as requisições.
+
+Entramos na página de login, mas o objetivo é realizar um cadastro. Agora sim, estamos na página de registro automático. Vamos preencher os campos: o nome será Vinicios, o e-mail será vinicius@alura.com.br e a senha será 123. Em seguida, clicamos em cadastrar. A requisição foi feita, mas recebemos um status code 400, indicando um Bad Request. Isso significa que enviamos algo incorreto, pois o código 400 indica que a API não aceitou o que enviamos. Vamos verificar o que ocorreu.
+
+Ao analisar a resposta, percebemos que o e-mail não pode ser vazio, deve ser um e-mail válido, e a senha precisa ter mais de 6 caracteres, entre outras validações. Vamos verificar o payload enviado: o e-mail, o nome e a senha estão presentes. Provavelmente, a API não está reconhecendo o que enviamos. No cabeçalho, precisamos especificar que estamos enviando um JSON. Isso deve ser feito explicitamente.
+
+Corrigindo o cabeçalho da requisição
+
+No Postman, ao verificar o cabeçalho, encontramos 8 cabeçalhos ocultos, incluindo o Content-Type: application/json. No Postman, isso funciona porque ele adiciona automaticamente, mas o Fetch não faz isso. No Fetch, é nossa responsabilidade definir, por exemplo, o Content-Type. Portanto, precisamos adicionar esse cabeçalho na requisição, indicando que estamos enviando JSON.
+
+```JSX
+headers: {
+    'Content-Type': 'application/json'
+}
+```
+
+Após definir o método, como o cabeçalho vem antes do corpo, adicionamos o cabeçalho. Precisamos especificar o Content-Type. Vamos pegar do Postman para garantir que está correto: Content-Type, com o "C" e o "T" maiúsculos. O valor será application/json. Quando enviamos JSON, o cabeçalho deve ser assim: Content-Type: application/json.
+
+Realizando novos testes de cadastro
+
+Vamos testar novamente no Chrome. Limpamos as requisições e tentamos novamente. Preenchemos com Vinicios, e-mail vinicius@alura.com.br e senha 123. Ao clicar em cadastrar, recebemos outro 400, mas algo melhorou. A mensagem agora indica que a única validação que falhou foi a senha, que precisa ter 6 caracteres ou mais. Portanto, a senha 123 não é válida. Vamos criar uma senha maior: 123456.
+
+Agora, tentamos cumprir os requisitos da API. Clicamos em cadastrar e, desta vez, o registro retornou o usuário. O cadastro foi bem-sucedido. O e-mail é vinicius@alura.com.br e a senha não é devolvida, pois é um dado seguro que não deve ser trafegado. Vamos copiar o e-mail criado e tentar fazer o login.
+
+Verificando o funcionamento do login
+
+Na requisição de login, substituímos user@example.com pelo e-mail criado: vinicius@alura.com.br. Ao enviar, o login foi bem-sucedido, retornando o access token e os dados do usuário, como ID, e-mail e nome. O registro está funcionando.
+
+Aprendemos que, ao enviar um corpo JSON, precisamos especificar que é um application/json, pois o Fetch não faz isso automaticamente. Devemos informar que estamos enviando JSON. No caso da curtida, não houve problema porque não enviamos um corpo na requisição, sendo um post sem corpo.
+
+Portanto, é importante ficar atento. Ao fazer um post enviando JSON, devemos adicionar esse cabeçalho. O registro está funcionando, e o login também funcionará no Postman. Precisamos apenas ajustar o método de login para se comunicar com a API, em vez de usar o local storage. É o que faremos a seguir.
+
+### Aula 3 - Para saber mais: promises, async e await
+
+Durante o curso, a gente usa tanto Promise quanto async/await, e se você ainda fica confuso com esses nomes, fica tranquilo: é completamente normal no começo.
+
+Esse conteúdo serve pra te ajudar a entender:
+
+- O que é uma Promise de verdade
+- O que muda quando usamos async e await
+- Qual abordagem faz mais sentido em cada situação
+
+#### O que é uma Promise?
+
+Uma Promise (ou "promessa") é uma forma que o JavaScript tem de lidar com tarefas assíncronas — ou seja, aquelas que demoram pra acontecer, como buscar dados de uma API, ler um arquivo ou esperar um tempo.
+
+Pensa assim: é como se você dissesse pro JavaScript "me avisa quando isso terminar". Ele não para tudo, só continua com o resto do código enquanto espera aquela tarefa acabar.
+
+Uma Promise tem 3 estados:
+
+- pending (pendente)
+- fulfilled (resolvida)
+- rejected (rejeitada, deu erro)
+
+Exemplo usando .then() e .catch():
+
+```JSX
+http.post('auth/login', { email, password }) 
+.then(response => { 
+const data = response.data 
+// fazer algo com os dados 
+}) 
+.catch(error => { 
+console.error('Erro ao fazer login:', error.message) 
+}) 
+```
+
+O que é async e await?
+
+O async/await é só uma forma diferente (mais legível) de lidar com Promises. Ele foi criado pra deixar o código assíncrono com cara de código "normal" — sem tantos .then() e .catch() aninhados.
+
+Exemplo usando async e await:
+
+```JSX
+const login = async (email, password) => { 
+try { 
+const response = await http.post('auth/login', { email, password }) 
+const data = response.data 
+// fazer algo com os dados 
+} catch (error) { 
+console.error('Erro ao fazer login:', error.message) 
+} 
+} 
+```
+
+Percebe como fica mais fácil de ler? Parece um código síncrono, mesmo sendo assíncrono por baixo dos panos.
+
+Comparando os dois lados
+
+Vamos pegar o mesmo código com async/await e reescrever usando Promise pura:
+
+```JSX
+Com async/await (como está no nosso hook useAuth):
+const register = async (name, email, password) => { 
+try { 
+await http.post('auth/register', { name, email, password }) 
+return { success: true } 
+} catch (error) { 
+return { success: false, error: error.message } 
+} 
+} 
+```
+
+O mesmo com Promises (.then/.catch):
+
+```JSX
+const register = (name, email, password) => { 
+return http.post('auth/register', { name, email, password }) 
+.then(() => { 
+return { success: true } 
+}) 
+.catch(error => { 
+return { success: false, error: error.message } 
+}) 
+} 
+```
+
+As duas versões fazem exatamente a mesma coisa. A diferença está apenas no estilo.
+
+Mas então... qual usar?
+
+Aqui vai meu conselho de careca experiente:
+
+Use async/await quando:
+
+Você precisa escrever código mais longo e legível
+
+Vai usar try/catch para tratar erros
+
+O fluxo de lógica depende de várias chamadas em sequência
+
+Use .then() quando:
+
+Você quer fazer algo simples e direto
+
+Está em um contexto onde não dá pra usar async, como dentro de um useEffect direto (embora aí o ideal seja criar uma função async dentro dele).
+
+E no fim das contas?
+
+async/await e Promise são só duas formas diferentes de lidar com o mesmo tipo de coisa: tarefas assíncronas. Não precisa decorar, nem escolher um lado da força. Com o tempo, você vai se sentir confortável com os dois.
+
+O importante é entender o que está acontecendo por baixo dos panos — que aquela requisição vai demorar pra acontecer, e que você precisa esperar ela terminar pra seguir com o restante.
+
+Volta nesse conteúdo sempre que pintar aquela dúvida: "isso aqui é uma Promise?" ou "preciso usar await aqui?". E lembra: todo await precisa de uma Promise pra funcionar.
+
+Vida longa e próspera!
+
+### Aula 3 - Fazendo login - Vídeo 2
+
+Transcrição  
+Vamos realizar a ação de login. Já implementamos o cadastro, agora precisamos expandir essa funcionalidade para incluir o login também. O que faremos é algo muito parecido. Vamos copiar o bloco de código inteiro do registro e colá-lo entre as linhas 47 e 52. Precisamos alterar para async, pois estamos utilizando await. Não temos o name e não é authregister, mas sim authlogin.
+
+Para começar, vamos definir a função de login como assíncrona, já que utilizaremos await para lidar com operações assíncronas:
+
+```JSX
+const login = async (email, password) => {
+```
+
+Se ocorrer um erro, lançaremos uma exceção e ele será capturado no catch. Caso contrário, precisamos salvar esse usuário. De onde vem esse usuário? Precisamos obtê-lo de algum lugar. Se não houver erro, o código prossegue. Vamos criar uma constante data, que são os dados enviados pelo back-end. Faremos um await do nosso response, transformando-o em JSON com response.json.
+
+Configurando a requisição de login
+
+Agora, vamos configurar a requisição para o login, utilizando o método POST e enviando o e-mail e a senha no corpo da requisição:
+
+```JSX
+const response = await fetch('http://localhost:3000/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email,
+    password
+  })
+})
+```
+
+No Postman, o resultado do login possui uma propriedade chamada accessToken, com o token de acesso, e uma propriedade chamada user, com os dados do usuário. Vamos utilizar localStorage.setItem para armazenar auth_user com data.user. Além do usuário, temos o accessToken, então podemos armazená-lo também no localStorage como access_token. Já podemos pensar no logout, realizando a limpeza do accessToken.
+
+Armazenando dados no localStorage
+
+Após receber a resposta, transformamos em JSON para acessar os dados do usuário e o token de acesso:
+
+```JSX
+const data = await response.json()
+```
+
+Definimos um usuário local com data.user e armazenamos no localStorage o accessToken. Podemos precisar desse accessToken em outro lugar, então poderíamos considerar armazená-lo dentro do objeto user. No entanto, isso fica a nosso critério. Podemos deixá-los separados ou, por exemplo, usar JSONStringify para passar o user e o accessToken juntos. Minha escolha foi deixá-los separados.
+
+```JSX
+localStorage.setItem('auth_user', JSON.stringify(data.user))
+localStorage.setItem('access_token', JSON.stringify(data.accessToken))
+```
+
+Entre as opções de armazenamento, o localStorage é uma das menos seguras. Poderíamos trocar para sessionStorage se quiséssemos, mas para este cenário, o localStorage é suficiente. Agora, temos auth_user com data.user. Corrigimos o erro de objeto dentro de objeto com JSONStringify, data.user, e data.accessToken.
+
+Testando o login e corrigindo erros
+
+Recapitulando, fizemos a requisição passando e-mail e senha. Se houver erro, lançamos uma exceção. Se tudo estiver correto, transformamos a resposta em um objeto JSON, fazemos setUser com data.user e armazenamos no localStorage. Assim, se a página for recarregada, o usuário e o accessToken estarão disponíveis. Teoricamente, isso fará o login funcionar ao realizar a requisição.
+
+Lembrando de um detalhe importante: como copiamos e colamos do outro método, os headers já estão presentes. Vamos verificar se isso vai funcionar. No Chrome, a primeira ação será limpar as requisições e tentar um login com a senha incorreta. Vamos testar para ver se ocorre algum erro. Ao inserir "123" e solicitar o login, recebemos um erro 401, indicando "unauthorized" (não autorizado) e a mensagem "credenciais inválidas".
+
+Agora, vamos testar com as credenciais corretas: vinicios@alura.com.br e a senha "123456". Ao fazer o login, o accessToken é gerado corretamente, assim como o usuário. O que faltou foi o redirecionamento. Vamos verificar o motivo no nosso submit, pois o navigate não foi executado. Para entender por que o redirecionamento não ocorreu, vamos inserir um debugger para analisar a resposta recebida.
+
+Corrigindo a espera pela resposta assíncrona
+
+Percebemos que não aguardamos pela resposta, o que significa que o processo é assíncrono. O código continua executando sem esperar. Para resolver isso, tornamos a função assíncrona e utilizamos await no login para aguardar a resposta. Agora, vamos atualizar e testar novamente com vinicios@alura.com.br e a senha correta "123456". Ao clicar em login, o processo funciona corretamente.
+
+O que aconteceu foi que não estávamos aguardando a resposta. Se não aguardamos, o JavaScript executa sem esperar. Precisamos usar await para que o código espere antes de prosseguir. Agora, ao verificar na application, no local storage, o token de acesso e o usuário estão presentes, indicando que o login está funcionando corretamente.
+
+Preparando para testar a funcionalidade de curtida
+
+O próximo passo é testar a funcionalidade de curtida. Vamos observar a aba de network (ou rede, se o Chrome estiver em português) e clicar em curtir. Como já estamos logados, isso deveria funcionar. No entanto, recebemos um erro 401 "unauthorized", indicando que o token não foi fornecido. Estamos enfrentando um bloqueio da API.
+
+Esse tipo de API não mantém estado, então o fato de recebermos um token não garante que a próxima requisição será autenticada. Cada requisição é independente. Portanto, ao curtir, precisamos enviar o token de acesso para a API. Isso será abordado no próximo vídeo.
+
+### Aula 3 - Autorizando requisições - Vídeo 3
+
+Transcrição  
+Estamos lembrando que as requisições em uma API desse tipo são stateless, ou seja, não possuem estado. O fato de a API nos entregar um token de acesso não significa que ela saberá quem somos, a menos que nos identifiquemos. Precisamos pegar esse token que recebemos e passá-lo de volta para a API em uma requisição. Como fazemos isso?
+
+Se olharmos no nosso código, onde está o nosso login? Está aqui, na linha 66. Estamos fazendo um setItem, e há um JSON.stringify aqui que está sobrando. Vamos corrigir isso, pois o access token já é uma string, então está tudo bem. Estamos guardando esse token, o que nos dá acesso a ele em outras partes da aplicação.
+
+Corrigindo o armazenamento do token
+
+Primeiro, vamos corrigir o armazenamento do token no localStorage:
+
+```JSX
+localStorage.setItem('access_token', data.access_token)
+```
+
+Agora que corrigimos o armazenamento do token, o que está faltando é enviarmos esse token.
+
+Demonstrando o uso do token no Postman
+
+Para fazermos isso, primeiro vamos mostrar no Postman como fazer, e depois aplicaremos a mesma técnica no Fetch. O que vamos fazer? Primeiro, faremos o logout para garantir que estamos deslogados da aplicação, e então vamos para o Postman. No Postman, pegaremos o login. Onde está nosso último login? Aqui está. Vamos pegar esse token e precisamos enviá-lo para mostrar ao back-end que somos nós que estamos curtindo esse post. Para isso, passaremos um cabeçalho adicional chamado authorization, e o valor será o seguinte: usaremos uma palavra fixa em inglês, bearer, e daremos um espaço. Bearer significa portador, basicamente indicando que somos portadores desse token. Então, bearer, espaço e o token. Se clicarmos agora em enviar, notamos que deu sucesso, retornou 201 e a quantidade de likes foi 82. Funciona se passarmos um header authorization bearer nesse formato.
+
+Implementando o envio do token no código
+
+Agora, vamos para o código, no nosso card post. O que precisamos fazer aqui? Precisamos pegar o token. Então, vamos buscar o token armazenado no localStorage:
+
+```JSX
+const token = localStorage.getItem('access_token')
+```
+
+Com o token em mãos, precisamos enviá-lo. Como fazemos isso? Já sabemos como adicionar coisas no cabeçalho, que é a propriedade headers. Vamos começar definindo os headers:
+
+```JSX
+headers: {
+
+}
+```
+
+Agora, vamos adicionar o cabeçalho de autorização. Precisamos garantir que o nome do cabeçalho esteja correto, então voltamos ao Postman para copiar o nome authorization corretamente:
+
+```JSX
+headers: {
+    Authorization:
+}
+```
+
+Finalmente, vamos completar o cabeçalho de autorização com o token, utilizando a palavra-chave Bearer:
+
+```JSX
+headers: {
+    Authorization: `Bearer ${token}`
+}
+```
+
+Estamos fazendo a mesma coisa que fizemos no Postman, agora utilizando o fetch. Passamos um header de autorização: Bearer espaço, Bearer portador, e inserimos o token.
+
+Testando a implementação no navegador
+
+Vamos voltar agora ao Chrome e fazer o login. Utilizamos o e-mail vinicios@alura.com.br e a senha 123456. Após o login, verificamos que funcionou. O contador estava em 82, clicamos e foi para 83. O like retornou 201, indicando que funcionou corretamente. Se olharmos a resposta, está lá, 83. Isso era o que estava faltando. Recapitulando, no Postman, adicionamos manualmente a autorização Bearer. E ele passa a funcionar. No código, adicionamos um cabeçalho com o mesmo conteúdo que vimos no Postman.
+
+Explorando funcionalidades do Postman para Bearer token
+
+Esse conceito de Bearer token é tão comum que há até um jeito mais fácil no Postman de fazer isso. Podemos remover o token, desmarcar e até deletar sem problemas. Se tentarmos enviar agora, recebemos um 401, indicando que não há token e não estamos autenticados. Vamos pegar o token novamente, voltar à requisição do like, e reparar que ao lado dos headers no Postman, há uma seção chamada autorização. Podemos clicar lá e escolher entre várias opções de autenticação, uma delas é o Bearer token. Colamos o token que obtivemos no login. Se enviarmos essa autorização com o Bearer token, o Postman gera automaticamente um cabeçalho. Se olharmos no header, ele gerou um cabeçalho exatamente como o esperado, com authorization e o Bearer token. Ele faz essa automação: apenas colamos o token e ele autentica.
+
+Concluindo sobre o uso do Bearer token
+
+Agora já sabemos como enviar nosso "crachá" a cada requisição. O que isso significa? Toda requisição que precisar de autenticação deve incluir o Bearer token, pois as requisições não têm inserção. O fato de o back-end entregar um access token não marca nada no back-end que identifique nas requisições seguintes. Isso é chamado de stateless (sem estado). A API não tem estado, então, para identificar a pessoa usuária que está fazendo a requisição, é necessário passar o access token, no nosso caso, o Bearer token.
+
+Introduzindo a próxima etapa: comentários
+
+Agora que a curtida já está funcionando, vamos focar na parte de comentários. Precisaremos combinar tanto o content-type JSON quanto o Bearer token na hora de enviar o comentário. Quando formos digitar algo, como "super bacana", precisaremos enviar o body e os headers necessários para completar a requisição. Mas isso é assunto para a próxima aula. Estarei esperando vocês lá. Até mais!
+
+### Aula 3 - Para saber mais: autorização, APIs stateless e o uso de tokens Bearer
+
+Quando a gente começa a integrar o frontend com o backend, chega uma hora em que as requisições precisam ser autorizadas — ou seja, o servidor precisa saber se você tem permissão pra acessar aquilo. É aí que entram os tokens e o tal do header Authorization.
+
+Mas pra entender isso direitinho, a gente precisa falar de dois conceitos importantes: o modelo stateless das APIs REST e o uso de tokens Bearer, como os JWTs.
+
+APIs REST são stateless. E isso muda tudo.
+
+Em uma API REST, cada requisição é independente. O servidor não guarda quem você é entre um pedido e outro. Isso é o que chamamos de stateless — sem estado.
+
+Traduzindo: se você quiser acessar uma rota protegida, precisa mandar tudo o que o servidor precisa saber em cada requisição. E é por isso que usamos tokens.
+
+O que é um token Bearer?
+
+O token é como um crachá de identificação. Ele é gerado quando o usuário faz login, e enviado em todas as requisições seguintes dentro do header:
+
+> Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...
+
+Esse token é lido e validado pelo backend. Se estiver tudo certo, o acesso é liberado. Se estiver ausente ou inválido, o servidor responde com erro 401 (não autorizado).
+
+E o que é esse token? Spoiler: geralmente é um JWT
+
+JWT significa JSON Web Token. É um padrão para representar dados de forma compacta e segura.
+Ele tem três partes separadas por ponto:
+
+1. Header: metadados sobre o token (tipo e algoritmo)
+2. Payload: os dados em si (como ID do usuário, data de expiração, permissões)
+3. Signature: uma assinatura digital que garante que o token não foi alterado
+
+Tudo isso codificado em Base64, o que permite que o backend leia e valide rapidamente — sem precisar consultar o banco a cada requisição.
+
+Esse modelo é rápido, seguro e funciona bem com a ideia de APIs stateless.
+
+Leitura obrigatória: o artigo do Neilton
+
+Se você quiser entender de forma ainda mais completa o que é um JWT, recomendo muito o artigo do Neilton na Alura:
+
+👉 [O que é JSON Web Tokens (JWT)?](https://www.alura.com.br/artigos/o-que-e-json-web-tokens)
+
+O texto explica com clareza o que é um JWT, quando usar e por que ele é tão usado hoje em APIs modernas.
+
+- Resumo rápido pra revisar sempre que precisar:
+- APIs REST são stateless → não guardam quem você é, cada requisição precisa se identificar.
+- Token Bearer → enviado no header Authorization, é o seu crachá de acesso.
+- JWT → tipo de token mais usado, contém dados codificados e uma assinatura digital.
+- Header Authorization → precisa ser enviado nas rotas protegidas.
+
+Esses conceitos podem parecer meio técnicos à primeira vista, mas com o tempo viram parte natural do seu dia a dia como dev. E sempre que bater dúvida, pode voltar aqui e revisar.
+
+Vida longa e próspera!
+
+### Aula 3 - Facilitando a contratação de freelancers na Freelando - Exercício
+
+A plataforma Freelando, que conecta freelancers a contratantes, está enfrentando dificuldades com o sistema de contratação, onde as requisições para contratar um freelancer específico estão falhando com um erro de 'Bad Request'.
+
+Como a equipe de desenvolvimento pode resolver esse problema para garantir que as contratações sejam realizadas sem erros, e quais são os benefícios de garantir uma comunicação clara entre a plataforma e a API?
+
+Resposta:  
+Incluir o cabeçalho 'Content-Type' com o valor 'application/json' nas requisições de contratação, além de implementar validações de dados e testes automatizados para garantir que as requisições estejam sempre no formato correto.
+
+> Correta, pois a inclusão do cabeçalho 'Content-Type' com o valor 'application/json' assegura que a API interprete corretamente os dados enviados no formato JSON. As validações de dados e testes automatizados garantem que as requisições estejam sempre no formato correto, melhorando a confiabilidade e a eficiência do sistema.
+
+### Aula 3 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Como transformar métodos em assíncronos utilizando async e await.
+- A importância de configurar corretamente o cabeçalho de uma requisição HTTP com Content-Type.
+- A utilização de JSON.stringify para preparar dados JSON em requisições.
+- Métodos para diagnosticar e resolver problemas de requisições HTTP.
+- Implementar fluxos de login assíncronos e armazenar tokens com localStorage.
+- Como lidar com erros de autenticação HTTP, como 401 Unauthorized.
+- A diferença entre localStorage e sessionStorage.
+- Como incluir tokens de acesso em cabeçalhos de autorização usando Bearer token.
+
+## Aula 4 - 
+
+### Aula 4 -  - Vídeo 1
+### Aula 4 -  - Vídeo 2
+### Aula 4 -  - Vídeo 3
+### Aula 4 -  - Vídeo 4
+### Aula 4 -  - Vídeo 5
+### Aula 4 -  - Vídeo 6
+### Aula 4 -  - Vídeo 7
+### Aula 4 -  - Vídeo 8
+### Aula 4 -  - Vídeo 9

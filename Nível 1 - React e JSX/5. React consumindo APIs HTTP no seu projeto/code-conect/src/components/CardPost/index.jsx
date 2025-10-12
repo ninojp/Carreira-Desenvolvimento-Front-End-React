@@ -7,9 +7,15 @@ import { Link } from "react-router"
 import { useState } from 'react'
 
 export const CardPost = ({ post }) => {
-    const [likes, setLikes] = useState(post.likes)
+    const [likes, setLikes] = useState(post.likes);
+    const token = localStorage.getItem('access_token');
     const handleLikeButton = () => {
-        fetch(`http://localhost:3000/blog-posts/${post.id}/like`, { method: 'POST' })
+        fetch(`http://localhost:3000/blog-posts/${post.id}/like`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         .then(response => {
             if (response.ok) {
                 setLikes(oldState => oldState + 1)
