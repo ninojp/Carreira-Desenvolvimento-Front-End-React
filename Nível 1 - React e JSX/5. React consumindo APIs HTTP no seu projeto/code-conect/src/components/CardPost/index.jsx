@@ -5,25 +5,23 @@ import { ThumbsUpButton } from "./ThumbsUpButton"
 import { ModalComment } from "../ModalComment"
 import { Link } from "react-router"
 import { useState } from 'react'
+import { http } from '../../api'
 
 export const CardPost = ({ post }) => {
     const [likes, setLikes] = useState(post.likes);
     const token = localStorage.getItem('access_token');
+    //-------------------------------------------------------------
     const handleLikeButton = () => {
-        fetch(`http://localhost:3000/blog-posts/${post.id}/like`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+        //No axios o segundo parametro do post é o body e deve ser passado mesmo vazio e o terceiro é o config (headers, etc)
+        http.post(`blog-posts/${post.id}/like`, {}, {
+            headers: { 'Authorization': `Bearer ${token}` }
         })
-        .then(response => {
-            if (response.ok) {
-                setLikes(oldState => oldState + 1)
-                console.log('incrementar like')
-            }
+        .then(() => {
+            setLikes(oldState => oldState + 1)
+            console.log('incrementar like')
         })
     }
-
+    //--------------------------------------------------------------
     return (
         <article className={styles.card}>
             <header className={styles.header}>

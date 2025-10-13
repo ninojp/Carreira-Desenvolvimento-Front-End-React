@@ -1707,10 +1707,268 @@ Nesta aula, aprendemos:
 - A diferença entre localStorage e sessionStorage.
 - Como incluir tokens de acesso em cabeçalhos de autorização usando Bearer token.
 
-## Aula 4 - 
+## Aula 4 - Atualizando dados com PATH
 
-### Aula 4 -  - Vídeo 1
-### Aula 4 -  - Vídeo 2
+### Aula 4 - Projeto da aula anterior
+
+Você pode ir acompanhando o passo a passo do desenvolvimento do nosso projeto e, caso deseje, você pode [acessar o projeto da aula anterior](https://github.com/alura-cursos/4870--code-connect/tree/aula-3).
+
+### Aula 4 - Migrando para o axios - Vídeo 1
+
+Transcrição  
+Agora é o momento de focarmos nos comentários. Precisamos enviar mais requisições do tipo POST, DELETE e PATCH para realizar operações nos comentários. Antes de implementarmos essa funcionalidade, vamos refletir sobre o seguinte: atualmente, estamos utilizando a API nativa do JavaScript, o Fetch. Já aprendemos a fazer requisições sem depender de nada além do próprio JavaScript, utilizando o Fetch. Funciona bem, mas à medida que o projeto cresce, já temos o Feed, o Blog Post, o Card Post e o UseAuth.
+
+Qual é o cuidado que devemos ter agora? Precisamos definir cabeçalhos e realizar o Stringify várias vezes. Por exemplo, no caso do registro, sempre que enviarmos um POST, precisamos lembrar de trocar o método, adicionar o cabeçalho de Content-Type e fazer o Stringify do que estamos enviando no body. Para requisições autenticadas, precisamos lembrar de pegar o token e adicioná-lo no cabeçalho. Podemos seguir assim, mas corremos o risco de cometer erros.
+
+Considerando o uso de bibliotecas para requisições HTTP
+
+Podemos pensar em extrair esse código e criar funções reaproveitáveis. Isso é possível, mas é uma prática tão comum que existem bibliotecas que fazem isso por nós. Uma delas, muito famosa e utilizada, é o Axios. No site axios-http.com/docs/intro, é explicado que o Axios é um cliente HTTP baseado em promessas. Ele pode ser usado tanto no navegador quanto em uma aplicação Node, e o próprio Axios sabe o que fazer para que as requisições funcionem.
+
+Em vez de reescrever tudo isso de forma reaproveitável, o que chamamos de "reinventar a roda", vamos utilizar o Axios, que funciona bem para esse caso. Vamos para o VS Code e pegar a instrução de instalação que está na documentação:
+
+> npm install axios
+
+Enquanto ele está instalando, é importante destacar que, embora o Axios simplifique o processo, precisamos entender como proceder quando não temos acesso a ele. Por isso, aprendemos a fazer requisições usando o Fetch. Agora que temos uma base sólida, ou seja, sabemos fazer uma requisição sem depender de bibliotecas de terceiros, estamos prontos para utilizar uma biblioteca que abstrai isso para nós.
+
+Migrando do Fetch para o Axios
+
+Conceitualmente, já sabemos o que é fazer um fetch, que uma requisição tem seus métodos, como lidar com cabeçalhos, entre outros. Agora, vamos migrar do Fetch para o Axios. Para isso, dentro de "src", vamos criar uma pasta chamada "API" e, dentro dela, um arquivo chamado index.js. Nele, criaremos uma constante chamada HTTP, na qual chamaremos o Axios que acabamos de instalar.
+
+Primeiro, importamos o Axios:
+
+> import axios from "axios";
+
+Em seguida, criamos uma instância do Axios:
+
+> const http = axios.create();
+
+A primeira vantagem é que podemos passar um objeto de configurações, incluindo a URL base da nossa API, que é a parte que sempre se repete. No nosso caso, é o localhost:3000:
+
+```JSX
+const http = axios.create({
+    baseURL: 'http://localhost:3000'
+});
+```
+
+Agora, podemos exportar esse HTTP, criando uma única instância do Axios que será compartilhada por toda a aplicação:
+
+```JSX
+export const http = axios.create({
+    baseURL: 'http://localhost:3000'
+});
+```
+
+Implementando o Axios no feed e blog post
+
+Vamos começar pelo feed. Em vez de usar o fetch, utilizaremos HTTP. Vamos ver se o VS Code importa para nós. Com o arquivo aberto, o VS Code encontrou o HTTP. Então, importamos HTTP de '../../API':
+
+> import { http } from "../../API";
+
+Para fazer a mesma coisa que fazíamos com o fetch usando o Axios, utilizamos HTTP.get. A parte repetida da URL pode ser deletada. Não precisamos mais transformar a resposta em JSON, pois o Axios já faz isso por nós. Na resolução da promessa, no caso de sucesso, temos acesso à resposta e podemos usar response.data. Essa é a única diferença. A promessa é uma resposta só, e temos acesso a tudo que teríamos da requisição, com os dados incluídos. Simplificamos bastante esse GET:
+
+```JSX
+useEffect(() => {
+    http.get('/blog-posts')
+        .then(response => setPosts(response.data))
+}, []);
+```
+
+Vamos testar para ver se o GET no feed funciona. No CodeConnect, recarregamos a página e tudo continua funcionando. Podemos verificar no preview. Continua funcionando, mas com menos código visível para nós. O Axios trata tudo o que precisa ser tratado. Agora, vamos para o próximo, o blog post. Faremos a mesma coisa: HTTP.get. Removemos a URL base, localhost:3000. Não precisamos mais do response.json. Se response.status for 404, fazemos o navigate. Caso contrário, fazemos um return para parar por aqui. Se a requisição for bem-sucedida, fazemos um setPost com response.data, o corpo da resposta.
+
+```JSX
+useEffect(() => {
+    http.get(`/blog-posts/${slug}`)
+        .then(response => {
+            setPost(response.data)
+        })
+        .catch(error => {
+            if (error?.response?.status === 404) {
+                navigate('/not-found')
+            }
+        })
+}, [slug, navigate]);
+```
+
+Tratando erros e ajustando o fluxo de execução
+
+Vamos testar novamente. No ver detalhes, recarregamos a página e tudo continua funcionando. Se houver um erro, como um 404, ele será tratado adequadamente.
+
+Ele está indicando que não está ocorrendo um redirect. Precisamos ajustar o if para garantir que a requisição seja bem-sucedida. Como faremos isso? Primeiramente, vamos lançar um debugger para entender o que está acontecendo e verificar se o código está passando por esse ponto. Com o debugger, se chegar nesse caso, a execução será interrompida. Ao recarregar a página, percebemos que a execução não parou, indicando que esse bloco de código não foi executado. Isso ocorre porque, no caso do Axios, quando algo dá errado, precisamos capturar no catch, onde o erro é tratado. Portanto, o caso if status 404 não será mais considerado um sucesso, mas sim uma falha, que deve ser capturada no catch. Podemos então fazer um if no error.status igual a 404 e, nesse ponto, realizar o navigate. Podemos também mover o debugger para essa parte para verificar se ele captura corretamente. Esse trecho de código anterior pode ser removido. Agora, ao recarregar a página, o debugger para no ponto correto, indicando que o código está sendo executado. No erro, podemos observar o código, a configuração, a mensagem, o nome, a requisição e a resposta, além do status, que é 404. Ao dar play no debugger, o redirect é realizado. Voltando ao VS Code, removemos o debugger para que ele não interrompa mais a execução. Ao recarregar, tudo funciona corretamente. Em caso de sucesso, o código funciona; em caso de falha, o redirect é realizado.
+
+Explorando o conceito do Axios e aplicando no CardPost
+
+Qual é o conceito do Axios nesse caso? No .then, ele só será acionado em caso de sucesso. Em caso de falha, será capturado no .catch, independentemente do status code. Se não for da família do 200, não é considerado sucesso e deve ser capturado no .catch. Vamos prosseguir para os demais casos, começando pelo CardPost. No CardPost, faremos um post autenticado com http.post, importando o http. Removemos a URL repetida e não precisamos mais especificar o método. Um detalhe importante é que, no caso do Axios, a parte de headers é idêntica. Passamos uma configuração, mas há um detalhe: ao fazer um post, o segundo parâmetro é o corpo da requisição, e a configuração é o terceiro parâmetro. Podemos adicionar o header authorization com o token. O detalhe é que ele é o terceiro parâmetro, enquanto o corpo do post é o segundo. Se não passarmos o corpo, não funcionará. O objeto de configuração é o terceiro parâmetro no post do Axios. Não precisamos mais verificar response.ok, pois só cairá no .then em caso de sucesso. Se falhar, não será acionado. Agora podemos testar a funcionalidade de curtida novamente. No feed, ao clicar em curtir, tudo funciona corretamente. Na aba de network, ao clicar, vemos que está retornando 201, indicando que está funcionando.
+
+```JSX
+http.post(`/blog-posts/${post.id}/like`, {}, {
+    headers: {
+        'Authorization': `Bearer ${token}`
+    }
+})
+.then(response => {
+    setLikes(oldState => oldState + 1)
+    console.log('incrementar like')
+});
+```
+
+Implementando o Axios no useAuth e testando funcionalidades
+
+O que falta agora é o useAuth. Como procederemos? No useAuth, ao olhar no Swagger, quando fazemos um register, o status code que queremos é 201, e no caso de login, é 200. Precisamos verificar esses status codes. No useAuth, usaremos o Axios da mesma forma. Chamamos o HTTP, verificamos se o código já foi importado, e utilizamos .post. Removemos a parte repetida, o método, e o contentType.json, pois o Axios lida com isso automaticamente. O jsonBody e jsonStringify também são removidos. Basicamente, fazemos um post com um objeto como segundo parâmetro. Diferente da curtida, aqui precisamos passar o corpo da requisição. Se ocorrer uma falha, o próprio Axios lançará um erro, que será capturado no catch. Removemos o if, pois não precisamos mais verificar a resposta. Em caso de erro, o Axios lançará o erro, que será capturado no catch. O mesmo procedimento se aplica ao login: http.post, removendo a URL base, o método post, os headers, e o jsonStringify, passando apenas o email e a password. Solicitamos ao VS Code que formate o código. Nesse caso, precisamos da resposta, mas agora utilizamos response.data diretamente. Realizamos a requisição, aguardamos, obtemos o objeto de dados e processamos tudo. Em caso de falha, será capturado no catch.
+
+```JSX
+const response = await http.post('/auth/register', {
+    name,
+    email,
+    password
+});
+
+const response = await http.post('/auth/login', {
+    email,
+    password
+});
+const data = response.data;
+setUser(data.user);
+localStorage.setItem('auth_user', JSON.stringify(data.user));
+localStorage.setItem('access_token', data.access_token);
+```
+
+Vamos testar? No VS Code, faremos um logout e testaremos criando outro usuário. Primeiro, criaremos um usuário com o e-mail marcos@alura.com.br e senha 123. Deixamos a senha como 123 para verificar o caso de falha. Ao tentar cadastrar, ele cai no catch e exibe a mensagem de bad request, indicando que a senha precisa ter mais de 6 caracteres. Agora, testamos o caso de sucesso com a senha 123456. Ao clicar em cadastrar, tudo funciona corretamente e o redirect é realizado. Agora, testaremos o login com marcos@alura.com.br e senha 123456. Ao clicar em login, tudo funciona corretamente. Testamos também o caso de falha com credenciais inválidas, como marcos@alura.com.br e senha 123. Ao tentar o login, ele cai na mensagem de erro e não prossegue. Assim, migramos do fetch do node fetch para o Axios, o que nos permite escrever menos código. No entanto, esse código não desapareceu; ele está encapsulado na biblioteca do Axios. Com isso, conseguimos reduzir a repetição de código, inclusive na seção de adicionar o header. Há mais a ser feito, e continuaremos na sequência.
+
+### Aula 4 - Comentando um post - Vídeo 2
+
+Transcrição  
+Vamos focar agora no modal de comentário, pois queremos enviar esse comentário para algum lugar. A primeira coisa que faremos é focar no CardPost. No CardPost, da mesma forma que temos o número de comentários sendo exibido com comments.length, precisamos atualizar isso caso alguém adicione novos comentários.
+
+Para isso, vamos criar um estado local para esses comentários, setComments, ao invés de pegar o post.comments diretamente. Vamos começar definindo o estado local para os comentários:
+
+```JSX
+const [comments, setComments] = useState(post.comments)
+```
+
+Agora, o número de comentários vem do estado local, permitindo que possamos incrementá-lo. Se fizermos isso e recarregarmos a página, após fazer o login novamente, o sistema continuará funcionando como deveria.
+
+Configurando o modal de comentário
+
+Quem faz a adição desse comentário é o modal de comentário. Vamos entrar nele. O modal de comentário já recebe uma propriedade chamada isEditing para saber se está editando ou adicionando um comentário novo. Podemos adicionar um callback agora, chamado onSuccess. Vamos definir o componente ModalComment com essas propriedades:
+
+```JSX
+export const ModalComment = ({ isEditing, onSuccess }) => {
+```
+
+Quando for um caso de sucesso, ou seja, quando conseguirmos adicionar um comentário, faremos o seguinte: além do handleLike, teremos um const handleNewComment que receberá uma arrow function. Essa função receberá um comentário e, então, faremos um setComments de um novo array, primeiro com o comentário novo e depois com os comentários que já tínhamos:
+
+```JSX
+const handleNewComment = (comment) => {
+    setComments([comment, ...comments])
+}
+```
+
+Quando faremos isso? No onSuccess do nosso modal. Dessa forma, quando um comentário novo for adicionado, ele chamará esse método, passando um comentário novo, e tudo funcionará corretamente. Vamos passar o handleNewComment para o ModalComment:
+
+```JSX
+<ModalComment onSuccess={handleNewComment}
+```
+
+Enviando requisição com Axios
+
+Por enquanto, estamos utilizando um setTimeout que não está fazendo nada. Precisamos enviar essa requisição, e faremos isso usando o Axios. O Visual Studio Code já importou o Axios:
+
+```JSX
+import http from '../../api'
+```
+
+Vamos fazer um http.post. Para onde faremos esse post? Provavelmente, precisaremos do postId. Vamos colocar a URL entre crases, mas precisamos verificar no Swagger. No Swagger, a rota de comentário é /comments/post/id. Vamos colar isso aqui:
+
+```JSX
+http.post(`/comments/post/${postId}`)
+```
+
+Agora, está faltando o símbolo de dólar, pois o postId ainda não está sendo recebido. Vamos recebê-lo também. No nosso modal de comentário, o postId será o post.id, ao qual temos acesso:
+
+```JSX
+export const ModalComment = ({ isEditing, onSuccess, postId }) => {
+```
+
+E passamos o postId ao chamar o ModalComment:
+
+```JSX
+<ModalComment onSuccess={handleNewComment} postId={post.id} />
+```
+
+Configurando o corpo da requisição
+
+Agora, ao fazer um post, precisamos passar o corpo da requisição. Vamos ver o que o Swagger espera. No Swagger, ele pede uma propriedade chamada text, que, por acaso, é o nome do nosso campo de texto. Passamos o objeto dessa forma:
+
+```JSX
+http.post(`/comments/post/${postId}`, {
+    text
+})
+```
+
+Sabemos que precisamos passar um segundo argumento com os cabeçalhos (headers). Qual cabeçalho precisamos pegar? Precisamos pegar o token:
+
+```JSX
+const token = localStorage.getItem('access_token')
+```
+
+No cabeçalho, que é um objeto, passamos uma autorização interpolando o header do nosso token:
+
+```JSX
+http.post(`/comments/post/${postId}`, {
+    text
+}, {
+    headers: {
+        Authorization: `Bearer ${token}`
+    }
+})
+```
+
+Tratando a resposta da requisição
+
+Realizamos um post para o endereço especificado com o corpo e os cabeçalhos adequados. No caso de sucesso, utilizamos o método then para fechar o modal, pegar a resposta e chamar a função onSuccess, passando response.data:
+
+```JSX
+.then((response) => {
+    modalRef.current.closeModal()
+    onSuccess(response.data)
+    setLoading(false)
+})
+```
+
+Relembrando o que estamos fazendo, há um estado de loading, então também definimos setLoadingFalse. Pedimos ao VS Code para formatar o documento, e tudo ficou organizado. Fizemos um post para a URL com o corpo e os cabeçalhos, e agora, no caso de sucesso, fechamos o modal, chamamos onSuccess e definimos setLoadingFalse.
+
+Testando a funcionalidade de comentários
+
+Vamos testar o código. No Chrome, no CodeConnect, recarregamos a página para garantir que tudo está atualizado. No projeto "Construindo SPA com Vue", há um comentário. Clicamos para abrir e deixar um comentário sobre o post. Escrevemos: "Eu gosto bastante de VueJS" e clicamos em comentar. A requisição foi bem-sucedida, retornando um status 201, e o número de comentários aumentou para 2. Ao recarregar a página, o número de comentários permanece 2. Adicionamos mais um comentário: "Vue é excelente". Agora, o número de comentários deve aumentar para 3. Comentamos, e o número subiu para 3. Ao entrar na página de detalhes, verificamos que os comentários "Vue é excelente" e "Eu gosto bastante de VueJS" estão presentes, confirmando que a criação de novos posts está funcionando.
+
+Implementando a desabilitação de botões
+
+Precisamos implementar a funcionalidade para desabilitar botões caso não estejamos autenticados. No CardPost, utilizamos o useAuth para verificar a autenticação:
+
+```JSX
+import { useAuth } from '../../hooks/useAuth'
+const { isAuthenticated } = useAuth()
+```
+
+No ThumbsUpButton, adicionamos a propriedade disabled para desabilitar o botão caso não estejamos autenticados:
+
+```JSX
+disabled={!isAuthenticated}
+```
+
+No modal de comentários, aplicamos a mesma lógica para evitar repetição de código. No IconButton, também adicionamos disabled se não estivermos autenticados:
+
+```JSX
+<IconButton 
+    disabled={!isAuthenticated}
+    onClick={() => modalRef.current.openModal()}
+>
+```
+
+Após fazer logout, verificamos que os botões estão desabilitados, impedindo a abertura do modal de comentários e a ação de curtir. Fazemos login novamente, pois a próxima funcionalidade a ser desenvolvida é a edição de comentários. Na página de detalhes, apenas nossos próprios comentários poderão ser editados. Ao abrir o modal com o modo de edição ativo, o comentário antigo deve ser carregado, e um método diferente deve ser chamado.
+
+Essa é uma prévia do que abordaremos no próximo encontro. Estamos ansiosos para continuar!
+
 ### Aula 4 -  - Vídeo 3
 ### Aula 4 -  - Vídeo 4
 ### Aula 4 -  - Vídeo 5

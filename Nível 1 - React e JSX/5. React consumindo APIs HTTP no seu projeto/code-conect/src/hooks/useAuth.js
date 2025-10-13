@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { http } from '../api';
 
 // const createUser = (name, email, password) => ({
 //   id: Date.now().toString(),
@@ -26,27 +27,11 @@ export const useAuth = () => {
   //------------------------------------------------------------------------------
   const register = async (name, email, password) => {
     try {
-      const respostAPI = await fetch(`http://localhost:3000/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          email,
-          password
-        })
+      await http.post(`auth/register`, {
+        name,
+        email,
+        password
       });
-      if (!respostAPI.ok) {
-        throw new Error('ERRO! HOOOK-useAuth.register().fetch() ', respostAPI.status)
-      }
-      //CÓDIGO ANTERIOR - LOCALSTORAGE
-      // const existingUsers = JSON.parse(localStorage.getItem('auth_users') || '[]')
-      // const userExists = existingUsers.find(u => u.email === email)
-      // if (userExists) { throw new Error('Usuário já existe com este email') }
-      // const newUser = createUser(name, email, password)
-      // existingUsers.push(newUser)
-      // localStorage.setItem('auth_users', JSON.stringify(existingUsers))
-      // setUser(newUser)
-      // localStorage.setItem('auth_user', JSON.stringify(newUser))
       return { success: true }
     } catch (error) {
       return { success: false, error: error.message }
@@ -55,23 +40,12 @@ export const useAuth = () => {
   //----------------------------------------------------------------------
   const login = async (email, password) => {
     try {
-      const respostAPI = await fetch(`http://localhost:3000/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      const respostAPI = await http.post('auth/login', {
           email,
           password
-        })
       });
-      if (!respostAPI.ok) {
-        throw new Error('ERRO! HOOOK-useAuth() .login() .fetch() ', respostAPI.status)
-      }
-      const dados = await respostAPI.json()
-      // const users = JSON.parse(localStorage.getItem('auth_users') || '[]') //CÓDIGO ANTERIOR
-      // const user = users.find(u => u.email === email && u.password === password)
-      // if (!user) { throw new Error('Email ou senha incorretos') }
+      const dados = respostAPI.data
+
       setUser(dados.user)
       localStorage.setItem('auth_user', JSON.stringify(dados.user))
       localStorage.setItem('access_token', dados.access_token)

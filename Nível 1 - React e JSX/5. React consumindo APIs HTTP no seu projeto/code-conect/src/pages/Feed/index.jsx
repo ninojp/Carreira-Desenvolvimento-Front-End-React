@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react"
 import { CardPost } from "../../components/CardPost"
 import styles from './feed.module.css'
+import { http } from "../../api";
 
 export const Feed = () => {
     const [posts, setPosts] = useState([]);
     useEffect(() => {
-        fetch('http://localhost:3000/blog-posts')
-        .then(respostaApi => respostaApi.json())
-        .then(dadosApi => setPosts(dadosApi))
+        // fetch('http://localhost:3000/blog-posts')
+        http.get('blog-posts')
+        .then(resposta => setPosts(resposta.data))
+        // .then(respostaApi => respostaApi.json())
+        // .then(dadosApi => setPosts(dadosApi))
     }, []);
     // Mesma lógica do código acima, mas usando async/await
     // useEffect(() => {
