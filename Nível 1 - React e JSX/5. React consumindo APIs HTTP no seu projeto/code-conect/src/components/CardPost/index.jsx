@@ -1,15 +1,21 @@
 import styles from './cardpost.module.css'
-
 import { Author } from "../Author"
 import { ThumbsUpButton } from "./ThumbsUpButton"
 import { ModalComment } from "../ModalComment"
 import { Link } from "react-router"
 import { useState } from 'react'
 import { http } from '../../api'
+import { useAuth } from '../../hooks/useAuth'
 
 export const CardPost = ({ post }) => {
     const [likes, setLikes] = useState(post.likes);
+    const [commentsPost, setCommentsPost] = useState(post.comments);
     const token = localStorage.getItem('access_token');
+    const { isAuthenticated } = useAuth();
+    //-------------------------------------------------------------
+    const handleNewComment = (newComment) => {
+        setCommentsPost([newComment, ...commentsPost])
+    }
     //-------------------------------------------------------------
     const handleLikeButton = () => {
         //No axios o segundo parametro do post é o body e deve ser passado mesmo vazio e o terceiro é o config (headers, etc)
@@ -40,15 +46,15 @@ export const CardPost = ({ post }) => {
             <footer className={styles.footer}>
                 <div className={styles.actions}>
                     <div className={styles.action}>
-                        <ThumbsUpButton loading={false} onClick={handleLikeButton} />
+                        <ThumbsUpButton loading={false} onClick={handleLikeButton} disabled={!isAuthenticated} />
                         <p>
                             {likes}
                         </p>
                     </div>
                     <div className={styles.action}>
-                        <ModalComment />
+                        <ModalComment onSuccess={handleNewComment} postId={post?.id}/>
                         <p>
-                            {post.comments.length}
+                            {commentsPost.length}
                         </p>
                     </div>
                 </div>

@@ -1969,10 +1969,339 @@ Após fazer logout, verificamos que os botões estão desabilitados, impedindo a
 
 Essa é uma prévia do que abordaremos no próximo encontro. Estamos ansiosos para continuar!
 
-### Aula 4 -  - Vídeo 3
-### Aula 4 -  - Vídeo 4
-### Aula 4 -  - Vídeo 5
-### Aula 4 -  - Vídeo 6
-### Aula 4 -  - Vídeo 7
-### Aula 4 -  - Vídeo 8
-### Aula 4 -  - Vídeo 9
+### Aula 4 - Editando um comentário - Vídeo 3
+
+Transcrição  
+Vamos agora realizar a edição de comentários. Primeiramente, vamos fechar a modal no nosso Chrome e exibir o componente de comentário para que a pessoa possa editar o comentário, caso seja a proprietária dele. Para isso, vamos pegar o usuário logado utilizando o useAuth. Podemos obter o user e, ao observar a estrutura de comentário, notamos que cada comentário possui um autor com um id. Esse id é o do usuário.
+
+Para começar, vamos importar o useAuth e obter o usuário logado:
+
+> const { user } = useAuth()
+
+Agora, vamos criar uma constante chamada isOwner, que verificará se o user.id é igual ao comment.author.id. Exibiremos a modal de comentário apenas se essa condição for verdadeira.
+
+> const isOwner = user && user.id === comment.author.id
+
+Testando a funcionalidade de edição
+
+Vamos testar para ver se está funcionando. Ao recarregar a página no Chrome, notamos um erro. O console indica que está lendo uma propriedade de nulo. Isso ocorre porque, enquanto a aplicação está sendo renderizada, o usuário pode estar nulo no início. Vamos verificar se o usuário existe e, então, comparar o id do usuário com o id do autor.
+
+Após recarregar a página, o erro de compilação foi resolvido. Isso acontece porque, quando a aplicação inicia e o useAuth é chamado, o usuário está vazio. Apenas depois ele é preenchido com o usuário do localStorage. Agora, os ícones aparecem apenas nos comentários que fizemos. Por exemplo, no comentário de Bruno Silva, o ícone de comentário não aparece, indicando que está funcionando corretamente.
+
+Transformando a lista de comentários em estado local
+
+A próxima etapa é transformar a lista de comentários em um estado local, assim como fizemos no card post, pois essa lista de comentários pode mudar. Vamos copiar a linha do useState para o blog post. O useState já estava configurado corretamente.
+
+> > const [comments, setComments] = useState(post.comments)
+
+Na nossa lista de comentários, não utilizaremos mais o post.comments, nem na CommentList. Vamos fazer um copy-paste do renderComment da mesma forma.
+
+> <CommentList comments={comments} />
+
+Se alguém adicionar um novo comentário, ele será adicionado à lista. Por enquanto, deixaremos duplicado, o que está aceitável.
+
+```JSX
+const handleNewComment = (comment) => {
+    setComments([comment, ...comments])
+}
+```
+
+Atualizando a lista de comentários`
+
+No caso de adicionar um novo comentário, passaremos um onSuccess na modal de comentário. Note que isso é diferente do comentário que estamos editando, pois são locais distintos.
+
+```JSX
+<ModalComment onSuccess={handleNewComment} />
+```
+
+Quando alguém adiciona um comentário, precisamos atualizar a lista, pois o número de comentários aumentará. Devemos ter cuidado ao editar um comentário, pois o texto será alterado, e precisaremos lidar com o delete e o update.
+
+Podemos agora testar um comentário. Se houver um erro ao tentar ler propriedades de nulo, podemos verificar no blog post. Podemos deixar como um array vazio inicialmente e, ao obter o post, fazemos um setComments passando response.data.comments. Isso resolverá o erro.
+
+```JSX
+const [comments, setComments] = useState([])
+setComments(response.data.comments)
+```
+
+Adicionando novos comentários
+
+Vamos adicionar um novo comentário. Se ocorrer um bad request, podemos verificar no network. Isso pode ocorrer porque precisamos passar o post.id na modal do blog post. Se o post for nulo, tratamos para que não quebre. Após recarregar, ao adicionar um novo comentário, ele é incrementado corretamente.
+
+```JSX
+<ModalComment onSuccess={handleNewComment} postId={post?.id} />
+```
+
+Atualização de comentários
+
+Precisamos atualizar um comentário tanto na API quanto localmente quando ele for editado. Para isso, vamos criar um estado local. Utilizaremos text e setText, que receberão um useState, importando o texto do comentário.
+
+> const [text, setText] = useState(comment.text)
+
+No caso de sucesso, faremos um renderEdit. Quando o comentário for editado com sucesso, chamaremos uma função handleEdit, que receberá o novo comentário e fará um setText com newComment.text, atualizando localmente.
+
+```JSX
+const handleEdit = (newComment) => {
+    setText(newComment.text)
+}
+```
+
+Implementando a lógica de edição e criação
+
+Na modal de comentário, o post será feito apenas para criar um novo comentário. Quando for para atualizar, não utilizaremos um post, mas sim um patch. Implementaremos um if else: se estivermos editando, faremos algo; caso contrário, seguiremos o procedimento padrão.
+
+```JSX
+if (isEditing) {
+    http.patch(`/comments/${commentId}`, {
+        text
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then((response) => {
+            modalRef.current.closeModal()
+            onSuccess(response.data)
+            setLoading(false)
+        })
+} else {
+    http.post(`/comments/post/${postId}`, {
+        text
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    })
+        .then((response) => {
+            modalRef.current.closeModal()
+            onSuccess(response.data)
+            setLoading(false)
+        })
+}
+```
+
+Verificando a funcionalidade de edição
+
+Vamos verificar se isso funciona. No nosso comentário, ao carregar a página, precisamos trazer o valor preenchido. No textarea, devemos definir um valor padrão (defaultValue). Se estivermos editando, passaremos o valor atual. Ajustaremos isso na nossa modal de comentário, passando o defaultValue como o texto do comentário.
+
+> defaultValue={text}
+
+Adicionaremos uma propriedade para o defaultValue, que será vazio por padrão. Se alguém passar um defaultValue, utilizaremos esse valor. Além disso, o patch precisa do ID do comentário, então passaremos essa propriedade também.
+
+> export const ModalComment = ({ isEditing, onSuccess, postId, defaultValue = '', commentId }) => {
+
+No navegador, ao recarregar a página, o defaultValue já aparece. Editaremos o comentário e clicaremos em atualizar. O patch foi feito, o estado local foi atualizado, e ao recarregar a página, o comentário permanece atualizado.
+
+Conseguimos realizar uma atualização otimista: quando retorna 200, atualizamos o estado local sem precisar buscar tudo novamente no back-end.
+
+Próximos passos
+
+Ainda precisamos implementar a exclusão de comentários, que será o assunto do nosso próximo vídeo. Estaremos esperando por vocês lá.
+
+### Aula 4 - Para saber mais: resolução de problemas com o debugger
+
+Em algum momento durante o desenvolvimento, os logs no console não são mais suficientes. Você quer entender exatamente o que está acontecendo com seu código, linha por linha. E é justamente pra isso que serve o debugger do navegador. Ele é uma ferramenta poderosa que permite "pausar" a execução do seu aplicativo e observar tudo o que está rolando em tempo real: os valores das variáveis, o fluxo da execução, o que foi chamado e quando.
+
+Mesmo que você esteja desenvolvendo uma aplicação em React, o debugger funciona porque no final das contas tudo é JavaScript rodando no navegador.
+
+Como abrir o debugger
+
+A forma mais simples é abrir as ferramentas de desenvolvedor do navegador. Se você estiver usando o Chrome ou o Edge, pode apertar F12 ou usar o atalho Ctrl+Shift+I (ou Cmd+Option+I no macOS). Depois, acesse a aba chamada "Sources". É ali que você vai conseguir navegar entre os arquivos do seu projeto e inserir os pontos de parada.
+
+Com o Vite ou Create React App, o navegador mostra os arquivos como estão na pasta src/, então fica bem mais fácil encontrar o que você quer.
+
+Pausando a execução com um breakpoint
+
+Quando você encontra o arquivo onde quer pausar, basta clicar no número da linha correspondente. Isso marca um ponto de parada, também conhecido como breakpoint. Quando o navegador chegar naquela linha, ele vai automaticamente interromper a execução e te mostrar tudo o que está acontecendo naquele momento.
+
+Se você preferir, também pode escrever debugger diretamente no código. Assim:
+
+```JSX
+function handleSubmit(data) { 
+const payload = normalizar(data) 
+debugger 
+return api.salvar(payload) 
+} 
+```
+
+Quando essa função for chamada, o navegador vai parar exatamente nesse ponto.
+
+Entendendo o que está acontecendo enquanto está pausado
+
+Assim que o código é pausado, você consegue ver os valores de todas as variáveis locais no painel lateral chamado "Scope". Pode também acompanhar quais funções foram chamadas até chegar ali, olhando o "Call Stack". Se quiser, pode observar o valor de expressões específicas adicionando no painel "Watch".
+
+Você também consegue controlar como vai navegar pelo código a partir desse ponto. Pode continuar a execução normalmente, entrar dentro de uma função, sair de uma função ou apenas executar uma linha por vez. Esses botões ficam bem visíveis no topo da aba "Sources".
+
+E no React, muda algo?
+
+Como React é JavaScript, tudo o que explicamos até aqui funciona normalmente. A diferença é que, como você está lidando com funções que rodam em momentos específicos (como efeitos, eventos de clique ou mudança de estado), é bom saber onde colocar o breakpoint.
+
+Se você quer ver o que acontece dentro de um useEffect, uma boa prática é escrever uma função interna e colocar o debugger dentro dela:
+
+```JSX
+useEffect(() => { 
+async function carregarDados() { 
+const res = await api.get('/posts') 
+debugger 
+setPosts(res.data) 
+} 
+carregarDados() 
+}, []) 
+```
+
+Para eventos, como cliques ou submits, basta colocar o debugger dentro da função que trata o evento. Assim que o usuário interagir, o código pausa e você consegue investigar com calma.
+
+Mais algumas dicas
+
+Se quiser, você pode adicionar um breakpoint que só para quando uma condição for verdadeira. Clique com o botão direito no número da linha e escolha "Add conditional breakpoint". Por exemplo: items.length > 5. Isso é ótimo quando você quer investigar um erro que só acontece em certos casos.
+
+Outro recurso interessante é o "Pause on exceptions". Ao ativar isso, o navegador vai pausar automaticamente quando acontecer um erro no seu código, mesmo que você não tenha colocado breakpoint nenhum.
+
+Ah, e não esquece da aba "Network" do DevTools. Lá você consegue ver todas as requisições feitas pelo navegador, os dados enviados, as respostas recebidas e muito mais. Isso ajuda demais quando o problema está relacionado à comunicação com o backend.
+
+E se eu quiser usar o VS Code pra depurar?
+
+É possível usar o VS Code como debugger do navegador, criando uma configuração de depuração com Chrome. Mas se você está começando agora, o caminho mais simples é usar o DevTools do navegador mesmo. Rápido, direto, sem configuração extra.
+
+Conclusão
+
+Aprender a usar o debugger muda completamente a forma como você lida com problemas no código. Ele dá visibilidade total do que está acontecendo, permitindo que você valide suposições e encontre erros com muito mais confiança.
+
+Se você nunca tinha usado antes, experimente colocar um debugger no meio de uma função e ver o que acontece. Aos poucos, isso vira um hábito natural no seu processo de desenvolvimento.
+
+### Aula 4 - Para saber mais: centralização da configuração no axios
+
+Centralizando as Configurações de Requisições
+
+Ao utilizar uma biblioteca como o Axios, é comum criar uma instância customizada por meio do método axios.create. Essa prática permite centralizar informações que se repetem em várias requisições – como a URL base da API, configurações de cabeçalhos e até tratamentos padrões para erros. Assim, em vez de configurar esses detalhes para cada chamada, a instância já vem pré-configurada e a reutilização do código se torna mais simples e limpa.
+
+Motivação para a Abstração
+
+A ideia de centralizar as configurações está alinhada com o princípio de "não reinventar a roda". Em aplicações com muitas requisições HTTP, pode ser fácil perder-se nas repetições de configurações como cabeçalhos (por exemplo, Content-Type ou tokens de autorização). Ao definir esses parâmetros em um único lugar, a manutenção se torna mais prática e a probabilidade de erros diminui, já que a alteração de um parâmetro comum pode ser feita de forma centralizada.
+
+Benefícios e Considerações
+
+Criar uma instância customizada com axios.create traz diversas vantagens:
+
+- Manutenção Facilitada: Alterações na URL base ou nos cabeçalhos precisam ser feitas apenas uma vez na configuração, propagando-se para todas as requisições.
+- Redução de Repetição de Código: Evita a duplicação de parâmetros que são comuns a todas as requisições, dando mais clareza e objetividade ao código.
+- Flexibilidade de Configuração: É possível definir interceptores para tratar erros ou adicionar tokens automaticamente, personalizando o comportamento de forma centralizada.
+
+No entanto, vale destacar que essa abordagem exige uma boa organização do código. Em projetos muito dinâmicos, onde diferentes serviços podem demandar configurações distintas, é importante avaliar se uma única instância será suficiente ou se faz sentido criar múltiplas instâncias específicas.
+
+Exemplo Prático  
+Considere a seguinte implementação de uma instância do Axios:
+
+```JSX
+import axios from 'axios';
+
+const http = axios.create({
+  baseURL: 'http://localhost:3000',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+export default http;
+```
+
+Com essa configuração, todas as requisições que utilizarem a instância http já terão a URL base e os cabeçalhos configurados, permitindo chamadas mais enxutas, como:
+
+```JSX
+http.get('/posts')
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error('Erro na requisição:', error);
+  });
+```
+
+Esse padrão torna o código mais modular e facilita futuras manutenções ou ajustes na comunicação com a API.
+
+### Aula 4 - Tratamento de erros em operações de comentários - Exercício
+
+Na plataforma online da Gatito Petshop, uma loja que oferece produtos e serviços para animais de estimação, a equipe de desenvolvimento está enfrentando um problema ao tentar adicionar novos comentários aos produtos. Frequentemente, as pessoas usuárias recebem um erro de "bad request" ao submeter um comentário, o que está afetando a experiência delas. A equipe precisa identificar a causa desse erro e implementar uma solução eficaz.
+
+Qual das alternativas abaixo descreve a melhor abordagem para diagnosticar e resolver o problema de "bad request" ao adicionar comentários, garantindo que as pessoas usuárias possam comentar sem interrupções?
+
+Resposta:  
+Verificar se todos os dados necessários estão sendo enviados corretamente na requisição, incluindo a presença e validade do post.id do produto, revisar o código para garantir que o post.id está sendo passado corretamente para a função de adição de comentários, e implementar verificações de nulidade para evitar acessos a propriedades de objetos nulos.
+
+> Correta, pois essa abordagem cobre a verificação completa dos dados enviados, assegura que o post.id é tratado corretamente e previne erros de nulidade, abordando diretamente as causas comuns de um "bad request".
+
+### Aula 4 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- Como usar o Axios para requisições HTTP de forma eficiente e simplificada.
+- A configurar instâncias do Axios com URLs base e usar métodos HTTP como get e post.
+- A tratar respostas HTTP em JSON automaticamente com Axios.
+- A implementar autenticação eficiente incluindo tokens nos cabeçalhos das requisições.
+- A atualizar dinamicamente comentários em React e manipular estados locais.
+- A utilizar o localStorage para recuperar tokens e autenticar usuários.
+- A integrar lógica para edição de comentários com métodos HTTP PATCH.
+- A manipular a interface do usuário para garantir funcionamento suave e evitar erros.
+
+## Aula 5 - Deletando dados com DELETE
+
+### Aula 5 - Interceptando requests - Vídeo 1
+
+Transcrição
+Vamos prosseguir com a implementação da rotina de exclusão de comentários. Anteriormente, discutimos sobre a migração para o Axios com o objetivo de evitar a repetição de código. No entanto, ainda estamos repetindo a parte do cabeçalho de autorização. Vamos verificar quantas vezes estamos fazendo isso. Ao realizar uma busca no projeto, encontramos três locais diferentes onde essa lógica de obtenção do Bearer token e sua adição ao cabeçalho está sendo aplicada. Se formos implementar agora um método de exclusão e esquecermos de adicionar o cabeçalho, receberemos um erro 401.
+
+Vamos focar no Axios. Vamos abrir o arquivo httpAPIIndex e explorar como utilizar as ferramentas do Axios para adicionar esse cabeçalho. Na documentação do Axios, há uma seção sobre interceptors (interceptadores). O que é um interceptor? Ele é, como o nome sugere, um interceptador que pode atuar sobre a requisição ou a resposta. Com base no que está acontecendo, podemos tomar alguma ação. Por exemplo, podemos interceptar todas as requisições, ou seja, todas as saídas, verificar se temos o token e, caso positivo, adicioná-lo ao cabeçalho antes de enviar a requisição.
+
+Implementando interceptadores no Axios
+Vamos implementar isso utilizando axios.interceptors. No VS Code, vamos colar o código de exemplo, mas queremos interceptar as requisições não do Axios globalmente, mas sim dessa instância específica do http.
+
+Primeiro, vamos configurar o interceptor para nossa instância específica do Axios:
+
+http.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    return config;
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
+Copiar código
+Nesta instância específica, para todos que a utilizarem, vamos executar o seguinte código. O que queremos fazer? Exatamente como está na documentação, queremos realizar uma ação antes de enviar a requisição. Que ação é essa? Vamos pegar o token.
+
+http.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    const token = localStorage.getItem('access_token')
+    return config;
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
+Copiar código
+Adicionando o token de autorização ao cabeçalho
+Vamos obtê-lo do localStorage.getItem. Qual é o nome do item? access_token. E o que faremos a seguir? Vamos verificar com if token. Temos o token? Se sim, vamos acessar a config, pegar os headers e adicionar nossa autorização.
+
+http.interceptors.request.use(function (config) {
+    // Do something before request is sent
+    const token = localStorage.getItem('access_token')
+    if (token) {
+        config.headers = {
+            Authorization: `Bearer ${token}`
+        }
+    }
+    return config;
+}, function (error) {
+    return Promise.reject(error);
+});
+Copiar código
+Fazendo isso, podemos deletar sem preocupação o like e também o editar comentário. Podemos editar e deletar aqui, e também podemos remover do criar comentário. Agora, não precisamos mais do token aqui e também não precisamos mais do token no like button. No handleLike, vamos proceder dessa forma: se tivermos o token, vamos lá e atualizamos nossa autorização. Quando temos o token no localStorage, vamos no authorization e colocamos o Bearer token. Vamos verificar se isso vai funcionar. O synchronous true não será necessário, podemos deletá-lo.
+
+Testando a implementação e próximos passos
+Vamos testar isso. No Chrome, no CodeConnect, recarregamos a página e está funcionando. Vamos ao feed e curtimos. Maravilha, está curtido. Vamos olhar a requisição? Se observarmos o like, nos headers, conseguimos ver o que foi enviado. Ao fazer scroll, os headers da requisição estão lá, incluindo nosso authorization token. O interceptor cuidará disso para nós, e agora não precisamos mais nos preocupar em pegar o token em cada requisição autenticada. Basta usar essa instância do HTTP e está implementado.
+
+Para nosso próximo encontro, ao deletar um comentário, não precisaremos mais nos preocupar em lembrar de adicionar o Bearer token. No próximo encontro, começaremos a deletar comentários e concluiremos nossas insígnias do CRUD. Até mais!
+
+### Aula 5 -  - Vídeo 2
+### Aula 5 -  - Vídeo 3
+### Aula 5 -  - Vídeo 4
+### Aula 5 -  - Vídeo 5
+### Aula 5 -  - Vídeo 6
+### Aula 5 -  - Vídeo 7
+### Aula 5 -  - Vídeo 8

@@ -14,11 +14,17 @@ export const BlogPost = () => {
     const { slug } = useParams()
     const [post, setPost] = useState(null)
     const navigate = useNavigate()
-
+    const [commentsPost, setCommentsPost] = useState([]);
+    //--------------------------------------------------------------
+    const handleNewComment = (newComment) => {
+        setCommentsPost([newComment, ...commentsPost])
+    }
+    //--------------------------------------------------------------
     useEffect(() => {
         http.get(`blog-posts/slug/${slug}`)
             .then(response => {
                 setPost(response.data);
+                setCommentsPost(response.data.comments);
             })
             .catch(error => {
                 // debugger;
@@ -54,9 +60,9 @@ export const BlogPost = () => {
                             </p>
                         </div>
                         <div className={styles.action}>
-                            <ModalComment />
+                            <ModalComment onSuccess={handleNewComment} postId={post?.id} />
                             <p>
-                                {post.comments.length}
+                                {commentsPost.length}
                             </p>
                         </div>
                     </div>
@@ -69,7 +75,7 @@ export const BlogPost = () => {
                     {post.markdown}
                 </ReactMarkdown>
             </div>
-            <CommentList comments={post.comments} />
+            <CommentList comments={commentsPost} />
         </main>
     )
 }
