@@ -2246,16 +2246,18 @@ Nesta aula, aprendemos:
 
 ### Aula 5 - Interceptando requests - Vídeo 1
 
-Transcrição
+Transcrição  
 Vamos prosseguir com a implementação da rotina de exclusão de comentários. Anteriormente, discutimos sobre a migração para o Axios com o objetivo de evitar a repetição de código. No entanto, ainda estamos repetindo a parte do cabeçalho de autorização. Vamos verificar quantas vezes estamos fazendo isso. Ao realizar uma busca no projeto, encontramos três locais diferentes onde essa lógica de obtenção do Bearer token e sua adição ao cabeçalho está sendo aplicada. Se formos implementar agora um método de exclusão e esquecermos de adicionar o cabeçalho, receberemos um erro 401.
 
 Vamos focar no Axios. Vamos abrir o arquivo httpAPIIndex e explorar como utilizar as ferramentas do Axios para adicionar esse cabeçalho. Na documentação do Axios, há uma seção sobre interceptors (interceptadores). O que é um interceptor? Ele é, como o nome sugere, um interceptador que pode atuar sobre a requisição ou a resposta. Com base no que está acontecendo, podemos tomar alguma ação. Por exemplo, podemos interceptar todas as requisições, ou seja, todas as saídas, verificar se temos o token e, caso positivo, adicioná-lo ao cabeçalho antes de enviar a requisição.
 
 Implementando interceptadores no Axios
+
 Vamos implementar isso utilizando axios.interceptors. No VS Code, vamos colar o código de exemplo, mas queremos interceptar as requisições não do Axios globalmente, mas sim dessa instância específica do http.
 
 Primeiro, vamos configurar o interceptor para nossa instância específica do Axios:
 
+```JSX
 http.interceptors.request.use(function (config) {
     // Do something before request is sent
     return config;
@@ -2263,9 +2265,11 @@ http.interceptors.request.use(function (config) {
     // Do something with request error
     return Promise.reject(error);
 });
-Copiar código
+```
+
 Nesta instância específica, para todos que a utilizarem, vamos executar o seguinte código. O que queremos fazer? Exatamente como está na documentação, queremos realizar uma ação antes de enviar a requisição. Que ação é essa? Vamos pegar o token.
 
+```JSX
 http.interceptors.request.use(function (config) {
     // Do something before request is sent
     const token = localStorage.getItem('access_token')
@@ -2274,10 +2278,13 @@ http.interceptors.request.use(function (config) {
     // Do something with request error
     return Promise.reject(error);
 });
-Copiar código
+```
+
 Adicionando o token de autorização ao cabeçalho
+
 Vamos obtê-lo do localStorage.getItem. Qual é o nome do item? access_token. E o que faremos a seguir? Vamos verificar com if token. Temos o token? Se sim, vamos acessar a config, pegar os headers e adicionar nossa autorização.
 
+```JSX
 http.interceptors.request.use(function (config) {
     // Do something before request is sent
     const token = localStorage.getItem('access_token')
@@ -2290,18 +2297,380 @@ http.interceptors.request.use(function (config) {
 }, function (error) {
     return Promise.reject(error);
 });
-Copiar código
+```
+
 Fazendo isso, podemos deletar sem preocupação o like e também o editar comentário. Podemos editar e deletar aqui, e também podemos remover do criar comentário. Agora, não precisamos mais do token aqui e também não precisamos mais do token no like button. No handleLike, vamos proceder dessa forma: se tivermos o token, vamos lá e atualizamos nossa autorização. Quando temos o token no localStorage, vamos no authorization e colocamos o Bearer token. Vamos verificar se isso vai funcionar. O synchronous true não será necessário, podemos deletá-lo.
 
 Testando a implementação e próximos passos
+
 Vamos testar isso. No Chrome, no CodeConnect, recarregamos a página e está funcionando. Vamos ao feed e curtimos. Maravilha, está curtido. Vamos olhar a requisição? Se observarmos o like, nos headers, conseguimos ver o que foi enviado. Ao fazer scroll, os headers da requisição estão lá, incluindo nosso authorization token. O interceptor cuidará disso para nós, e agora não precisamos mais nos preocupar em pegar o token em cada requisição autenticada. Basta usar essa instância do HTTP e está implementado.
 
 Para nosso próximo encontro, ao deletar um comentário, não precisaremos mais nos preocupar em lembrar de adicionar o Bearer token. No próximo encontro, começaremos a deletar comentários e concluiremos nossas insígnias do CRUD. Até mais!
 
-### Aula 5 -  - Vídeo 2
-### Aula 5 -  - Vídeo 3
-### Aula 5 -  - Vídeo 4
-### Aula 5 -  - Vídeo 5
-### Aula 5 -  - Vídeo 6
-### Aula 5 -  - Vídeo 7
-### Aula 5 -  - Vídeo 8
+### Aula 5 - Deletando comentários - Vídeo 2
+
+Transcrição  
+Vamos deletar comentários, lembrando que só podemos deletar os comentários dos quais somos autores. Vamos começar criando a função. Estamos no BlogPost porque o nosso estado de comentários está aqui. Precisamos deletar aqui para que, ao removermos, ele seja removido do estado local e atualize a interface.
+
+Primeiro, vamos criar a constante handleDelete, que receberá uma arrow function. Inicialmente, ela será uma função vazia:
+
+```JSX
+const handleDelete = () => {
+
+}
+```
+
+Precisaremos do commentId para identificar qual comentário será deletado. Vamos ajustar a função para receber esse parâmetro:
+
+```JSX
+const handleDelete = (commentId) => {
+
+}
+```
+
+Implementando a chamada HTTP para deletar
+
+Utilizaremos o método HTTP .delete. No Chrome, ao verificar no Swagger, vemos que podemos deletar um comentário, mas apenas o autor pode fazer isso. Nenhum back-end confia em quem está deletando, então ele fará a lógica para verificar se a pessoa pode deletar aquele comentário.
+
+Para o handleDelete, precisamos concatenar a string "comments" com o commentId que recebemos. Vamos implementar a chamada HTTP:
+
+```JSX
+http.delete(`comments/${commentId}`)
+```
+
+Se tudo der certo, nem precisamos olhar para a resposta, mas podemos fazer um setComments. Vamos pegar o estado antigo, utilizando useState, e aplicar oldState.filter para filtrar todos os comentários cujo id seja diferente do commentId que recebemos. O filter retornará um novo array, removendo o comentário deletado, caso a chamada à API seja bem-sucedida.
+
+```JSX
+http.delete(`comments/${commentId}`)
+    .then(() => {
+        setComments(oldState => oldState.filter(c => c.id !== commentId))
+    })
+```
+
+Passando a lógica de deleção para os componentes
+
+Agora, precisamos passar essa lógica para baixo. O handleDelete deve ser passado para CommentList como onDelete. No CommentList, receberemos onDelete e continuaremos passando para baixo. No nosso componente de comentário, passaremos onDelete.
+
+```JSX
+<CommentList comments={comments} onDelete={handleDelete} />
+```
+
+No CommentList, vamos definir a estrutura para receber onDelete:
+
+```JSX
+export const CommentList = ({ comments, onDelete }) => {
+```
+
+E passaremos onDelete para cada Comment:
+
+```JSX
+<Comment comment={comment} key={comment.id} onDelete={onDelete} />
+```
+
+Verificando a propriedade do comentário e confirmando deleção
+
+Precisamos criar a lógica para verificar se somos os proprietários do comentário. Podemos usar, por exemplo, um IconButton, que é um botão transparente, e chamá-lo de "Excluir". No onClick, chamaremos onDelete, que é uma prop recebida de CommentList. No CommentList, onDelete é uma prop recebida de BlogPost.
+
+```JSX
+{isOwner && <IconButton onClick={() => onDelete(comment.id)}>Excluir</IconButton>}
+```
+
+Por fim, podemos adicionar um confirm para abrir um modal de diálogo, perguntando à pessoa se ela realmente deseja deletar. O resultado do confirm será armazenado em isConfirmed. Se a pessoa confirmar, prosseguimos com a exclusão. Isso evita exclusões acidentais.
+
+```JSX
+const handleDelete = (commentId) => {
+    const isConfirmed = confirm('Tem certeza que deseja remover o comentário?')
+    if (isConfirmed) {
+        http.delete(`comments/${commentId}`)
+            .then(() => {
+                setComments(oldState => oldState.filter(c => c.id !== commentId))
+            })
+    }
+}
+```
+
+Testando a funcionalidade de deleção
+
+Vamos testar isso agora no Chrome.
+
+Fizemos de cima para baixo, porque nosso estado está no topo. Portanto, precisamos realizar o drilling de props. Vamos recarregar. Não há erros no console. Excelente. Vamos entrar na página de detalhes. Observe que já abriu. A mensagem "Tem certeza que deseja remover o comentário?" aparece. Por que isso está acontecendo? Vamos verificar. Ah, isso ocorre porque colocamos no lugar errado. Ou seja, o isConfirmed não deveria estar no useEffect. Vamos corrigir isso. Ele deve estar no... onde está nosso onDelete? RenderDelete. Aqui está. Se já percebemos isso, podemos ter pensado: "Ih, estamos fazendo no lugar errado." Agora sim. O RenderDelete é que deve chamar isConfirmed. Vamos recarregar. Excelente. Agora parece que está correto. O botão de excluir está aqui. Vamos tentar excluir este novo comentário? Vamos verificar na aba de Network para ver o que acontece. Comentário novo. Vamos excluir. Quero excluir. Ok. Note que ocorreu um erro. O primeiro sinal indica que há algo errado. Essa URL com esse objeto aqui é porque deixamos de passar algo como parâmetro. Por quê? Vamos entender. No ponto onde chamamos o onDelete, não estamos passando o ID do comentário, mas sim o evento de clique. O que precisamos fazer para corrigir? Vamos transformar isso em uma arrow function, passando o comment.id. Certo? Agora sim. Do jeito que estava antes, estávamos passando o evento de clique, e isso não funcionaria. Vamos recarregar. Vamos tentar excluir novamente. Excluir. Tem certeza que deseja remover o comentário? Sim. Ok. Excelente. Recebemos um 200 no delete. Excelente. Se recarregarmos a página, o comentário não está mais ali. E se deletarmos aqui, o view.js é ótimo. Recarregamos, deletamos. A mensagem, a resposta, delete 200. Se recarregarmos a página, excelente. Vou deletar o último comentário que sobrou aqui. Vou deletar. Se recarregarmos a página, excelente. Já está deletando. Note que, apesar do prop drilling, porque nosso estado está sendo gerido no topo no BlogPost, conseguimos deletar o comentário e atualizar nosso estado local baseado na resposta. E com isso, fechamos todo o nosso ciclo. Mas ainda não terminamos. Há uma última missão. Por quê? Este botão de like não está funcionando. Ele só funciona no CardPost. E essa lógica de adicionar comentários está duplicada. Há dois lugares diferentes fazendo isso. Então, qual é a última missão? Refatorar isso, primeiro, para trazer a funcionalidade de curtir para esta página do BlogPost e evitar esse código duplicado. Mas para alcançar esse resultado, não há conteúdo novo envolvido. Vamos usar tudo que sabemos. Então, é hora do desafio. Vou deixar bem descrito o passo a passo para resolver isso, mas agora é sua vez. Estou confiando que você resolverá. O próximo passo no CodeConnect é eliminar esse código duplicado, refatorar e deixar tudo organizado. Mas fique tranquilo, pois deixarei o gabarito disponível caso precise consultar. Era isso. Até mais!
+
+### Aula 5 - Desafio: curtindo e comentando na página de detalhes
+
+Ao longo do curso, fomos adicionando funcionalidades ao nosso app de blog. Agora que ele está ganhando corpo, é um bom momento pra refatorar um pedacinho do código e deixá-lo mais organizado e reaproveitável.
+
+Atualmente, a lógica de likes e comentários está sendo repetida em mais de um lugar. Tanto no componente CardPost quanto na página BlogPost, temos partes bem parecidas que lidam com:
+
+- contagem e atualização de likes;
+- listagem e adição de comentários;
+- deleção de comentários (no caso da BlogPost).
+
+Sua missão aqui é agrupar essa lógica num hook personalizado. Algo como usePostInteractions, que receba um post como parâmetro e retorne os estados e funções relacionados a ele.
+
+Esse hook será responsável por:
+
+- controlar o estado de likes e comments;
+- expor funções como handleNewComment, handleLikeButton e handleDeleteComment;
+- permitir que outros componentes usem essa lógica sem duplicar código.
+
+> Dica: olhe com carinho para os useState, useEffect e funções dentro de CardPost e BlogPost. Vai perceber que tem bastante coisa em comum ali.
+
+Depois que o hook estiver criado, o próximo passo é limpar os componentes e fazer com que eles usem o hook no lugar do código duplicado. Você pode seguir o padrão dos hooks que já usamos no projeto e importar o http ali dentro para as requisições.
+
+Esse tipo de refatoração ajuda muito a manter o código mais limpo, fácil de testar e mais agradável de evoluir.
+
+Bora praticar?
+
+Opinião do instrutor
+
+Nesta solução, extraímos toda a lógica de interações com o post (likes e comentários) para um hook personalizado. Isso ajuda a manter os componentes mais limpos e reutilizáveis.
+
+O novo hook fica em src/hooks/usePostInteractions.js
+
+```JSX
+import { useState, useCallback, useEffect } from 'react' 
+import { http } from '../api' 
+
+export const usePostInteractions = (initialPost) => { 
+const [likes, setLikes] = useState(initialPost?.likes || 0) 
+const [comments, setComments] = useState(initialPost?.comments || []) 
+
+useEffect(() => { 
+if (initialPost) { 
+setLikes(initialPost.likes || 0) 
+setComments(initialPost.comments || []) 
+} 
+}, [initialPost]) 
+
+const handleNewComment = useCallback((comment) => { 
+setComments(prevComments => [comment, ...prevComments]) 
+}, []) 
+
+const handleLikeButton = useCallback(async (postId) => { 
+try { 
+await http.post(`blog-posts/${postId}/like`) 
+setLikes(prevLikes => prevLikes + 1) 
+} catch (error) { 
+console.error('Erro ao dar like:', error) 
+} 
+}, []) 
+
+const handleDeleteComment = useCallback(async (commentId) => { 
+const isConfirmed = confirm('Tem certeza que deseja remover o comentário?') 
+if (isConfirmed) { 
+try { 
+await http.delete(`comments/${commentId}`) 
+setComments(prev => prev.filter(c => c.id !== commentId)) 
+} catch (error) { 
+console.error('Erro ao deletar comentário:', error) 
+} 
+} 
+}, []) 
+
+const updateComments = useCallback((newComments) => { 
+setComments(newComments) 
+}, [])
+
+const updateLikes = useCallback((newLikes) => { 
+setLikes(newLikes) 
+}, []) 
+
+return { 
+likes, 
+comments, 
+handleNewComment, 
+handleLikeButton, 
+handleDeleteComment, 
+updateComments, 
+updateLikes 
+} 
+} 
+```
+
+Com o hook pronto, usamos ele nos componentes CardPost e BlogPost:
+
+src/components/CardPost/index.jsx
+
+- Antes: o componente mantinha localmente os estados e funções de like/comentário.
+- Depois: usamos usePostInteractions para obter os dados e handlers.
+
+src/pages/BlogPost/index.jsx
+
+- Antes: lógica de comentários e likes estava misturada à lógica de carregamento do post.
+- Depois: extraímos isso para o hook, mantendo o componente focado em carregar e renderizar o post.
+
+Essa mudança melhora a separação de responsabilidades, deixa os componentes mais legíveis e facilita testes e manutenções futuras.
+
+### Aula 5 - Para saber mais: outros tipos de requests
+
+Durante o curso, a gente trabalhou com um padrão bem comum no desenvolvimento web: o famoso CRUD. Ou seja, criamos dados, lemos, atualizamos e deletamos. Tudo isso usando requisições do tipo GET, POST, PUT e DELETE. E de fato, isso cobre boa parte do que você vai encontrar no dia a dia como desenvolvedor ou desenvolvedora.
+
+Mas conforme você vai ganhando experiência e pegando projetos diferentes, é normal esbarrar em tipos de requisições que fogem desse padrão mais básico. E tudo bem. O importante é saber que existe, não decorar tudo agora.
+
+Abaixo, vou te apresentar alguns desses tipos especiais de requisição, explicar rapidinho pra que servem e te dar um ponto de partida pra quando quiser aprender mais.
+
+Upload de imagem (e arquivos em geral)
+
+Quando o sistema precisa receber uma imagem, um PDF, um vídeo... a requisição precisa ser enviada de um jeito diferente. Em vez de mandar só um JSON com texto, a gente precisa usar um formato chamado multipart/form-data.
+
+Esse tipo de request quebra os dados em partes, permitindo que o arquivo e outros campos venham juntos. Se você já viu formulários com campo de arquivo (`<input type="file" />`), é disso que estamos falando.
+
+Hoje em dia, bibliotecas como o React Hook Form, o FormData API do navegador e até algumas que fazem upload direto pra nuvem (como o Cloudinary) ajudam bastante com isso.
+
+Exemplo com FormData:
+
+```JSX
+const formData = new FormData() 
+formData.append('file', fileInput.files[0]) 
+formData.append('title', 'Minha imagem') 
+
+fetch('/upload', { 
+method: 'POST', 
+body: formData 
+}) 
+```
+
+Quer saber mais? Pesquise por: FormData JavaScript, multipart upload, ou upload de arquivos com React
+
+Streams (envio por partes, em tempo real)
+
+Algumas situações exigem que os dados sejam enviados ou recebidos aos poucos, como acontece em uploads de vídeos pesados, leitura de arquivos grandes ou até geração de respostas longas por IA.
+
+Essas requisições funcionam em streaming: em vez de esperar tudo terminar pra depois entregar o resultado, o servidor vai mandando em partes. E você pode ir exibindo essas partes à medida que chegam.
+
+Um protocolo que ajuda nisso é o tus, pensado pra uploads grandes e resilientes. Existe até uma biblioteca chamada tus-js-client pra lidar com isso no frontend.
+
+Exemplo com tus-js-client:
+
+```JSX
+import * as tus from 'tus-js-client' 
+
+const upload = new tus.Upload(file, { 
+endpoint: 'https://meu-servidor.com/files/', 
+metadata: { 
+filename: file.name, 
+filetype: file.type 
+}, 
+onError (error) { 
+console.error('Erro no upload:', error) 
+}, 
+onProgress (bytesSent, bytesTotal) { 
+const percent = (bytesSent / bytesTotal * 100).toFixed(2) 
+console.log(`${percent}% enviado`) 
+}, 
+onSuccess () { 
+console.log('Upload finalizado:', upload.url) 
+} 
+}) 
+
+upload.start() 
+```
+
+Curioso? Dá uma olhada em: https://tus.io ou busque por tus-js-client no GitHub
+
+WebSockets (comunicação em tempo real)
+
+Sabe quando você está num chat e vê a outra pessoa digitando? Ou recebe uma notificação assim que ela envia a mensagem? Isso não é feito com requisições normais tipo GET ou POST. A mágica aqui acontece com WebSocket.
+
+WebSockets permitem uma conexão aberta entre cliente e servidor. Uma vez conectados, os dois lados podem trocar mensagens em tempo real, sem precisar ficar fazendo várias requisições.
+
+Uma biblioteca muito usada nesse cenário é o socket.io, que facilita a vida de quem está começando.
+
+Exemplo com socket.io:
+
+```JSX
+import { io } from 'socket.io-client' 
+
+const socket = io('http://localhost:3000') 
+
+socket.on('connect', () => { 
+console.log('Conectado ao servidor') 
+
+// Enviar uma mensagem 
+socket.emit('chat message', 'Olá mundo!') 
+}) 
+
+socket.on('chat message', (msg) => { 
+console.log('Mensagem recebida:', msg) 
+}) 
+```
+
+Quer ver um exemplo? Procure por socket.io chat app no GitHub ou explore a documentação em https://socket.io
+
+E como isso me ajuda agora?
+
+Você não precisa sair sabendo implementar tudo isso agora. Mas é bom saber que existem outros jeitos de trocar dados com o backend, além do CRUD tradicional. Saber que existe já é metade do caminho. Com o tempo (e novos projetos), você vai se deparar com esses cenários, e quando isso acontecer, vai lembrar: “ah, eu já ouvi falar disso”.
+
+Daí é só voltar aqui, pesquisar os nomes que anotei acima, e seguir evoluindo.
+
+Seguir carreira em tecnologia é assim mesmo: a gente vai abrindo espaço pra novos aprendizados, sempre aos poucos. E isso aqui é só mais uma sementinha plantada.
+
+Vamos em frente.
+
+### Aula 5 - Projeto final de curso
+
+Você pode [baixar a versão final do projeto neste link](https://github.com/alura-cursos/4870--code-connect/tree/aula-5).
+
+Terminei o curso, e agora?
+
+Sério, parabéns por ter chegado até aqui! Fechar um curso com um projeto funcional, bem estruturado e cheio de boas práticas é uma conquista que merece ser celebrada.
+
+Durante o curso, você não ficou só escrevendo código por escrever. A gente foi evoluindo juntos, passo a passo, começando de um código simples e indo em direção a uma arquitetura mais organizada e com melhor separação de responsabilidades.
+
+Você tirou o estado de dentro dos componentes, criou um hook (usePostInteractions) para centralizar as interações com posts, deixou o código mais limpo, mais fácil de testar e de evoluir. Também usou useCallback, useEffect, fez controle de erros, e foi entendendo na prática como pequenos ajustes mudam bastante a manutenibilidade da aplicação.
+
+Se você ainda não está tão familiarizado com o useCallback, recomendo assistir a esse vídeo que explica o conceito de forma bem simples: [Hooks do React: useCallback](https://cursos.alura.com.br/extra/alura-mais/hooks-do-react-usecallback-c1534)
+
+Se no começo o código era mais direto e talvez até um pouco repetitivo, agora ele está com uma cara mais profissional, e isso foi mérito seu.
+
+Continue praticando!
+
+Agora que você chegou até aqui, vale muito a pena continuar evoluindo com esse projeto. Algumas ideias:
+
+- Que tal publicar na Vercel ou na Netlify? Mostra pro mundo o que você construiu!
+- Escreve um post falando sobre sua experiência. Me marca que eu vou adorar ler: LinkedIn ou Instagram
+- Refatora ainda mais: separa os hooks em arquivos distintos, adiciona novos endpoints, brinca com outros recursos do React ou mesmo do backend.
+
+Lembrando que aprender programação é uma jornada contínua. Não precisa ter pressa, mas é importante manter o ritmo: testar coisas novas, cometer erros, aprender com eles e curtir o processo.
+
+Se quiser trocar ideia, tirar dúvidas ou só bater um papo sobre o que vem depois, estou por aqui — seja no Discord, LinkedIn ou Instagram.
+
+Vida longa e próspera no mundo do React!
+
+Abraço do careca barbudo o/
+
+### Aula 5 - O que aprendemos?
+
+Nesta aula, aprendemos:
+
+- A usar interceptores no Axios para adicionar automaticamente o cabeçalho de autorização.
+- A centralizar a lógica de manipulação de headers de autenticação usando interceptores.
+- A configurar interceptores para ações específicas em requisições HTTP.
+- A deletar comentários em um blog post garantindo controle pelo autor com HTTP DELETE.
+- A confirmar a exclusão de comentários via um modal de diálogo.
+- A atualizar a interface do usuário removendo o comentário do estado local após exclusão.
+- A passar funções de deleção através de vários níveis de componentes via props drilling.
+- A planejar refatorações para eliminação de código duplicado e extensão de funcionalidades.
+
+### Aula 5 - Conclusão - Vídeo
+
+Transcrição  
+Parabéns por ter concluído mais um curso. Foi uma jornada incrível de novos conhecimentos e ferramentas para conseguirmos fazer o CodeConnect se conectar com o back-end.
+
+No início, tivemos que trabalhar um pouco no lado do back-end, entendendo como levantar um projeto. Discutimos se deveríamos usar Docker ou não, considerando várias opções. Portanto, cuidamos dessa parte do back-end.
+
+Explorando documentação e ferramentas de requisição
+
+Em seguida, passamos a entender um pouco sobre documentação, explorando o Swagger e outras ferramentas. Utilizamos o Postman para começar a depurar e entender o que acontece nas requisições.
+
+Para aprender todas essas funcionalidades, começamos usando o Fetch do próprio JavaScript e depois migramos para o Axios, chegando ao ponto de interceptar as requisições. Ou seja, antes de cada requisição, realizamos uma verificação.
+
+Implementando autenticação e operações CRUD
+
+Será que temos um token? Se tivermos, vamos enviá-lo. Houve muita coisa envolvida, tanto na parte de autenticação, que tivemos que refatorar, quanto nas novas funcionalidades para realizar as operações GET, POST, PUT, PATCH e DELETE. Com isso, estamos prontos para continuar e explorar outras funcionalidades do React. Agora, sempre que houver um back-end para se conectar, já sabemos qual é o caminho a seguir.
+
+Agradecendo e incentivando feedback
+
+Estamos muito orgulhosos de termos chegado até aqui. Parabéns de verdade. Esperamos encontrá-los em uma próxima oportunidade, em um próximo curso. Antes de encerrar e antes de pegar o certificado, não se esqueçam de deixar no fórum as dúvidas, se necessário, ou no Discord. Também é importante deixar um comentário e uma avaliação sobre o que acharam deste curso e o que poderia ter sido diferente. Isso nos ajuda muito a melhorar os cursos aqui da plataforma.
+
+Um grande abraço, nos vemos em uma próxima oportunidade. Até mais!

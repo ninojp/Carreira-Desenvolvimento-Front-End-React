@@ -3,30 +3,30 @@ import { Author } from "../Author"
 import { ThumbsUpButton } from "./ThumbsUpButton"
 import { ModalComment } from "../ModalComment"
 import { Link } from "react-router"
-import { useState } from 'react'
-import { http } from '../../api'
 import { useAuth } from '../../hooks/useAuth'
+import { usePostInteractions } from '../../hooks/usePostInteractions'
 
 export const CardPost = ({ post }) => {
-    const [likes, setLikes] = useState(post.likes);
-    const [commentsPost, setCommentsPost] = useState(post.comments);
-    const token = localStorage.getItem('access_token');
+    // const [likes, setLikes] = useState(post.likes);
+    // const [commentsPost, setCommentsPost] = useState(post.comments);
     const { isAuthenticated } = useAuth();
+        const { likes, comments, handleNewComment, handleLikeButton } = usePostInteractions(post)
+    
+        const onLikeClick = () => {
+            handleLikeButton(post.id)
+        }
     //-------------------------------------------------------------
-    const handleNewComment = (newComment) => {
-        setCommentsPost([newComment, ...commentsPost])
-    }
+    // const handleNewComment = (newComment) => {
+    //     setCommentsPost([newComment, ...commentsPost])
+    // }
     //-------------------------------------------------------------
-    const handleLikeButton = () => {
-        //No axios o segundo parametro do post é o body e deve ser passado mesmo vazio e o terceiro é o config (headers, etc)
-        http.post(`blog-posts/${post.id}/like`, {}, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-        .then(() => {
-            setLikes(oldState => oldState + 1)
-            console.log('incrementar like')
-        })
-    }
+    // const handleLikeButton = () => {
+    //     http.post(`blog-posts/${post.id}/like`)
+    //     .then(() => {
+    //         setLikes(oldState => oldState + 1)
+    //         console.log('incrementar like')
+    //     })
+    // }
     //--------------------------------------------------------------
     return (
         <article className={styles.card}>
@@ -46,7 +46,7 @@ export const CardPost = ({ post }) => {
             <footer className={styles.footer}>
                 <div className={styles.actions}>
                     <div className={styles.action}>
-                        <ThumbsUpButton loading={false} onClick={handleLikeButton} disabled={!isAuthenticated} />
+                        <ThumbsUpButton loading={false} onClick={onLikeClick} disabled={!isAuthenticated} />
                         <p>
                             {likes}
                         </p>
@@ -54,7 +54,7 @@ export const CardPost = ({ post }) => {
                     <div className={styles.action}>
                         <ModalComment onSuccess={handleNewComment} postId={post?.id}/>
                         <p>
-                            {commentsPost.length}
+                            {comments.length}
                         </p>
                     </div>
                 </div>

@@ -22,11 +22,7 @@ export const ModalComment = ({ isEditing, onSuccess, postId, defaultValue='', co
             setLoading(true);
             // setTimeout(() => { setLoading(false) }, 2000);
             if (isEditing) {
-                http.patch(`/comments/${commentId}`, { text }, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    }
-                })
+                http.patch(`/comments/${commentId}`, { text })
                     .then(response => {
                         if (onSuccess) {
                             setLoading(false);
@@ -35,11 +31,7 @@ export const ModalComment = ({ isEditing, onSuccess, postId, defaultValue='', co
                         }
                     });
             } else {
-                http.post(`/comments/post/${postId}`, { text }, {
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    }
-                })
+                http.post(`/comments/post/${postId}`, { text })
                     .then(response => {
                         if (onSuccess) {
                             setLoading(false);

@@ -6,6 +6,10 @@ useRef: como funciona esse React Hook
 https://www.youtube.com/watch?v=BwRxBGsT_f0&ab_channel=Alura
 
 
+useCallback: Hooks do React
+https://cursos.alura.com.br/extra/alura-mais/hooks-do-react-usecallback-c1534
+
+
 Hook useCallback x useMemo: performance no React 
 https://www.youtube.com/watch?v=VVmGrEZoBvM&t=239s&ab_channel=Alura
 
