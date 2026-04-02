@@ -1,0 +1,25 @@
+*.DS_Store
+# Ignore node_modules
+node_modules/
+# Ignore log files
+*.log
+# Ignore build output
+dist/
+build/
+# Ignore environment variable files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+# Ignore IDE specific files
+.vscode/
+.idea/
+.vs/
+# Ignore OS generated files
+Thumbs.db
+Desktop.ini
+# Ignore coverage reports
+coverage/
+# Ignore npm debug files
+npm-debug.log*
